@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs';
-import { int, Material, StandardMaterial } from 'babylonjs';
+import { int, Material, StandardMaterial, Vector3 } from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
 import Axie from './axie';
@@ -186,6 +186,23 @@ export default class Game {
 
         var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
 
+        const bullet_starting_position = new BABYLON.Vector3(0, 0.5, -47.8);
+
+        const bullet = BABYLON.MeshBuilder.CreateSphere("bullet", { diameter: 0.1 });
+        bullet.position = bullet_starting_position;
+
+        const bullet_material = new BABYLON.StandardMaterial("bullet_material");
+        bullet_material.diffuseColor = BABYLON.Color3.Black();
+        bullet.material = bullet_material;
+
+        const bunker = BABYLON.MeshBuilder.CreateBox("bunker", { width: 1, height: 0.5, depth: 2 })
+        bunker.position.y = 0.25;
+        bunker.position.z = -48;
+
+        const bunker_material = new BABYLON.StandardMaterial("bunker_material");
+        bunker_material.diffuseColor = BABYLON.Color3.Black();
+        bunker.material = bunker_material;
+
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 case BABYLON.PointerEventTypes.POINTERPICK:
@@ -253,16 +270,53 @@ export default class Game {
         let step = 0.25;
         let cloned = false;
 
+        let forward = new BABYLON.Vector3(1, 0, 1);
+        let fin = new BABYLON.Vector3(0, 0, -1);
+        let side = BABYLON.Vector3.Cross(forward, fin);
+        let nextForward = BABYLON.Vector3.Zero();
+
         this.scene.onBeforeRenderObservable.add(() => {
-            console.log(cloned);
             if (!cloned && this.drop_zone_1_axies.length > 0) {
 
                 this.drop_zone_1_axies.forEach((mesh) => {
                     var cloned_mesh = mesh.clone();
                     cloned_mesh.position.x = cloned_mesh.position.x - 25;
+                    cloned_mesh.orientation = bunker.position.subtract(cloned_mesh.position);
+                    this.play_field_axies.push(cloned_mesh);
                 })
 
                 cloned = true;
+            }
+
+            if (this.play_field_axies.length > 0) {
+                this.play_field_axies.forEach((mesh) => {
+                    if(mesh.position.z > -50){
+
+                        mesh.movePOV(0, 0, step);
+                        console.log("move");
+                    }
+                })
+
+                let target = this.play_field_axies[0];
+
+                nextForward = target.position.subtract(bullet.position).normalize();
+                fin = BABYLON.Vector3.Cross(forward, nextForward);
+                forward = nextForward;
+                side = BABYLON.Vector3.Cross(forward, fin);
+                let orientation = BABYLON.Vector3.RotationFromAxis(side, forward, fin);
+                bullet.rotation = orientation;
+
+                bullet.position.addInPlace(forward.scale(0.5));
+
+                if (bullet.intersectsMesh(target)) {
+                    this.play_field_axies.splice(0, 1);
+                    target.dispose();
+                    bullet.position = new BABYLON.Vector3(0, 0.5, -47.8);
+                    if (this.play_field_axies.length == 0) {
+
+                        cloned = false;
+                    }
+                }
             }
             // sphere.movePOV(0, 0, step);
 
