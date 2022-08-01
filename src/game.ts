@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs';
-import { Material, StandardMaterial } from 'babylonjs';
+import { int, Material, StandardMaterial } from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
 import Axie from './axie';
@@ -15,12 +15,13 @@ export default class Game {
     private scene: BABYLON.Scene;
     private camera: BABYLON.ArcRotateCamera;
     private light: BABYLON.Light;
-    private clickedBubba: Boolean = false;
-    private clickedPuffy: Boolean = false;
-    private clickedOlek: Boolean = false;
     private isHoveringOverDropZone1: Boolean = false;
     private isHoveringOverDropZone2: Boolean = false;
     private selectedMesh: BABYLON.Mesh;
+
+    private drop_zone_1_axies = [];
+    private play_field_axies = [];
+    private drop_zone_1_axies_coordinates = new Map<int, int>();
 
     private room: Room<any>;
     private playerEntities: { [playerId: string]: BABYLON.Mesh } = {};
@@ -190,36 +191,40 @@ export default class Game {
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     console.log("pick " + pointerInfo.pickInfo.pickedMesh.id);
                     if (pointerInfo.pickInfo.hit) {
-                        if (this.selectedMesh != null) {
+                        if (pointerInfo.pickInfo.pickedMesh.id === "drop_zone1") {
+                            if (this.isHoveringOverDropZone1 && this.selectedMesh) {
+                                var intersectsMesh = false;
+
+                                for (var mesh of this.drop_zone_1_axies) {
+                                    console.log(mesh.position);
+                                    if (this.selectedMesh.intersectsMesh(mesh)) {
+                                        intersectsMesh = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!intersectsMesh) {
+                                    this.drop_zone_1_axies.push(this.selectedMesh.clone());
+                                } else {
+                                    intersectsMesh = false;
+                                }
+                            }
+                        } else if (this.selectedMesh) {
                             this.selectedMesh.dispose();
                             this.selectedMesh = null;
                         }
                         if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
-                            this.clickedPuffy = !this.clickedPuffy;
-                            if (this.clickedPuffy) {
-                                this.clickedBubba = false;
-                                this.clickedOlek = false;
-                                this.selectedMesh = puffy.clone();
-                            }
+                            this.selectedMesh = puffy.clone();
                         } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
-                            this.clickedBubba = !this.clickedBubba;
-                            if (this.clickedBubba) {
-                                this.clickedPuffy = false;
-                                this.clickedOlek = false;
-                                this.selectedMesh = bubba.clone();
-                            }
+                            this.selectedMesh = bubba.clone();
                         } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
-                            this.clickedOlek = !this.clickedOlek;
-                            if (this.clickedOlek) {
-                                this.clickedPuffy = false;
-                                this.clickedBubba = false;
-                                this.selectedMesh = olek.clone();
-                            }
+                            this.selectedMesh = olek.clone();
                         }
                     }
                     break;
+
                 case BABYLON.PointerEventTypes.POINTERMOVE:
-                    if (this.selectedMesh != null) {
+                    if (this.selectedMesh) {
                         if (this.isHoveringOverDropZone1) {
                             var target = BABYLON.Vector3.Unproject(
                                 new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
@@ -246,8 +251,19 @@ export default class Game {
         // let nextForward = BABYLON.Vector3.Zero();
 
         let step = 0.25;
+        let cloned = false;
 
         this.scene.onBeforeRenderObservable.add(() => {
+            console.log(cloned);
+            if (!cloned && this.drop_zone_1_axies.length > 0) {
+
+                this.drop_zone_1_axies.forEach((mesh) => {
+                    var cloned_mesh = mesh.clone();
+                    cloned_mesh.position.x = cloned_mesh.position.x - 25;
+                })
+
+                cloned = true;
+            }
             // sphere.movePOV(0, 0, step);
 
             // bullet.position.addInPlace(forward.scale(bullet_speed));
