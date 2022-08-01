@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie from './axie';
 
 import Menu from "./menu";
-import { createSkyBox } from "./utils";
+import { createSkyBox, getZeroPlaneVector } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -15,6 +15,12 @@ export default class Game {
     private scene: BABYLON.Scene;
     private camera: BABYLON.ArcRotateCamera;
     private light: BABYLON.Light;
+    private clickedBubba: Boolean = false;
+    private clickedPuffy: Boolean = false;
+    private clickedOlek: Boolean = false;
+    private isHoveringOverDropZone1: Boolean = false;
+    private isHoveringOverDropZone2: Boolean = false;
+    private selectedMesh: BABYLON.Mesh;
 
     private room: Room<any>;
     private playerEntities: { [playerId: string]: BABYLON.Mesh } = {};
@@ -124,87 +130,127 @@ export default class Game {
     bootstrap(): void {
         this.scene = new BABYLON.Scene(this.engine);
         this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
-        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 2.5, 15, new BABYLON.Vector3(0, 0, -48), this.scene);
+        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 10, new BABYLON.Vector3(25, 25, 0), this.scene);
         this.camera.attachControl(this.canvas, true);
 
-        const bullet_speed = 0.5;
-        const bullet_starting_position = new BABYLON.Vector3(0, 0.5, -47.8);
-        const sphere_starting_position = new BABYLON.Vector3(0, 0.5, 49);
-
         createSkyBox(this.scene);
-
-        var axie = new Axie(4);
-
-        var sphere_material = new BABYLON.StandardMaterial("sphere_material", this.scene);
-        const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameterZ: 1.5 }, this.scene);
-        sphere.position = sphere_starting_position;
-        sphere.material = sphere_material;
-        axie.mesh = sphere;
-
-        const bullet = BABYLON.MeshBuilder.CreateSphere("bullet", { diameter: 0.1 });
-        bullet.position = bullet_starting_position;
-
-        const bullet_material = new BABYLON.StandardMaterial("bulletMat");
-        bullet_material.diffuseColor = BABYLON.Color3.Black();
-        bullet.material = bullet_material; //Place the material property of the ground
-        // bullet.orientation = BABYLON.Vector3(0,1,0);
-
-
-        const bunker = BABYLON.MeshBuilder.CreateBox("bunker", { width: 1, height: 0.5, depth: 2 })
-        bunker.position.y = 0.25;
-        bunker.position.z = -48;
-
         const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 20, height: 100 }, this.scene);
+        ground.isPickable = false;
 
         const drop_zone1 = BABYLON.MeshBuilder.CreateGround("drop_zone1", { width: 20, height: 15 }, this.scene);
         drop_zone1.position = new BABYLON.Vector3(25, 0, 42.5);
+        drop_zone1.actionManager = new BABYLON.ActionManager(this.scene);
+        drop_zone1.actionManager.registerAction(
+            new BABYLON.SwitchBooleanAction(
+                BABYLON.ActionManager.OnPointerOverTrigger,
+                this,
+                'isHoveringOverDropZone1'
+            )
+        )
+        drop_zone1.actionManager.registerAction(
+            new BABYLON.SwitchBooleanAction(
+                BABYLON.ActionManager.OnPointerOutTrigger,
+                this,
+                'isHoveringOverDropZone1'
+            )
+        )
+
 
         const drop_zone2 = BABYLON.MeshBuilder.CreateGround("drop_zone2", { width: 20, height: 15 }, this.scene);
         drop_zone2.position = new BABYLON.Vector3(25, 0, -42.5);
 
-        const wireMat = new BABYLON.StandardMaterial("wireMat");
-        wireMat.wireframe = true;
+        const puffy = BABYLON.MeshBuilder.CreateSphere("puffy", { diameterZ: 1.5 });
+        puffy.position = new BABYLON.Vector3(18, 1, 28);
+        puffy.actionManager = new BABYLON.ActionManager(this.scene);
 
-        let forward = sphere.position.subtract(bullet.position).normalize();
-        let fin = new BABYLON.Vector3(0, 0, -1);
-        let side = BABYLON.Vector3.Cross(forward, fin);
-        let nextForward = BABYLON.Vector3.Zero();
+        const bubba = BABYLON.MeshBuilder.CreateBox("bubba", { width: 1, height: 1, depth: 1 });
+        bubba.position = new BABYLON.Vector3(21, 1, 28);
+        bubba.actionManager = new BABYLON.ActionManager(this.scene);
+
+        const olek = BABYLON.MeshBuilder.CreateCylinder("olek", { diameterTop: 0, height: 1, diameterBottom: 1 });
+        olek.position = new BABYLON.Vector3(24, 1, 28);
+        olek.actionManager = new BABYLON.ActionManager(this.scene);
+
+        const puffy_material = new BABYLON.StandardMaterial("puffy_material");
+        puffy_material.diffuseColor = BABYLON.Color3.Blue();
+        puffy.material = puffy_material;
+
+        const bubba_material = new BABYLON.StandardMaterial("bubba_material");
+        bubba_material.diffuseColor = BABYLON.Color3.Red();
+        bubba.material = bubba_material;
+
+        const olek_material = new BABYLON.StandardMaterial("olek_material");
+        olek_material.diffuseColor = BABYLON.Color3.Green();
+        olek.material = olek_material;
+
+        var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
+
+        this.scene.onPointerObservable.add((pointerInfo) => {
+            switch (pointerInfo.type) {
+                case BABYLON.PointerEventTypes.POINTERPICK:
+                    console.log("pick " + pointerInfo.pickInfo.pickedMesh.id);
+                    if (pointerInfo.pickInfo.hit) {
+                        if (this.selectedMesh != null) {
+                            this.selectedMesh.dispose();
+                            this.selectedMesh = null;
+                        }
+                        if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
+                            this.clickedPuffy = !this.clickedPuffy;
+                            if (this.clickedPuffy) {
+                                this.clickedBubba = false;
+                                this.clickedOlek = false;
+                                this.selectedMesh = puffy.clone();
+                            }
+                        } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
+                            this.clickedBubba = !this.clickedBubba;
+                            if (this.clickedBubba) {
+                                this.clickedPuffy = false;
+                                this.clickedOlek = false;
+                                this.selectedMesh = bubba.clone();
+                            }
+                        } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
+                            this.clickedOlek = !this.clickedOlek;
+                            if (this.clickedOlek) {
+                                this.clickedPuffy = false;
+                                this.clickedBubba = false;
+                                this.selectedMesh = olek.clone();
+                            }
+                        }
+                    }
+                    break;
+                case BABYLON.PointerEventTypes.POINTERMOVE:
+                    if (this.selectedMesh != null) {
+                        if (this.isHoveringOverDropZone1) {
+                            var target = BABYLON.Vector3.Unproject(
+                                new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
+                                canvas_client_rect.width,
+                                canvas_client_rect.height,
+                                BABYLON.Matrix.Identity(),
+                                this.camera.getViewMatrix(),
+                                this.camera.getProjectionMatrix()
+                            );
+                            target.x = this.camera.position.x - target.x;
+                            target.y = this.camera.position.y - target.y;
+                            target.z = this.camera.position.z - target.z;
+                            this.selectedMesh.position = getZeroPlaneVector(this.camera.position, target);
+                        } else {
+                            this.selectedMesh.position = new BABYLON.Vector3(0, -100, 0);
+                        }
+                    }
+
+            }
+        });
+        // let forward = sphere.position.subtract(bullet.position).normalize();
+        // let fin = new BABYLON.Vector3(0, 0, -1);
+        // let side = BABYLON.Vector3.Cross(forward, fin);
+        // let nextForward = BABYLON.Vector3.Zero();
 
         let step = 0.25;
 
         this.scene.onBeforeRenderObservable.add(() => {
-            sphere.movePOV(0, 0, step);
+            // sphere.movePOV(0, 0, step);
 
-            if (sphere.position.z < - 49 || sphere.position.z > 49) {
-                step = -step;
-            }
-
-            nextForward = sphere.position.subtract(bullet.position).normalize();
-            fin = BABYLON.Vector3.Cross(forward, nextForward);
-            forward = nextForward;
-            side = BABYLON.Vector3.Cross(forward, fin);
-            let orientation = BABYLON.Vector3.RotationFromAxis(side, forward, fin);
-            bullet.rotation = orientation;
-
-            bullet.position.addInPlace(forward.scale(bullet_speed));
-
-            if (sphere.intersectsMesh(bunker, true) || bullet.intersectsMesh(sphere, true)) {
-                axie.hp--;
-                bullet.position = new BABYLON.Vector3(0, 0.5, -47.8);
-            } else {
-            }
-
-            if (axie.hp == 3) {
-                (axie.mesh.material as StandardMaterial).diffuseColor = BABYLON.Color3.Green();
-            } else if (axie.hp == 2) {
-                (axie.mesh.material as StandardMaterial).diffuseColor = BABYLON.Color3.Yellow();
-            } else if (axie.hp == 1) {
-                (axie.mesh.material as StandardMaterial).diffuseColor = new BABYLON.Color3(1, 0.5, 0.3);
-            } else if (axie.hp == 0) {
-                (axie.mesh.material as StandardMaterial).diffuseColor = BABYLON.Color3.Black();
-                axie.mesh.position = new BABYLON.Vector3(0, 0.5, 49);
-                axie.hp = 3;
-            }
+            // bullet.position.addInPlace(forward.scale(bullet_speed));
 
         })
 
