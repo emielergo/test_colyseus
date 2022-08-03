@@ -2,10 +2,10 @@ import * as BABYLON from 'babylonjs';
 import { int, Material, StandardMaterial, Vector3 } from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
-import Axie from './axie';
+import Axie, { Bullet, Bunker } from './axie';
 
 import Menu from "./menu";
-import { createSkyBox, getZeroPlaneVector } from "./utils";
+import { createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -19,9 +19,10 @@ export default class Game {
     private isHoveringOverDropZone2: Boolean = false;
     private selectedMesh: BABYLON.Mesh;
 
-    private drop_zone_1_axies = [];
+    private drop_zone_1_meshes = [];
     private play_field_axies = [];
-    private drop_zone_1_axies_coordinates = new Map<int, int>();
+    private bullets = [];
+    private drop_zone_1_meshes_coordinates = new Map<int, int>();
 
     private room: Room<any>;
     private playerEntities: { [playerId: string]: BABYLON.Mesh } = {};
@@ -183,37 +184,38 @@ export default class Game {
         const olek_material = new BABYLON.StandardMaterial("olek_material");
         olek_material.diffuseColor = BABYLON.Color3.Green();
         olek.material = olek_material;
+        olek.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, 1));
 
         var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
 
-        const bullet_starting_position = new BABYLON.Vector3(0, 0.5, -47.8);
+        const bullet_starting_position = new BABYLON.Vector3(0, 1, -47.8);
 
-        const bullet = BABYLON.MeshBuilder.CreateSphere("bullet", { diameter: 0.1 });
-        bullet.position = bullet_starting_position;
+        const bullet_mesh = BABYLON.MeshBuilder.CreateSphere("bullet_mesh", { diameter: 0.1 });
+        // const bullet_mesh = BABYLON.MeshBuilder.CreateCylinder("bullet_mesh", { diameterTop: 0, height: 1, diameterBottom: 1 });
+        bullet_mesh.position = bullet_starting_position;
 
         const bullet_material = new BABYLON.StandardMaterial("bullet_material");
         bullet_material.diffuseColor = BABYLON.Color3.Black();
-        bullet.material = bullet_material;
+        bullet_mesh.material = bullet_material;
 
-        const bunker = BABYLON.MeshBuilder.CreateBox("bunker", { width: 1, height: 0.5, depth: 2 })
-        bunker.position.y = 0.25;
-        bunker.position.z = -48;
+        const bunker_mesh = BABYLON.MeshBuilder.CreateBox("bunker_mesh", { width: 1, height: 2, depth: 2 })
+        bunker_mesh.position = new BABYLON.Vector3(0, 1, -48);
 
         const bunker_material = new BABYLON.StandardMaterial("bunker_material");
         bunker_material.diffuseColor = BABYLON.Color3.Black();
-        bunker.material = bunker_material;
+        bunker_mesh.material = bunker_material;
+
+        const bunker_two = new Bunker(200, bunker_mesh.clone());
 
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 case BABYLON.PointerEventTypes.POINTERPICK:
-                    console.log("pick " + pointerInfo.pickInfo.pickedMesh.id);
                     if (pointerInfo.pickInfo.hit) {
                         if (pointerInfo.pickInfo.pickedMesh.id === "drop_zone1") {
                             if (this.isHoveringOverDropZone1 && this.selectedMesh) {
                                 var intersectsMesh = false;
 
-                                for (var mesh of this.drop_zone_1_axies) {
-                                    console.log(mesh.position);
+                                for (var mesh of this.drop_zone_1_meshes) {
                                     if (this.selectedMesh.intersectsMesh(mesh)) {
                                         intersectsMesh = true;
                                         break;
@@ -221,7 +223,7 @@ export default class Game {
                                 }
 
                                 if (!intersectsMesh) {
-                                    this.drop_zone_1_axies.push(this.selectedMesh.clone());
+                                    this.drop_zone_1_meshes.push(this.selectedMesh.clone());
                                 } else {
                                     intersectsMesh = false;
                                 }
@@ -262,66 +264,65 @@ export default class Game {
 
             }
         });
-        // let forward = sphere.position.subtract(bullet.position).normalize();
-        // let fin = new BABYLON.Vector3(0, 0, -1);
-        // let side = BABYLON.Vector3.Cross(forward, fin);
-        // let nextForward = BABYLON.Vector3.Zero();
 
-        let step = 0.25;
-        let cloned = false;
+        const axie_speed = 0.25;
+        const bullet_speed = 0.75;
 
-        let forward = new BABYLON.Vector3(1, 0, 1);
-        let fin = new BABYLON.Vector3(0, 0, -1);
-        let side = BABYLON.Vector3.Cross(forward, fin);
-        let nextForward = BABYLON.Vector3.Zero();
+        let frame = 0;
+        let reload_time = 0;
 
         this.scene.onBeforeRenderObservable.add(() => {
-            if (!cloned && this.drop_zone_1_axies.length > 0) {
-
-                this.drop_zone_1_axies.forEach((mesh) => {
-                    var cloned_mesh = mesh.clone();
-                    cloned_mesh.position.x = cloned_mesh.position.x - 25;
-                    cloned_mesh.orientation = bunker.position.subtract(cloned_mesh.position);
-                    this.play_field_axies.push(cloned_mesh);
+            let remaining_bullets = [];
+            if (frame % 120 == 0) {
+                this.drop_zone_1_meshes.forEach((mesh) => {
+                    var axie = new Axie(5, mesh.id.includes("puffy") ? 5 : 0, mesh.clone(), bunker_two.mesh);
+                    this.play_field_axies.push(axie);
                 })
-
-                cloned = true;
             }
 
             if (this.play_field_axies.length > 0) {
-                this.play_field_axies.forEach((mesh) => {
-                    if(mesh.position.z > -50){
-
-                        mesh.movePOV(0, 0, step);
-                        console.log("move");
+                this.play_field_axies.forEach((axie) => {
+                    if (!axie.isInRangeOfTarget()) {
+                        axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(-1, 0, 0), axie.mesh, axie.target);
+                        axie.mesh.movePOV(axie_speed, 0, 0);
                     }
                 })
 
-                let target = this.play_field_axies[0];
+                let target = bunker_two.findClosestTarget(this.play_field_axies);
 
-                nextForward = target.position.subtract(bullet.position).normalize();
-                fin = BABYLON.Vector3.Cross(forward, nextForward);
-                forward = nextForward;
-                side = BABYLON.Vector3.Cross(forward, fin);
-                let orientation = BABYLON.Vector3.RotationFromAxis(side, forward, fin);
-                bullet.rotation = orientation;
-
-                bullet.position.addInPlace(forward.scale(0.5));
-
-                if (bullet.intersectsMesh(target)) {
-                    this.play_field_axies.splice(0, 1);
-                    target.dispose();
-                    bullet.position = new BABYLON.Vector3(0, 0.5, -47.8);
-                    if (this.play_field_axies.length == 0) {
-
-                        cloned = false;
-                    }
+                if (reload_time == 0) {
+                    var bullet = new Bullet(bullet_mesh.clone(), target);
+                    this.bullets.push(bullet);
+                    reload_time = 5;
                 }
             }
-            // sphere.movePOV(0, 0, step);
 
-            // bullet.position.addInPlace(forward.scale(bullet_speed));
+            if (this.bullets.length > 0) {
+                this.bullets.forEach((bullet) => {
+                    bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target.mesh);
+                    bullet.mesh.movePOV(bullet_speed, 0, 0);
 
+                    if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
+                        let index = this.play_field_axies.indexOf(bullet.target);
+
+                        if (index !== -1) {
+                            this.play_field_axies.splice(index, 1);
+                        }
+
+                        var target = bullet.target;
+                        target.disposeIncomingBullets();
+                        target.mesh.dispose();
+                    } else {
+                        remaining_bullets.push(bullet);
+                    }
+                })
+            }
+
+            frame++;
+            if (reload_time > 0) {
+                reload_time--;
+            }
+            this.bullets = remaining_bullets;
         })
 
         this.doRender();
@@ -354,3 +355,7 @@ export default class Game {
         });
     }
 }
+function findClosestTarget(play_field_axies: any[]) {
+    throw new Error('Function not implemented.');
+}
+

@@ -26,3 +26,14 @@ export var getHorizontalPlaneVector = function (y, pos, rot) {
 export var getZeroPlaneVector = function (pos, rot) {
     return getHorizontalPlaneVector(0, pos, rot);
 };
+
+export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
+// console.log("31" + mesh.id);
+// console.log("32" + mesh.position);
+// console.log("33" + target);
+    let forward = mesh.position.subtract(target.position).normalize();
+    let up = BABYLON.Vector3.Cross(xnormal, forward);
+    let side = BABYLON.Vector3.Cross(forward, up);
+
+    return BABYLON.Vector3.RotationFromAxis(forward, up, side);
+}
