@@ -28,6 +28,7 @@ export default class Game {
     private room: Room<any>;
     private axiesByAxieIdBySessionId: Map<String, Map<String, Axie>> = new Map<String, Map<String, Axie>>();
     private axieNextPositionByAxieId: Map<String, BABYLON.Vector3> = new Map<String, BABYLON.Vector3>();
+    private bunker_two: Bunker;
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
         this.canvas = canvas;
@@ -45,20 +46,29 @@ export default class Game {
             // update local target position
             axieMap.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    const new_axie = new Axie(this.room.sessionId + this.cloned_counter, 1, 5, axie.skin, (this.scene.getMeshById("puffy") as BABYLON.Mesh).clone(axie.id), this.scene.getMeshById("bunker_mesh"));
+                    const new_axie = new Axie(axie.id, 1, 5, axie.skin, (this.scene.getMeshById("puffy") as BABYLON.Mesh).clone(), this.bunker_two);
+                    new_axie.setMesh(axie.skin, new_axie.mesh);
                     this.cloned_counter++;
                     this.axiesByAxieIdBySessionId.get(sessionId).set(axie.id, new_axie);
+                    this.axieNextPositionByAxieId.set(axie.id, new_axie.mesh.position);
+                    // console.log(isCurrentPlayer);
+                    // console.log(this.axiesByAxieIdBySessionId);
                 }
 
-                axie.onChange = function (changes) {
+                axie.onChange((changes) => {
+                    let next_position = new BABYLON.Vector3(0, 1, 0);
                     changes.forEach(change => {
-                        console.log(change.field);
-                        console.log(change.value);
-                        console.log(change.previousValue);
+                        if (change.field === "x") {
+                            next_position._x = change.value;
+                        }
+                        if (change.field === "z") {
+                            next_position._z = change.value;
+                        }
+                        this.axieNextPositionByAxieId.set(axie.id, next_position);
                     })
-                };
+                });
+                // axie.triggerAll();
 
-                // axie.trigerAll();
             });
 
             // axieMap.onChange((axie) => {
@@ -188,7 +198,7 @@ export default class Game {
         bunker_material.diffuseColor = BABYLON.Color3.Black();
         bunker_mesh.material = bunker_material;
 
-        const bunker_two = new Bunker(200, bunker_mesh.clone());
+        this.bunker_two = new Bunker(200, bunker_mesh.clone());
 
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
@@ -218,7 +228,7 @@ export default class Game {
                         } else if (this.selectedAxie && this.selectedAxie.mesh) {
                             this.selectedAxie.mesh.dispose();
                         } else {
-                            this.selectedAxie = new Axie(this.room.sessionId + this.cloned_counter, 1, 1, null, null, bunker_two);
+                            this.selectedAxie = new Axie(this.room.sessionId + this.cloned_counter, 1, 1, null, null, this.bunker_two);
                             this.cloned_counter++;
                             if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
                                 this.selectedAxie.setMesh("puffy", puffy.clone());
@@ -266,9 +276,9 @@ export default class Game {
             if (frame % 120 == 0) {
                 this.drop_zone_1_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
-                    this.cloned_counter ++;
+                    this.cloned_counter++;
                     clonedAxie.setMesh(axie.skin, clonedAxie.mesh);
-                    this.room.send("insertPosition", {
+                    this.room.send("insertAxie", {
                         id: clonedAxie.id,
                         skin: "puffy",
                         x: clonedAxie.mesh.position.x,
@@ -285,7 +295,7 @@ export default class Game {
                     if (!axie.isInRangeOfTarget()) {
                         axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(-1, 0, 0), axie.mesh, axie.target);
                         axie.mesh.movePOV(axie_speed, 0, 0);
-                        this.room.send("updatePosition", {
+                        this.room.send("updateAxie", {
                             id: axie.id,
                             x: axie.mesh.position.x,
                             y: axie.mesh.position.y,
@@ -294,7 +304,7 @@ export default class Game {
                     }
                 })
 
-                let target = bunker_two.findClosestTarget(this.play_field_axies);
+                let target = this.bunker_two.findClosestTarget(this.play_field_axies);
 
                 if (reload_time == 0) {
                     var bullet = new Bullet(bullet_mesh.clone(), target);
@@ -318,6 +328,10 @@ export default class Game {
                         var target = bullet.target;
                         target.disposeIncomingBullets();
                         target.mesh.dispose();
+                        this.axiesByAxieIdBySessionId
+                        this.room.send("removeAxie", {
+                            id: target.id
+                        });
                     } else {
                         remaining_bullets.push(bullet);
                     }
@@ -343,11 +357,14 @@ export default class Game {
     private doRender(): void {
         // constantly lerp players
         this.scene.registerBeforeRender(() => {
-            for (let sessionId in this.axiesByAxieIdBySessionId) {
-                const axiesById = this.axiesByAxieIdBySessionId[sessionId];
-                axiesById.forEach(axie => {
-                    axie.mesh.position = this.axieNextPositionByAxieId[axie.id];
-                })
+            for (let sessionId of this.axiesByAxieIdBySessionId.keys()) {
+                if (sessionId != this.room.sessionId) {
+
+                    const axiesById = this.axiesByAxieIdBySessionId.get(sessionId);
+                    axiesById.forEach(axie => {
+                        axie.mesh.position = BABYLON.Vector3.Lerp(axie.mesh.position, this.axieNextPositionByAxieId.get(axie.id), 0.05);
+                    })
+                }
                 // const targetPosition = this.playerNextPosition[sessionId];
                 // entity.position = BABYLON.Vector3.Lerp(entity.position, targetPosition, 0.05);
             }

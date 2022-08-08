@@ -22,7 +22,7 @@ export default class Axie {
 
     isInRangeOfTarget(): boolean {
         if (this.range == 0) {
-            return this.target ? this.mesh.intersectsMesh(this.target) : false;
+            return this.target ? this.mesh.intersectsMesh(this.target.mesh) : false;
         } else {
             return this.target && this.mesh ? this.mesh.position.subtract(this.target.mesh.position).length() < this.range ? true : false : false;
         }
@@ -43,10 +43,6 @@ export default class Axie {
     }
 
     setMesh(skin: string, mesh: BABYLON.Mesh): void {
-        if(this.mesh){
-
-            console.log(this.mesh.id);
-        }
         this.mesh = mesh;
         this.mesh.position.x = this.mesh.position.x - 25;
     }
