@@ -13,6 +13,7 @@ export default class Game {
     private canvas: HTMLCanvasElement;
     private engine: BABYLON.Engine;
     private scene: BABYLON.Scene;
+    private menuScene: BABYLON.Scene;
     private camera: BABYLON.ArcRotateCamera;
     private light: BABYLON.Light;
     private isHoveringOverDropZone1: Boolean = false;
@@ -46,13 +47,12 @@ export default class Game {
             // update local target position
             axieMap.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    const new_axie = new Axie(axie.id, 1, 5, axie.skin, (this.scene.getMeshById("puffy") as BABYLON.Mesh).clone(), this.bunker_two);
+                    const new_axie = new Axie(axie.id, 1, 5, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.bunker_two);
                     new_axie.setMesh(axie.skin, new_axie.mesh);
+                    new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     this.cloned_counter++;
                     this.axiesByAxieIdBySessionId.get(sessionId).set(axie.id, new_axie);
                     this.axieNextPositionByAxieId.set(axie.id, new_axie.mesh.position);
-                    // console.log(isCurrentPlayer);
-                    // console.log(this.axiesByAxieIdBySessionId);
                 }
 
                 axie.onChange((changes) => {
@@ -70,6 +70,14 @@ export default class Game {
                 // axie.triggerAll();
 
             });
+
+            axieMap.axies.onRemove((axie) => {
+                if (!isCurrentPlayer) {
+                    this.axiesByAxieIdBySessionId.get(sessionId).get(axie.id).mesh.dispose();
+                    this.axiesByAxieIdBySessionId.get(sessionId).delete(axie.id);
+                    this.axieNextPositionByAxieId.delete(axie.id);
+                }
+            })
 
             // axieMap.onChange((axie) => {
             //     this.axieNextPosition[axie.id].set(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z);
@@ -122,7 +130,7 @@ export default class Game {
     bootstrap(): void {
         this.scene = new BABYLON.Scene(this.engine);
         this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
-        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 10, new BABYLON.Vector3(25, 25, 0), this.scene);
+        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 30, new BABYLON.Vector3(25, 25, 0), this.scene);
         this.camera.attachControl(this.canvas, true);
 
         createSkyBox(this.scene);
@@ -345,6 +353,45 @@ export default class Game {
             this.bullets = remaining_bullets;
         })
 
+
+        this.menuScene = new BABYLON.Scene(this.engine);
+        this.menuScene.autoClear = false;
+        let camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this.menuScene);
+        camera.useAutoRotationBehavior = true;
+        camera.setTarget(BABYLON.Vector3.Zero());
+        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.menuScene);
+
+        const attackPickMenu = new GUI.Rectangle("attackPickMenu");
+        attackPickMenu.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        attackPickMenu.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        attackPickMenu.height = "100%";
+        attackPickMenu.width = "10%";
+        attackPickMenu.thickness = 0;
+
+        // Button positioning
+        const stackPanel = new GUI.StackPanel();
+        stackPanel.isVertical = true;
+        stackPanel.height = "50%";
+        stackPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        stackPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+        const button = GUI.Button.CreateImageWithCenterTextButton("testButton", "PUFFY ATTACK", "./public/btn-default.png");
+            button.width = "90%";
+            button.height = "55px";
+            button.fontFamily = "Roboto";
+            button.fontSize = "3%";
+            button.thickness = 0;
+            button.paddingTop = "10px"
+            button.color = "#c0c0c0";
+            button.onPointerClickObservable.add(async () => {
+        });
+        stackPanel.addControl(button);
+
+        attackPickMenu.addControl(stackPanel);
+
+        advancedTexture.addControl(attackPickMenu);
+
+
         this.doRender();
     }
 
@@ -359,20 +406,18 @@ export default class Game {
         this.scene.registerBeforeRender(() => {
             for (let sessionId of this.axiesByAxieIdBySessionId.keys()) {
                 if (sessionId != this.room.sessionId) {
-
                     const axiesById = this.axiesByAxieIdBySessionId.get(sessionId);
                     axiesById.forEach(axie => {
                         axie.mesh.position = BABYLON.Vector3.Lerp(axie.mesh.position, this.axieNextPositionByAxieId.get(axie.id), 0.05);
                     })
                 }
-                // const targetPosition = this.playerNextPosition[sessionId];
-                // entity.position = BABYLON.Vector3.Lerp(entity.position, targetPosition, 0.05);
             }
         });
 
         // Run the render loop.
         this.engine.runRenderLoop(() => {
             this.scene.render();
+            this.menuScene.render();
         });
 
         // The canvas/window resize event handler.
