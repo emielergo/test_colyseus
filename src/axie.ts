@@ -3,26 +3,28 @@ import { int } from 'babylonjs';
 import { getRotationVectorFromTarget } from './utils';
 
 export default class Axie {
+    public id: string;
     public hp: int;
     public range: int;
+    public skin: string;
     public mesh: BABYLON.Mesh;
     public target;
     public incoming_bullets = [];
 
-    constructor(hp: int, range: int, mesh, target) {
+    constructor(id: string, hp: int, range: int, skin: string, mesh, target) {
+        this.id = id;
         this.hp = hp;
         this.range = range;
+        this.skin = skin;
         this.mesh = mesh;
         this.target = target;
-
-        this.mesh.position.x = this.mesh.position.x - 25;
     }
 
     isInRangeOfTarget(): boolean {
         if (this.range == 0) {
             return this.target ? this.mesh.intersectsMesh(this.target) : false;
         } else {
-            return this.target ? this.mesh.position.subtract(this.target.position).length() < this.range ? true : false : false;
+            return this.target && this.mesh ? this.mesh.position.subtract(this.target.mesh.position).length() < this.range ? true : false : false;
         }
     }
 
@@ -36,9 +38,18 @@ export default class Axie {
         this.hp = this.hp - damage;
     }
 
-    // setPosition(position: BABYLON.Vector3): void{
-    //     this.mesh.position = position;
-    // }
+    clone(id: string): Axie {
+        return new Axie(id, this.hp, this.range, this.skin, this.mesh.clone(), this.target);
+    }
+
+    setMesh(skin: string, mesh: BABYLON.Mesh): void {
+        if(this.mesh){
+
+            console.log(this.mesh.id);
+        }
+        this.mesh = mesh;
+        this.mesh.position.x = this.mesh.position.x - 25;
+    }
 
 }
 

@@ -31,7 +31,7 @@ export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
 // console.log("31" + mesh.id);
 // console.log("32" + mesh.position);
 // console.log("33" + target);
-    let forward = mesh.position.subtract(target.position).normalize();
+    let forward = mesh.position.subtract(target.mesh.position).normalize();
     let up = BABYLON.Vector3.Cross(xnormal, forward);
     let side = BABYLON.Vector3.Cross(forward, up);
 

@@ -17,16 +17,17 @@ export default class Game {
     private light: BABYLON.Light;
     private isHoveringOverDropZone1: Boolean = false;
     private isHoveringOverDropZone2: Boolean = false;
-    private selectedMesh: BABYLON.Mesh;
+    private selectedAxie: Axie;
+    private cloned_counter = 0;
 
-    private drop_zone_1_meshes = [];
+    private drop_zone_1_axies = [];
     private play_field_axies = [];
     private bullets = [];
-    private drop_zone_1_meshes_coordinates = new Map<int, int>();
+    private drop_zone_1_axies_coordinates = new Map<int, int>();
 
     private room: Room<any>;
-    private playerEntities: { [playerId: string]: BABYLON.Mesh } = {};
-    private playerNextPosition: { [playerId: string]: BABYLON.Vector3 } = {};
+    private axiesByAxieIdBySessionId: Map<String, Map<String, Axie>> = new Map<String, Map<String, Axie>>();
+    private axieNextPositionByAxieId: Map<String, BABYLON.Vector3> = new Map<String, BABYLON.Vector3>();
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
         this.canvas = canvas;
@@ -35,56 +36,45 @@ export default class Game {
     }
 
     initPlayers(): void {
-        this.room.state.players.onAdd((player, sessionId) => {
+        this.room.state.axieMaps.onAdd((axieMap, sessionId) => {
             const isCurrentPlayer = (sessionId === this.room.sessionId);
 
-            const sphere = BABYLON.MeshBuilder.CreateSphere(`player-${sessionId}`, {
-                segments: 8,
-                diameter: 40
-            }, this.scene);
-
             // Set player mesh properties
-            const sphereMaterial = new BABYLON.StandardMaterial(`playerMat-${sessionId}`, this.scene);
-            sphereMaterial.emissiveColor = (isCurrentPlayer) ? BABYLON.Color3.FromHexString("#ff9900") : BABYLON.Color3.Gray();
-            sphere.material = sphereMaterial;
-
-            // Set player spawning position
-            sphere.position.set(player.x, player.y, player.z);
-
-            this.playerEntities[sessionId] = sphere;
-            this.playerNextPosition[sessionId] = sphere.position.clone();
+            this.axiesByAxieIdBySessionId.set(sessionId, new Map<String, Axie>());
 
             // update local target position
-            player.onChange(() => {
-                this.playerNextPosition[sessionId].set(player.x, player.y, player.z);
+            axieMap.axies.onAdd((axie) => {
+                if (!isCurrentPlayer) {
+                    const new_axie = new Axie(this.room.sessionId + this.cloned_counter, 1, 5, axie.skin, (this.scene.getMeshById("puffy") as BABYLON.Mesh).clone(axie.id), this.scene.getMeshById("bunker_mesh"));
+                    this.cloned_counter++;
+                    this.axiesByAxieIdBySessionId.get(sessionId).set(axie.id, new_axie);
+                }
+
+                axie.onChange = function (changes) {
+                    changes.forEach(change => {
+                        console.log(change.field);
+                        console.log(change.value);
+                        console.log(change.previousValue);
+                    })
+                };
+
+                // axie.trigerAll();
             });
+
+            // axieMap.onChange((axie) => {
+            //     this.axieNextPosition[axie.id].set(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z);
+            // });
         });
 
-        this.room.state.players.onRemove((player, playerId) => {
-            this.playerEntities[playerId].dispose();
-            delete this.playerEntities[playerId];
-            delete this.playerNextPosition[playerId];
+        this.room.state.axieMaps.onRemove((player, playerId) => {
+            // this.axiesByAxieIdBySessionId[playerId].forEach(axie =>{ axie.mesh.dispose()});
+            // delete this.axiesByAxieIdBySessionId[playerId];
+            // delete this.playerNextPosition[playerId];
         });
 
         this.room.onLeave(code => {
             this.gotoMenu();
         })
-    }
-
-    createGround(): void {
-        // Create ground plane
-        const plane = BABYLON.MeshBuilder.CreatePlane("plane", { size: GROUND_SIZE }, this.scene);
-        plane.position.y = -15;
-        plane.rotation.x = Math.PI / 2;
-
-        let floorPlane = new BABYLON.StandardMaterial('floorTexturePlane', this.scene);
-        floorPlane.diffuseTexture = new BABYLON.Texture('./public/ground.jpg', this.scene);
-        floorPlane.backFaceCulling = false; // Always show the front and the back of an element
-
-        let materialPlane = new BABYLON.MultiMaterial('materialPlane', this.scene);
-        materialPlane.subMaterials.push(floorPlane);
-
-        plane.material = materialPlane;
     }
 
     displayGameControls() {
@@ -101,16 +91,6 @@ export default class Game {
         playerInfo.paddingLeft = "10px";
         playerInfo.outlineColor = "#000000";
         advancedTexture.addControl(playerInfo);
-
-        const instructions = new GUI.TextBlock("instructions");
-        instructions.text = "CLICK ANYWHERE ON THE GROUND!";
-        instructions.color = "#fff000"
-        instructions.fontFamily = "Roboto";
-        instructions.fontSize = 24;
-        instructions.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        instructions.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-        instructions.paddingBottom = "10px";
-        advancedTexture.addControl(instructions);
 
         // back to menu button
         const button = GUI.Button.CreateImageWithCenterTextButton("back", "<- BACK", "./public/btn-default.png");
@@ -136,6 +116,9 @@ export default class Game {
         this.camera.attachControl(this.canvas, true);
 
         createSkyBox(this.scene);
+        this.displayGameControls();
+        this.initPlayers();
+
         const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 20, height: 100 }, this.scene);
         ground.isPickable = false;
 
@@ -212,38 +195,45 @@ export default class Game {
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     if (pointerInfo.pickInfo.hit) {
                         if (pointerInfo.pickInfo.pickedMesh.id === "drop_zone1") {
-                            if (this.isHoveringOverDropZone1 && this.selectedMesh) {
+                            if (this.isHoveringOverDropZone1 && this.selectedAxie) {
                                 var intersectsMesh = false;
 
-                                for (var mesh of this.drop_zone_1_meshes) {
-                                    if (this.selectedMesh.intersectsMesh(mesh)) {
+                                for (var axie of this.drop_zone_1_axies) {
+                                    if (this.selectedAxie.mesh.intersectsMesh(axie.mesh)) {
                                         intersectsMesh = true;
                                         break;
                                     }
                                 }
 
                                 if (!intersectsMesh) {
-                                    this.drop_zone_1_meshes.push(this.selectedMesh.clone());
+                                    const sessionId = this.room.sessionId;
+                                    const clonedAxie = this.selectedAxie.clone(sessionId + this.cloned_counter);
+
+                                    this.axiesByAxieIdBySessionId.get(sessionId).set(clonedAxie.id, clonedAxie);
+                                    this.drop_zone_1_axies.push(clonedAxie);
                                 } else {
                                     intersectsMesh = false;
                                 }
                             }
-                        } else if (this.selectedMesh) {
-                            this.selectedMesh.dispose();
-                            this.selectedMesh = null;
+                        } else if (this.selectedAxie && this.selectedAxie.mesh) {
+                            this.selectedAxie.mesh.dispose();
+                        } else {
+                            this.selectedAxie = new Axie(this.room.sessionId + this.cloned_counter, 1, 1, null, null, bunker_two);
+                            this.cloned_counter++;
+                            if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
+                                this.selectedAxie.setMesh("puffy", puffy.clone());
+                            } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
+                                this.selectedAxie.setMesh("bubba", bubba.clone());
+                            } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
+                                this.selectedAxie.setMesh("olek", olek.clone());
+                            }
                         }
-                        if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
-                            this.selectedMesh = puffy.clone();
-                        } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
-                            this.selectedMesh = bubba.clone();
-                        } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
-                            this.selectedMesh = olek.clone();
-                        }
+
                     }
                     break;
 
                 case BABYLON.PointerEventTypes.POINTERMOVE:
-                    if (this.selectedMesh) {
+                    if (this.selectedAxie && this.selectedAxie.mesh) {
                         if (this.isHoveringOverDropZone1) {
                             var target = BABYLON.Vector3.Unproject(
                                 new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
@@ -256,9 +246,9 @@ export default class Game {
                             target.x = this.camera.position.x - target.x;
                             target.y = this.camera.position.y - target.y;
                             target.z = this.camera.position.z - target.z;
-                            this.selectedMesh.position = getZeroPlaneVector(this.camera.position, target);
+                            this.selectedAxie.mesh.position = getZeroPlaneVector(this.camera.position, target);
                         } else {
-                            this.selectedMesh.position = new BABYLON.Vector3(0, -100, 0);
+                            this.selectedAxie.mesh.position = new BABYLON.Vector3(0, -100, 0);
                         }
                     }
 
@@ -274,9 +264,19 @@ export default class Game {
         this.scene.onBeforeRenderObservable.add(() => {
             let remaining_bullets = [];
             if (frame % 120 == 0) {
-                this.drop_zone_1_meshes.forEach((mesh) => {
-                    var axie = new Axie(5, mesh.id.includes("puffy") ? 5 : 0, mesh.clone(), bunker_two.mesh);
-                    this.play_field_axies.push(axie);
+                this.drop_zone_1_axies.forEach((axie) => {
+                    var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
+                    this.cloned_counter ++;
+                    clonedAxie.setMesh(axie.skin, clonedAxie.mesh);
+                    this.room.send("insertPosition", {
+                        id: clonedAxie.id,
+                        skin: "puffy",
+                        x: clonedAxie.mesh.position.x,
+                        y: clonedAxie.mesh.position.y,
+                        z: clonedAxie.mesh.position.z,
+                    });
+                    this.cloned_counter++;
+                    this.play_field_axies.push(clonedAxie);
                 })
             }
 
@@ -285,6 +285,12 @@ export default class Game {
                     if (!axie.isInRangeOfTarget()) {
                         axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(-1, 0, 0), axie.mesh, axie.target);
                         axie.mesh.movePOV(axie_speed, 0, 0);
+                        this.room.send("updatePosition", {
+                            id: axie.id,
+                            x: axie.mesh.position.x,
+                            y: axie.mesh.position.y,
+                            z: axie.mesh.position.z,
+                        });
                     }
                 })
 
@@ -299,7 +305,7 @@ export default class Game {
 
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
-                    bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target.mesh);
+                    bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target);
                     bullet.mesh.movePOV(bullet_speed, 0, 0);
 
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
@@ -337,10 +343,13 @@ export default class Game {
     private doRender(): void {
         // constantly lerp players
         this.scene.registerBeforeRender(() => {
-            for (let sessionId in this.playerEntities) {
-                const entity = this.playerEntities[sessionId];
-                const targetPosition = this.playerNextPosition[sessionId];
-                entity.position = BABYLON.Vector3.Lerp(entity.position, targetPosition, 0.05);
+            for (let sessionId in this.axiesByAxieIdBySessionId) {
+                const axiesById = this.axiesByAxieIdBySessionId[sessionId];
+                axiesById.forEach(axie => {
+                    axie.mesh.position = this.axieNextPositionByAxieId[axie.id];
+                })
+                // const targetPosition = this.playerNextPosition[sessionId];
+                // entity.position = BABYLON.Vector3.Lerp(entity.position, targetPosition, 0.05);
             }
         });
 
@@ -355,6 +364,7 @@ export default class Game {
         });
     }
 }
+
 function findClosestTarget(play_field_axies: any[]) {
     throw new Error('Function not implemented.');
 }
