@@ -116,10 +116,12 @@ export default class Menu {
                 case "create":
                     this.swapLoadingMessageBox(true);
                     game = new Game(this._canvas, this._engine, await this._colyseus.create(ROOM_NAME));
+                    game.player_number = 1;
                     break;
                 case "join":
                     this.swapLoadingMessageBox(true);
                     game = new Game(this._canvas, this._engine, await this._colyseus.join(ROOM_NAME));
+                    game.player_number = 2;
                     break;
                 default:
                     this.swapLoadingMessageBox(true);
@@ -128,6 +130,8 @@ export default class Menu {
             this._scene.dispose();
             game.bootstrap();
         } catch (error) {
+            console.log(error.message);
+            console.log(error.stack);
             this._errorMessage.text = error.message;
             this.swapErrorMessageBox(true);
         }

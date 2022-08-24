@@ -3,6 +3,8 @@ import { int } from 'babylonjs';
 import { getRotationVectorFromTarget } from './utils';
 
 export default class Axie {
+    public static PLAYER_ONE_OFFSET = 25;
+
     public id: string;
     public hp: int;
     public range: int;
@@ -42,9 +44,22 @@ export default class Axie {
         return new Axie(id, this.hp, this.range, this.skin, this.mesh.clone(), this.target);
     }
 
-    setMesh(skin: string, mesh: BABYLON.Mesh): void {
+    setMesh(mesh: BABYLON.Mesh): void {
         this.mesh = mesh;
-        this.mesh.position.x = this.mesh.position.x - 25;
+    }
+
+    offsetPositionForSpawn(isPlayer1: Boolean): void {
+        if (this.mesh) {
+            if (isPlayer1) {
+                this.mesh.position.z = this.mesh.position.z - Axie.PLAYER_ONE_OFFSET;
+            } else {
+                this.mesh.position.z = this.mesh.position.z + Axie.PLAYER_ONE_OFFSET;
+            }
+        }
+    }
+
+    setSkin(skin: string): void {
+        this.skin = skin;
     }
 
 }
@@ -52,29 +67,44 @@ export default class Axie {
 export class Bullet {
     public mesh: BABYLON.Mesh;
     public target: Axie;
+    public speed: int;
 
-    constructor(mesh, target) {
+    constructor(mesh, target, speed) {
         this.mesh = mesh;
         this.target = target;
+        this.speed = speed;
+
         target.incoming_bullets.push(this);
     }
 
     intersectsWithTarget(): boolean {
         return this.target ? this.mesh.intersectsMesh(this.target.mesh) : false;
     }
+
+    clone(): Bullet {
+        return new Bullet(this.mesh.clone(), this.target, this.speed);
+    }
 }
 
 export class Bunker {
+    public id: String;
     public hp: int;
     public mesh: BABYLON.Mesh;
 
-    constructor(hp, mesh) {
-        this.mesh = mesh;
+    constructor(id, hp, mesh) {
+        this.id = id;
         this.hp = hp;
+        this.mesh = mesh;
     }
 
     findClosestTarget(play_field_axies) {
-        let closest_axie = play_field_axies[0];
+        let closest_axie;
+
+        for(let axie of play_field_axies){
+            closest_axie = axie;
+            break;
+        }
+
         let closest_axie_distance = this.mesh.position.subtract(closest_axie.mesh.position).length();
 
         for (let i = 1; i < play_field_axies.length && i < 50; i++) {
