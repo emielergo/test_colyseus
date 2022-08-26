@@ -30,8 +30,6 @@ export default class Game {
     private drop_zone_2;
     private own_drop_zone;
     private drop_zone_axies = [];
-    private play_field_axies = [];
-    private enemy_play_field_axies = [];
     private bullets = [];
 
     private room: Room<any>;
@@ -157,8 +155,9 @@ export default class Game {
             });
 
             player.axies.onRemove((axie) => {
-                if (!isCurrentPlayer) {
-                    this.axiesByAxieIdBySessionId.get(sessionId).get(axie.id).mesh.dispose();
+                const axieToRemove = this.axiesByAxieIdBySessionId.get(sessionId).get(axie.id)
+                if (axieToRemove) {
+                    axieToRemove.mesh.dispose();
                     this.axiesByAxieIdBySessionId.get(sessionId).delete(axie.id);
                     this.axieNextPositionByAxieId.delete(axie.id);
                 }
@@ -255,7 +254,6 @@ export default class Game {
                                     const sessionId = this.room.sessionId;
                                     const clonedAxie = this.selectedAxie.clone(sessionId);
 
-                                    this.axiesByAxieIdBySessionId.get(sessionId).set(clonedAxie.id, clonedAxie);
                                     this.drop_zone_axies.push(clonedAxie);
                                 } else {
                                     intersectsMesh = false;
@@ -268,18 +266,28 @@ export default class Game {
 
                             this.selectedAxie = new Axie(this.room.sessionId, 1, 1, null, null, this.target_bunker);
                             let skin;
+                            let hp;
+                            let range;
                             if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
                                 this.selectedAxie.setMesh(this.puffy.clone());
                                 skin = "puffy";
+                                hp = 1;
+                                range = 5;
                             } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
                                 this.selectedAxie.setMesh(this.bubba.clone());
                                 skin = "bubba";
+                                hp = 2;
+                                range = 0;
                             } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
                                 this.selectedAxie.setMesh(this.olek.clone());
                                 skin = "olek";
+                                hp = 3;
+                                range = 0;
                             }
                             this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
                             this.selectedAxie.setSkin(skin);
+                            this.selectedAxie.setHp(hp);
+                            this.selectedAxie.setRange(range);
                             this.selectedAxie.mesh.isPickable = false;
                         }
 
@@ -342,12 +350,15 @@ export default class Game {
                         y: clonedAxie.mesh.position.y,
                         z: clonedAxie.mesh.position.z,
                     });
-                    this.play_field_axies.push(clonedAxie);
+                    this.axiesByAxieIdBySessionId.get(this.room.sessionId).set(clonedAxie.id, clonedAxie);
                 })
             }
 
-            if (this.play_field_axies.length > 0) {
-                this.play_field_axies.forEach((axie) => {
+            // MOVE AND ATTACK WITH AXIES
+            let play_field_axies = this.axiesByAxieIdBySessionId.get(this.room.sessionId);
+            if (play_field_axies && play_field_axies.size > 0) {
+                play_field_axies.forEach((axie) => {
+                    axie.locateTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id), this.target_bunker);
                     if (!axie.isInRangeOfTarget()) {
                         axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(-1, 0, 0), axie.mesh, axie.target);
                         axie.mesh.movePOV(axie_speed, 0, 0);
@@ -359,37 +370,39 @@ export default class Game {
                         });
                     }
                 })
-
+            }
+            const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
+            if (enemyAxieMap && enemyAxieMap.values()) {
+                // Bunker Shoots
                 if (this.axiesByAxieIdBySessionId.get(this.enemy_session_id).size > 0) {
-                    let target = this.own_bunker.findClosestTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id).values());
                     if (reload_time == 0) {
-                        var bullet = new Bullet(this.bullet.clone(), target, bullet_speed);
-                        bullet.mesh.position = this.own_bunker.mesh.position.clone();
-                        this.bullets.push(bullet);
-                        reload_time = 5;
+                        let target = this.own_bunker.findClosestTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id).values());
+                        if (target) {
+                            var bullet = new Bullet(this.bullet.clone(), target, bullet_speed);
+                            bullet.mesh.position = this.own_bunker.mesh.position.clone();
+                            this.bullets.push(bullet);
+                            reload_time = 5;
+                        }
                     }
                 }
 
             }
 
+            // Move Bullets
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
                     bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target);
                     bullet.mesh.movePOV(bullet_speed, 0, 0);
 
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
-                        let index = this.play_field_axies.indexOf(bullet.target);
-
-                        if (index !== -1) {
-                            this.play_field_axies.splice(index, 1);
-                        }
+                        enemyAxieMap.delete(bullet.target.id);
 
                         var target = bullet.target;
-                        target.disposeIncomingBullets();
-                        target.mesh.dispose();
-                        this.axiesByAxieIdBySessionId
+                        target.dispose();
+
                         this.room.send("removeAxie", {
-                            id: target.id
+                            id: target.id,
+                            sessionId: this.enemy_session_id
                         });
                     } else {
                         remaining_bullets.push(bullet);
