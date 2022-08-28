@@ -69,8 +69,10 @@ export default class Axie extends RaidObject {
                         } else {
                             let iteration_distance = this.mesh.position.subtract(value.mesh.position).length();
                             if (iteration_distance < closest_axie_distance) {
-                                closest_axie = value;
-                                closest_axie_distance = iteration_distance;
+                                if (Math.random() < 0.9) {
+                                    closest_axie = value;
+                                    closest_axie_distance = iteration_distance;
+                                }
                             }
                         }
                     }
@@ -221,7 +223,7 @@ export class Bunker extends RaidObject {
         return closest_axie;
     }
 
-    dispose(){
+    dispose() {
         this.attacking_axies.forEach(axie => {
             axie.target = null;
         });
