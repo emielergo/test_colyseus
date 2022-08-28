@@ -94,3 +94,8 @@ export var createBulletMesh = function createBulletMesh(scene) {
     return bullet_mesh;
 }
 
+export var setEnergyText = function setEnergyText(game) {
+    game.energy_text_block.text = `Energy: ${game.energy}`.toUpperCase();
+
+}
+
