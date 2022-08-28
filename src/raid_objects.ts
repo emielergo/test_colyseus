@@ -1,23 +1,19 @@
 import * as BABYLON from 'babylonjs';
 import { int } from 'babylonjs';
+import Game from './game';
 import { getRotationVectorFromTarget } from './utils';
 
-export default class Axie {
-    public static PLAYER_ONE_OFFSET = 25;
-
+export abstract class RaidObject {
     public id: string;
-    public hp: int;
-    public range: int;
+    public damage: int;
     public skin: string;
     public mesh: BABYLON.Mesh;
     public target;
-    public incoming_bullets = [];
 
-    constructor(id: string, hp: int, range: int, skin: string, mesh, target) {
+    constructor(id: string, skin: string, damage: int, mesh, target) {
         this.id = id;
-        this.hp = hp;
-        this.range = range;
         this.skin = skin;
+        this.damage = damage;
         this.mesh = mesh;
         this.target = target;
     }
@@ -28,6 +24,27 @@ export default class Axie {
 
     setSkin(skin: string): void {
         this.skin = skin;
+    }
+
+    setDamage(damage: int): void {
+        this.damage = damage;
+    }
+}
+
+export default class Axie extends RaidObject {
+    public static PLAYER_ONE_OFFSET = 25;
+    public static AXIE_VIEW_RANGE = 20;
+
+    public range: int;
+    public hp: int;
+    public reload_time = 0;
+    public attacking_axies = [];
+    public incoming_bullets = [];
+
+    constructor(id: string, hp: int, range: int, damage: int, skin: string, mesh, target) {
+        super(id, skin, damage, mesh, target);
+        this.hp = hp;
+        this.range = range;
     }
 
     setHp(hp: int): void {
@@ -77,11 +94,33 @@ export default class Axie {
         }
     }
 
+    inflictDamage(damage: int): void {
+        this.hp -= damage;
+    }
+
     isInViewingRangeOfTarget(potential_target): boolean {
-        return this.mesh.position.subtract(potential_target.mesh.position).length() < 20;
+        return this.mesh.position.subtract(potential_target.mesh.position).length() < Axie.AXIE_VIEW_RANGE;
+    }
+
+    attackTarget(bullet): Bullet {
+        let bullet_clone;
+        if (this.range == 0 && this.damage) {
+            this.target.inflictDamage(this.damage);
+        } else {
+            let bullet_mesh_clone = bullet.clone();
+            bullet_mesh_clone.position = this.mesh.position.clone();
+            bullet_clone = new Bullet(bullet.id, this.damage, Bullet.BULLET_SPEED, 'bullet', bullet_mesh_clone, this.target);
+        }
+        this.target.attacking_axies.push(this);
+        this.reload_time = 5;
+
+        return bullet_clone;
     }
 
     dispose(): void {
+        this.attacking_axies.forEach(axie => {
+            axie.target = null;
+        });
         this.disposeIncomingBullets();
         this.mesh.dispose();
     }
@@ -92,12 +131,8 @@ export default class Axie {
         })
     }
 
-    inflictDamage(damage: int): void {
-        this.hp = this.hp - damage;
-    }
-
     clone(id: string): Axie {
-        return new Axie(id, this.hp, this.range, this.skin, this.mesh.clone(), this.target);
+        return new Axie(id, this.hp, this.range, this.damage, this.skin, this.mesh.clone(), this.target);
     }
 
     offsetPositionForSpawn(isPlayer1: Boolean): void {
@@ -114,39 +149,49 @@ export default class Axie {
 
 }
 
-export class Bullet {
-    public mesh: BABYLON.Mesh;
-    public target: Axie;
+export class Bullet extends RaidObject {
+    public static BULLET_SPEED = 0.75;
+
     public speed: int;
 
-    constructor(mesh, target, speed) {
-        this.mesh = mesh;
-        this.target = target;
+    constructor(id: string, damage: int, speed: int, skin: string, mesh, target) {
+        super(id, skin, damage, mesh, target);
         this.speed = speed;
 
         target.incoming_bullets.push(this);
     }
 
     clone(): Bullet {
-        return new Bullet(this.mesh.clone(), this.target, this.speed);
+        return new Bullet(this.id, this.damage, this.speed, this.skin, this.mesh.clone(), this.target);
     }
 
     intersectsWithTarget(): boolean {
         return this.target ? this.mesh.intersectsMesh(this.target.mesh) : false;
     }
-
-
 }
 
-export class Bunker {
-    public id: String;
+export class Bunker extends RaidObject {
+    public range: int;
     public hp: int;
-    public mesh: BABYLON.Mesh;
+    public incoming_bullets = [];
+    public attacking_axies = [];
 
-    constructor(id, hp, mesh) {
-        this.id = id;
+    constructor(id: string, hp: int, range: int, damage: int, skin: string, mesh, target) {
+        super(id, skin, damage, mesh, target);
         this.hp = hp;
-        this.mesh = mesh;
+        this.range = range;
+    }
+
+    setHp(hp: int): void {
+        this.hp = hp;
+    }
+
+    setRange(range: int): void {
+        this.range = range;
+    }
+
+    inflictDamage(damage: int): void {
+        this.hp -= damage;
     }
 
     findClosestTarget(play_field_axies) {
@@ -174,5 +219,21 @@ export class Bunker {
         }
 
         return closest_axie;
+    }
+
+    dispose(){
+        this.attacking_axies.forEach(axie => {
+            axie.target = null;
+        });
+        this.disposeIncomingBullets();
+        this.mesh.dispose();
+
+        throw new Error('You Lose!');
+    }
+
+    disposeIncomingBullets(): void {
+        this.incoming_bullets.forEach((bullet) => {
+            bullet.mesh.dispose();
+        })
     }
 }

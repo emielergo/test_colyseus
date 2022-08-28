@@ -80,7 +80,7 @@ export var createBunker = function createBunker(scene) {
     bunker_material.diffuseColor = BABYLON.Color3.Black();
     bunker_mesh.material = bunker_material;
 
-    return new Bunker(bunker_mesh.id, 200, bunker_mesh);
+    return new Bunker(bunker_mesh.id, 200, 50, 1, 'bunker', bunker_mesh, null);
 }
 
 export var createBulletMesh = function createBulletMesh(scene) {

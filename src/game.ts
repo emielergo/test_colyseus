@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs';
-import { int, Material, StandardMaterial, Vector3 } from 'babylonjs';
+import { StandardMaterial } from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
@@ -51,7 +51,6 @@ export default class Game {
     }
 
     initWorld(): void {
-        console.log('init World');
         this.ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 40, height: 300 }, this.scene);
         this.ground.isPickable = false;
 
@@ -140,8 +139,7 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    console.log("added enemy axie: " + axie.skin);
-                    let new_axie = new Axie(axie.id, 1, 5, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
+                    let new_axie = new Axie(axie.id, axie.hp, axie.range, axie.damage, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
                     this.axieNextPositionByAxieId.set(new_axie.id, new_axie.mesh.position);
@@ -189,7 +187,6 @@ export default class Game {
     }
 
     displayGameControls() {
-        console.log('display Game Controls');
         const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("textUI");
 
         const playerInfo = new GUI.TextBlock("playerInfo");
@@ -264,30 +261,34 @@ export default class Game {
                                 this.selectedAxie.mesh.dispose();
                             }
 
-                            this.selectedAxie = new Axie(this.room.sessionId, 1, 1, null, null, this.target_bunker);
+                            this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, this.target_bunker);
                             let skin;
                             let hp;
                             let range;
+                            let damage;
                             if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
                                 this.selectedAxie.setMesh(this.puffy.clone());
                                 skin = "puffy";
                                 hp = 1;
-                                range = 5;
+                                range = 15;
+                                damage = 1;
                             } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
                                 this.selectedAxie.setMesh(this.bubba.clone());
                                 skin = "bubba";
-                                hp = 2;
+                                hp = 4;
                                 range = 0;
+                                damage = 3;
                             } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
                                 this.selectedAxie.setMesh(this.olek.clone());
                                 skin = "olek";
-                                hp = 3;
+                                hp = 8;
                                 range = 0;
                             }
                             this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
                             this.selectedAxie.setSkin(skin);
                             this.selectedAxie.setHp(hp);
                             this.selectedAxie.setRange(range);
+                            this.selectedAxie.setDamage(damage);
                             this.selectedAxie.mesh.isPickable = false;
                         }
 
@@ -320,7 +321,6 @@ export default class Game {
         this.scene.onKeyboardObservable.add((kbInfo) => {
             switch (kbInfo.type) {
                 case BABYLON.KeyboardEventTypes.KEYDOWN:
-                    console.log("KEY DOWN: ", kbInfo.event.code);
                     if (kbInfo.event.code == 'Space') {
                         this.render_loop = !this.render_loop;
                     }
@@ -329,14 +329,15 @@ export default class Game {
         });
 
         const axie_speed = 0.25;
-        const bullet_speed = 0.75;
 
         let frame = 0;
         let reload_time = 0;
 
         // RENDERLOOP
         this.scene.onBeforeRenderObservable.add(() => {
-            let remaining_bullets = [];
+            const remaining_bullets = [];
+            const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
+
             if (frame % 120 == 0 && this.enemy_session_id) {
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
@@ -345,6 +346,9 @@ export default class Game {
                     clonedAxie.setSkin(axie.skin);
                     this.room.send("insertAxie", {
                         id: clonedAxie.id,
+                        hp: clonedAxie.hp,
+                        range: clonedAxie.range,
+                        damage: clonedAxie.damage,
                         skin: axie.skin,
                         x: clonedAxie.mesh.position.x,
                         y: clonedAxie.mesh.position.y,
@@ -368,20 +372,39 @@ export default class Game {
                             y: axie.mesh.position.y,
                             z: axie.mesh.position.z,
                         });
+                    } else if(axie.reload_time <= 0 && axie.damage > 0) {
+                        const bullet_clone = axie.attackTarget(this.bullet);
+                        if(axie.target.hp <= 0){
+                            var target = axie.target;
+                            enemyAxieMap.delete(target.id);
+                            target.dispose();
+
+                            this.room.send("removeAxie", {
+                                id: target.id,
+                                sessionId: this.enemy_session_id
+                            });
+                        }
+                        if (bullet_clone) {
+                            this.bullets.push(bullet_clone);
+                        }
+
+                        axie.reload_time = 10;
+                    }else{
+                        axie.reload_time --;
                     }
                 })
             }
-            const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
+
             if (enemyAxieMap && enemyAxieMap.values()) {
                 // Bunker Shoots
                 if (this.axiesByAxieIdBySessionId.get(this.enemy_session_id).size > 0) {
                     if (reload_time == 0) {
                         let target = this.own_bunker.findClosestTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id).values());
                         if (target) {
-                            var bullet = new Bullet(this.bullet.clone(), target, bullet_speed);
+                            var bullet = new Bullet('bullet', this.own_bunker.damage, Bullet.BULLET_SPEED, 'bullet', this.bullet.clone(), target);
                             bullet.mesh.position = this.own_bunker.mesh.position.clone();
                             this.bullets.push(bullet);
-                            reload_time = 5;
+                            reload_time = 25;
                         }
                     }
                 }
@@ -392,18 +415,19 @@ export default class Game {
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
                     bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target);
-                    bullet.mesh.movePOV(bullet_speed, 0, 0);
-
+                    bullet.mesh.movePOV(bullet.speed, 0, 0);
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
-                        enemyAxieMap.delete(bullet.target.id);
+                        bullet.target.inflictDamage(bullet.damage);
+                        if(bullet.target.hp <= 0){
+                            var target = bullet.target;
+                            enemyAxieMap.delete(target.id);
+                            target.dispose();
 
-                        var target = bullet.target;
-                        target.dispose();
-
-                        this.room.send("removeAxie", {
-                            id: target.id,
-                            sessionId: this.enemy_session_id
-                        });
+                            this.room.send("removeAxie", {
+                                id: target.id,
+                                sessionId: this.enemy_session_id
+                            });
+                        }
                     } else {
                         remaining_bullets.push(bullet);
                     }
