@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
-import { createBubba, createBulletMesh, createBunker, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector } from "./utils";
+import { createBubba, createBulletMesh, createBunker, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -19,6 +19,8 @@ export default class Game {
     private render_loop: Boolean = true;
 
     public player_number;
+    public energy = 0;
+    private energy_text_block;
     private enemy_session_id;
     private isHoveringOverOwnDropZone: Boolean = false;
     private selectedAxie: Axie;
@@ -48,6 +50,50 @@ export default class Game {
         this.canvas = canvas;
         this.engine = engine;
         this.room = room;
+    }
+
+    displayGameControls() {
+        const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("textUI");
+
+        const playerInfo = new GUI.TextBlock("playerInfo");
+        playerInfo.text = `Room name: ${this.room.name}      Player ${this.player_number}: ${this.room.sessionId}`.toUpperCase();
+        playerInfo.color = "#eaeaea";
+        playerInfo.fontFamily = "Roboto";
+        playerInfo.fontSize = 20;
+        playerInfo.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        playerInfo.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        playerInfo.paddingTop = "10px";
+        playerInfo.paddingLeft = "10px";
+        playerInfo.outlineColor = "#000000";
+        advancedTexture.addControl(playerInfo);
+
+        this.energy_text_block = new GUI.TextBlock("energy");
+        this.energy_text_block.text = `Energy: ${this.energy}`.toUpperCase();
+        this.energy_text_block.color = "#eaeaea";
+        this.energy_text_block.fontFamily = "Roboto";
+        this.energy_text_block.fontSize = 20;
+        this.energy_text_block.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.energy_text_block.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        this.energy_text_block.paddingTop = "30px";
+        this.energy_text_block.paddingLeft = "10px";
+        this.energy_text_block.outlineColor = "#000000";
+        advancedTexture.addControl(this.energy_text_block);
+
+        // back to menu button
+        const button = GUI.Button.CreateImageWithCenterTextButton("back", "<- BACK", "./public/btn-default.png");
+        button.width = "100px";
+        button.height = "50px";
+        button.fontFamily = "Roboto";
+        button.thickness = 0;
+        button.color = "#f8f8f8";
+        button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        button.paddingTop = "10px";
+        button.paddingRight = "10px";
+        button.onPointerClickObservable.add(async () => {
+            await this.room.leave(true);
+        });
+        advancedTexture.addControl(button);
     }
 
     initWorld(): void {
@@ -186,58 +232,14 @@ export default class Game {
         })
     }
 
-    displayGameControls() {
-        const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("textUI");
-
-        const playerInfo = new GUI.TextBlock("playerInfo");
-        playerInfo.text = `Room name: ${this.room.name}      Player ${this.player_number}: ${this.room.sessionId}`.toUpperCase();
-        playerInfo.color = "#eaeaea";
-        playerInfo.fontFamily = "Roboto";
-        playerInfo.fontSize = 20;
-        playerInfo.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        playerInfo.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        playerInfo.paddingTop = "10px";
-        playerInfo.paddingLeft = "10px";
-        playerInfo.outlineColor = "#000000";
-        advancedTexture.addControl(playerInfo);
-
-        // back to menu button
-        const button = GUI.Button.CreateImageWithCenterTextButton("back", "<- BACK", "./public/btn-default.png");
-        button.width = "100px";
-        button.height = "50px";
-        button.fontFamily = "Roboto";
-        button.thickness = 0;
-        button.color = "#f8f8f8";
-        button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        button.paddingTop = "10px";
-        button.paddingRight = "10px";
-        button.onPointerClickObservable.add(async () => {
-            await this.room.leave(true);
-        });
-        advancedTexture.addControl(button);
-    }
-
-    bootstrap(): void {
-        this.scene = new BABYLON.Scene(this.engine);
-        this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
-        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 30, new BABYLON.Vector3(25, 25, 120), this.scene);
-        this.camera.attachControl(this.canvas, true);
-
-        createSkyBox(this.scene);
-        this.displayGameControls();
-        this.initWorld();
-        this.initPlayers();
-
+    setObservables(): void {
         var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
-
-        // OBSERVABLES
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     if (pointerInfo.pickInfo.hit) {
                         if (pointerInfo.pickInfo.pickedMesh.id === this.own_drop_zone.id) {
-                            if (this.isHoveringOverOwnDropZone && this.selectedAxie) {
+                            if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
@@ -252,6 +254,8 @@ export default class Game {
                                     const clonedAxie = this.selectedAxie.clone(sessionId);
 
                                     this.drop_zone_axies.push(clonedAxie);
+                                    this.energy -= 20;
+                                    setEnergyText(this);
                                 } else {
                                     intersectsMesh = false;
                                 }
@@ -327,13 +331,13 @@ export default class Game {
                     break;
             }
         });
+    }
 
+    setRenderLoopObservable(): void {
         const axie_speed = 0.25;
-
         let frame = 0;
         let reload_time = 0;
 
-        // RENDERLOOP
         this.scene.onBeforeRenderObservable.add(() => {
             const remaining_bullets = [];
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
@@ -372,9 +376,9 @@ export default class Game {
                             y: axie.mesh.position.y,
                             z: axie.mesh.position.z,
                         });
-                    } else if(axie.reload_time <= 0 && axie.damage > 0) {
+                    } else if (axie.reload_time <= 0 && axie.damage > 0) {
                         const bullet_clone = axie.attackTarget(this.bullet);
-                        if(axie.target.hp <= 0){
+                        if (axie.target.hp <= 0) {
                             var target = axie.target;
                             enemyAxieMap.delete(target.id);
                             target.dispose();
@@ -389,8 +393,8 @@ export default class Game {
                         }
 
                         axie.reload_time = 10;
-                    }else{
-                        axie.reload_time --;
+                    } else {
+                        axie.reload_time--;
                     }
                 })
             }
@@ -418,7 +422,7 @@ export default class Game {
                     bullet.mesh.movePOV(bullet.speed, 0, 0);
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
                         bullet.target.inflictDamage(bullet.damage);
-                        if(bullet.target.hp <= 0){
+                        if (bullet.target.hp <= 0) {
                             var target = bullet.target;
                             enemyAxieMap.delete(target.id);
                             target.dispose();
@@ -439,8 +443,26 @@ export default class Game {
                 reload_time--;
             }
             frame++;
+            if (frame % 20 == 0 && this.enemy_session_id) {
+                this.energy++;
+                setEnergyText(this);
+            }
         })
 
+    }
+
+    bootstrap(): void {
+        this.scene = new BABYLON.Scene(this.engine);
+        this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
+        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 30, new BABYLON.Vector3(25, 25, 120), this.scene);
+        this.camera.attachControl(this.canvas, true);
+
+        createSkyBox(this.scene);
+        this.displayGameControls();
+        this.initWorld();
+        this.initPlayers();
+        this.setObservables();
+        this.setRenderLoopObservable();
 
         this.menuScene = new BABYLON.Scene(this.engine);
         this.menuScene.autoClear = false;
@@ -474,9 +496,7 @@ export default class Game {
         button.onPointerClickObservable.add(async () => {
         });
         stackPanel.addControl(button);
-
         attackPickMenu.addControl(stackPanel);
-
         advancedTexture.addControl(attackPickMenu);
 
 
@@ -490,7 +510,6 @@ export default class Game {
     }
 
     private doRender(): void {
-        // constantly lerp players
         this.scene.registerBeforeRender(() => {
             for (let sessionId of this.axiesByAxieIdBySessionId.keys()) {
                 if (sessionId != this.room.sessionId) {
