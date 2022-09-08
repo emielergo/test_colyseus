@@ -35,9 +35,13 @@ export default class Axie extends RaidObject {
     public static PLAYER_ONE_OFFSET = 25;
     public static AXIE_VIEW_RANGE = 20;
 
-    public range: int;
     public hp: int;
+
+    public move_set = [];
+    public selected_move;
+    public range: int;
     public reload_time = 0;
+
     public attacking_axies = [];
     public incoming_bullets = [];
 

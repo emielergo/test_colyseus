@@ -1,5 +1,9 @@
 import * as BABYLON from "babylonjs";
 import { Bullet, Bunker } from "./raid_objects";
+import * as GUI from 'babylonjs-gui';
+import { Button } from "babylonjs-gui";
+
+export const axie_move_source_by_id_map = new Map<String, string[]>();
 
 export const createSkyBox = (scene: BABYLON.Scene) => {
     const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
@@ -45,6 +49,8 @@ export var createPuffy = function createPuffy(scene) {
     puffy_material.diffuseColor = BABYLON.Color3.Blue();
     puffy.material = puffy_material;
 
+    axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
+
     return puffy;
 }
 
@@ -56,6 +62,8 @@ export var createBubba = function createBubba(scene) {
     const bubba_material = new BABYLON.StandardMaterial("bubba_material");
     bubba_material.diffuseColor = BABYLON.Color3.Red();
     bubba.material = bubba_material;
+
+    axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
     return bubba;
 }
@@ -69,6 +77,8 @@ export var createOlek = function createOlek(scene) {
     olek_material.diffuseColor = BABYLON.Color3.Green();
     olek.material = olek_material;
     olek.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, 1));
+
+    axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
 
     return olek;
 }
@@ -92,6 +102,24 @@ export var createBulletMesh = function createBulletMesh(scene) {
     bullet_mesh.material = bullet_material;
 
     return bullet_mesh;
+}
+
+export var createButton = function createButton(id, source): Button {
+    const button = GUI.Button.CreateImageOnlyButton(id, source);
+    button.width = "80px";
+    button.height = "80px";
+    button.thickness = 0;
+    button.paddingTop = "10px"
+    button.onPointerClickObservable.add(function(ev, state){
+        const button = state.currentTarget;
+        if(button.thickness == 0){
+            button.thickness = 3;
+        }else{
+            button.thickness = 0;
+        }
+      });
+
+    return button;
 }
 
 export var setEnergyText = function setEnergyText(game) {

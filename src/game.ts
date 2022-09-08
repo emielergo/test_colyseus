@@ -4,8 +4,8 @@ import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
-import Menu from "./menu";
-import { createBubba, createBulletMesh, createBunker, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setEnergyText } from "./utils";
+import Menu, { MoveSetMenu } from "./menu";
+import { createBubba, createBulletMesh, createBunker, createButton, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -13,7 +13,7 @@ export default class Game {
     private canvas: HTMLCanvasElement;
     private engine: BABYLON.Engine;
     private scene: BABYLON.Scene;
-    private menuScene: BABYLON.Scene;
+    private MoveSetMenu: MoveSetMenu;
     private camera: BABYLON.ArcRotateCamera;
     private light: BABYLON.Light;
     private render_loop: Boolean = true;
@@ -23,6 +23,7 @@ export default class Game {
     private energy_text_block;
     private enemy_session_id;
     private isHoveringOverOwnDropZone: Boolean = false;
+    private show_moveset_menu: Boolean = false;
     private selectedAxie: Axie;
     private cloned_counter = 0;
 
@@ -234,18 +235,22 @@ export default class Game {
 
     setObservables(): void {
         var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
+        const axie_names = ["puffy", "bubba", "olek"];
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     if (pointerInfo.pickInfo.hit) {
-                        if (pointerInfo.pickInfo.pickedMesh.id === this.own_drop_zone.id) {
-                            if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
+                        const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
+                        if (clicked_mesh_id === this.own_drop_zone.id) {
+                            if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
+                                // if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
                                     if (this.selectedAxie.mesh.intersectsMesh(axie.mesh)) {
                                         intersectsMesh = true;
                                         break;
+
                                     }
                                 }
 
@@ -253,6 +258,7 @@ export default class Game {
                                     const sessionId = this.room.sessionId;
                                     const clonedAxie = this.selectedAxie.clone(sessionId);
 
+                                    clonedAxie.mesh.isPickable = true;
                                     this.drop_zone_axies.push(clonedAxie);
                                     this.energy -= 20;
                                     setEnergyText(this);
@@ -260,7 +266,9 @@ export default class Game {
                                     intersectsMesh = false;
                                 }
                             }
-                        } else {
+                        } else if (!axie_names.includes(clicked_mesh_id) && axie_names.includes(clicked_mesh_id.replace(/\./g, ''))) {
+                            this.show_moveset_menu = true;
+                        } else if (axie_names.includes(clicked_mesh_id)) {
                             if (this.selectedAxie && this.selectedAxie.mesh) {
                                 this.selectedAxie.mesh.dispose();
                             }
@@ -270,19 +278,19 @@ export default class Game {
                             let hp;
                             let range;
                             let damage;
-                            if (pointerInfo.pickInfo.pickedMesh.id === "puffy") {
+                            if (clicked_mesh_id === "puffy") {
                                 this.selectedAxie.setMesh(this.puffy.clone());
                                 skin = "puffy";
                                 hp = 1;
                                 range = 15;
                                 damage = 1;
-                            } else if (pointerInfo.pickInfo.pickedMesh.id === "bubba") {
+                            } else if (clicked_mesh_id === "bubba") {
                                 this.selectedAxie.setMesh(this.bubba.clone());
                                 skin = "bubba";
                                 hp = 4;
                                 range = 0;
                                 damage = 3;
-                            } else if (pointerInfo.pickInfo.pickedMesh.id === "olek") {
+                            } else if (clicked_mesh_id === "olek") {
                                 this.selectedAxie.setMesh(this.olek.clone());
                                 skin = "olek";
                                 hp = 8;
@@ -294,6 +302,7 @@ export default class Game {
                             this.selectedAxie.setRange(range);
                             this.selectedAxie.setDamage(damage);
                             this.selectedAxie.mesh.isPickable = false;
+                            this.MoveSetMenu.setMoveSetImages(this.selectedAxie.skin);
                         }
 
                     }
@@ -451,6 +460,11 @@ export default class Game {
 
     }
 
+    createMoveSetMenu(): void {
+        this.MoveSetMenu = new MoveSetMenu(this.engine);
+
+    }
+
     bootstrap(): void {
         this.scene = new BABYLON.Scene(this.engine);
         this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
@@ -463,41 +477,7 @@ export default class Game {
         this.initPlayers();
         this.setObservables();
         this.setRenderLoopObservable();
-
-        this.menuScene = new BABYLON.Scene(this.engine);
-        this.menuScene.autoClear = false;
-        let camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this.menuScene);
-        camera.useAutoRotationBehavior = true;
-        camera.setTarget(BABYLON.Vector3.Zero());
-        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.menuScene);
-
-        const attackPickMenu = new GUI.Rectangle("attackPickMenu");
-        attackPickMenu.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        attackPickMenu.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        attackPickMenu.height = "100%";
-        attackPickMenu.width = "10%";
-        attackPickMenu.thickness = 0;
-
-        // Button positioning
-        const stackPanel = new GUI.StackPanel();
-        stackPanel.isVertical = true;
-        stackPanel.height = "50%";
-        stackPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        stackPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-        const button = GUI.Button.CreateImageWithCenterTextButton("testButton", "PUFFY ATTACK", "./public/btn-default.png");
-        button.width = "90%";
-        button.height = "55px";
-        button.fontFamily = "Roboto";
-        button.fontSize = "3%";
-        button.thickness = 0;
-        button.paddingTop = "10px"
-        button.color = "#c0c0c0";
-        button.onPointerClickObservable.add(async () => {
-        });
-        stackPanel.addControl(button);
-        attackPickMenu.addControl(stackPanel);
-        advancedTexture.addControl(attackPickMenu);
+        this.createMoveSetMenu();
 
 
         this.doRender();
@@ -526,7 +506,9 @@ export default class Game {
         this.engine.runRenderLoop(() => {
             if (this.render_loop) {
                 this.scene.render();
-                this.menuScene.render();
+            }
+            if (this.selectedAxie && this.selectedAxie.mesh) {
+                this.MoveSetMenu.scene.render();
             }
         });
 
