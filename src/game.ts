@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu, { MoveSetMenu } from "./menu";
-import { createBubba, createBulletMesh, createBunker, createButton, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setEnergyText } from "./utils";
+import { createBubba, createBulletMesh, createBunker, createButton, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -21,6 +21,8 @@ export default class Game {
     public player_number;
     public energy = 0;
     private energy_text_block;
+    public crystal = 0;
+    private crystal_text_block;
     private enemy_session_id;
     private isHoveringOverOwnDropZone: Boolean = false;
     private show_moveset_menu: Boolean = false;
@@ -42,9 +44,9 @@ export default class Game {
 
     private own_bunker: Bunker;
     private target_bunker: Bunker;
-    private puffy: BABYLON.Mesh;
-    private bubba: BABYLON.Mesh;
-    private olek: BABYLON.Mesh;
+    private puffy: Axie;
+    private bubba: Axie;
+    private olek: Axie;
     private bullet;
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
@@ -79,6 +81,18 @@ export default class Game {
         this.energy_text_block.paddingLeft = "10px";
         this.energy_text_block.outlineColor = "#000000";
         advancedTexture.addControl(this.energy_text_block);
+
+        this.crystal_text_block = new GUI.TextBlock("crystal");
+        this.crystal_text_block.text = `Crystals: ${this.crystal}`.toUpperCase();
+        this.crystal_text_block.color = "#eaeaea";
+        this.crystal_text_block.fontFamily = "Roboto";
+        this.crystal_text_block.fontSize = 20;
+        this.crystal_text_block.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.crystal_text_block.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        this.crystal_text_block.paddingTop = "50px";
+        this.crystal_text_block.paddingLeft = "10px";
+        this.crystal_text_block.outlineColor = "#000000";
+        advancedTexture.addControl(this.crystal_text_block);
 
         // back to menu button
         const button = GUI.Button.CreateImageWithCenterTextButton("back", "<- BACK", "./public/btn-default.png");
@@ -130,6 +144,8 @@ export default class Game {
             // Set Player Specific Attributes
             if (isCurrentPlayer) {
                 this.player_number = player.number;
+                this.crystal = 10;
+                setCrystalText(this);
 
                 if (player.number == 1) {
                     this.camera.target = new BABYLON.Vector3(0, 0, 162.5);
@@ -170,9 +186,9 @@ export default class Game {
                 )
 
                 if (this.player_number == 2) {
-                    this.puffy.position.z = - this.puffy.position.z;
-                    this.bubba.position.z = - this.bubba.position.z;
-                    this.olek.position.z = - this.olek.position.z;
+                    this.puffy.mesh.position.z = - this.puffy.mesh.position.z;
+                    this.bubba.mesh.position.z = - this.bubba.mesh.position.z;
+                    this.olek.mesh.position.z = - this.olek.mesh.position.z;
                 }
             } else {
                 this.enemy_session_id = sessionId;
@@ -186,11 +202,10 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    let new_axie = new Axie(axie.id, axie.hp, axie.range, axie.damage, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
+                    let new_axie = new Axie(axie.id, axie.hp, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
                     this.axieNextPositionByAxieId.set(new_axie.id, new_axie.mesh.position);
-
 
                     axie.onChange((changes) => {
                         this.axieNextPositionByAxieId.set(axie.id, new BABYLON.Vector3(axie.x, axie.y, axie.z));
@@ -265,6 +280,8 @@ export default class Game {
                                 } else {
                                     intersectsMesh = false;
                                 }
+                                this.crystal++;
+                                setCrystalText(this);
                             }
                         } else if (!axie_names.includes(clicked_mesh_id) && axie_names.includes(clicked_mesh_id.replace(/\./g, ''))) {
                             this.show_moveset_menu = true;
@@ -273,25 +290,28 @@ export default class Game {
                                 this.selectedAxie.mesh.dispose();
                             }
 
-                            this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, this.target_bunker);
+                            this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, null, this.target_bunker);
                             let skin;
                             let hp;
                             let range;
                             let damage;
                             if (clicked_mesh_id === "puffy") {
-                                this.selectedAxie.setMesh(this.puffy.clone());
+                                this.selectedAxie.setMesh(this.puffy.mesh.clone());
+                                this.selectedAxie.active_cards = this.puffy.active_cards;
                                 skin = "puffy";
                                 hp = 1;
                                 range = 15;
                                 damage = 1;
                             } else if (clicked_mesh_id === "bubba") {
-                                this.selectedAxie.setMesh(this.bubba.clone());
+                                this.selectedAxie.setMesh(this.bubba.mesh.clone());
+                                this.selectedAxie.active_cards = this.bubba.active_cards;
                                 skin = "bubba";
                                 hp = 4;
                                 range = 0;
                                 damage = 3;
                             } else if (clicked_mesh_id === "olek") {
-                                this.selectedAxie.setMesh(this.olek.clone());
+                                this.selectedAxie.setMesh(this.olek.mesh.clone());
+                                this.selectedAxie.active_cards = this.olek.active_cards;
                                 skin = "olek";
                                 hp = 8;
                                 range = 0;
@@ -303,8 +323,8 @@ export default class Game {
                             this.selectedAxie.setDamage(damage);
                             this.selectedAxie.mesh.isPickable = false;
                             this.MoveSetMenu.setMoveSetImages(this.selectedAxie.skin);
+                            this.MoveSetMenu.setSelectedCards(this.selectedAxie);
                         }
-
                     }
                     break;
 
@@ -327,7 +347,6 @@ export default class Game {
                             this.selectedAxie.mesh.position = new BABYLON.Vector3(0, -100, 0);
                         }
                     }
-
             }
         });
 
@@ -461,8 +480,7 @@ export default class Game {
     }
 
     createMoveSetMenu(): void {
-        this.MoveSetMenu = new MoveSetMenu(this.engine);
-
+        this.MoveSetMenu = new MoveSetMenu(this.engine, this);
     }
 
     bootstrap(): void {

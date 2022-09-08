@@ -1,9 +1,12 @@
 import * as BABYLON from "babylonjs";
-import { Bullet, Bunker } from "./raid_objects";
+import Axie, { Bullet, Bunker } from "./raid_objects";
 import * as GUI from 'babylonjs-gui';
 import { Button } from "babylonjs-gui";
+import Card from "./card";
+import { int } from "babylonjs";
 
 export const axie_move_source_by_id_map = new Map<String, string[]>();
+export var type_map: Map<String, int> = new Map<String, int>([["mouth", 0], ["eyes", 1], ["ears", 2], ["horn", 3], ["back", 4], ["tail", 5]]);
 
 export const createSkyBox = (scene: BABYLON.Scene) => {
     const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
@@ -51,7 +54,13 @@ export var createPuffy = function createPuffy(scene) {
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
-    return puffy;
+    const puffy_axie = new Axie(puffy.id, 0, 0, 0, 0, 'puffy', puffy, null);
+
+    for (let i = 0; i < axie_move_source_by_id_map.get('puffy').length; i++) {
+        puffy_axie.cards_list.push(new Card(i, i * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('puffy')[i]));
+    }
+
+    return puffy_axie;
 }
 
 export var createBubba = function createBubba(scene) {
@@ -65,7 +74,13 @@ export var createBubba = function createBubba(scene) {
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
-    return bubba;
+    const bubba_axie = new Axie(bubba.id, 0, 0, 0, 0, 'bubba', bubba, null);
+
+    for (let i = 0; i < axie_move_source_by_id_map.get('bubba').length; i++) {
+        bubba_axie.cards_list.push(new Card(i, i * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('bubba')[i]));
+    }
+
+    return bubba_axie;
 }
 
 export var createOlek = function createOlek(scene) {
@@ -80,7 +95,13 @@ export var createOlek = function createOlek(scene) {
 
     axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
 
-    return olek;
+    const olek_axie = new Axie(olek.id, 0, 0, 0, 0, 'olek', olek, null);
+
+    for (let i = 0; i < axie_move_source_by_id_map.get('olek').length; i++) {
+        olek_axie.cards_list.push(new Card(i, (i + 1) * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('olek')[i]));
+    }
+
+    return olek_axie;
 }
 
 export var createBunker = function createBunker(scene) {
@@ -104,26 +125,41 @@ export var createBulletMesh = function createBulletMesh(scene) {
     return bullet_mesh;
 }
 
-export var createButton = function createButton(id, source): Button {
-    const button = GUI.Button.CreateImageOnlyButton(id, source);
+export var createButton = function createButton(name, source, game): Button {
+    const button = GUI.Button.CreateImageOnlyButton(name, source);
     button.width = "80px";
     button.height = "80px";
     button.thickness = 0;
     button.paddingTop = "10px"
-    button.onPointerClickObservable.add(function(ev, state){
+    button.onPointerClickObservable.add(function (ev, state) {
         const button = state.currentTarget;
-        if(button.thickness == 0){
-            button.thickness = 3;
-        }else{
-            button.thickness = 0;
+        if (game.crystal >= 10) {
+            if (button.thickness == 0) {
+                button.thickness = 3;
+
+                game.crystal = game.crystal - 10;
+                game.selectedAxie.active_cards[type_map.get(button.name)] = 1;
+                setCrystalText(game);
+
+                if (game.selectedAxie.mesh.id.includes("puffy")) {
+                    game.puffy.active_cards[type_map.get(button.id)] = 1;
+                } else if (game.selectedAxie.mesh.id.includes("bubba")) {
+                    game.bubba.active_cards[type_map.get(button.id)] = 1;
+                } else {
+                    game.olek.active_cards[type_map.get(button.id)] = 1;
+                }
+            }
         }
-      });
+    });
 
     return button;
 }
 
 export var setEnergyText = function setEnergyText(game) {
     game.energy_text_block.text = `Energy: ${game.energy}`.toUpperCase();
+}
 
+export var setCrystalText = function setCrystalText(game) {
+    game.crystal_text_block.text = `Crystal: ${game.crystal}`.toUpperCase();
 }
 

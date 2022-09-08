@@ -1,7 +1,5 @@
 import * as BABYLON from 'babylonjs';
 import { int } from 'babylonjs';
-import Game from './game';
-import { getRotationVectorFromTarget } from './utils';
 
 export abstract class RaidObject {
     public id: string;
@@ -37,7 +35,9 @@ export default class Axie extends RaidObject {
 
     public hp: int;
 
-    public move_set = [];
+    public cards_list = [];
+    public active_cards = [0,0,0,0,0,0];
+    public level = 0;
     public selected_move;
     public range: int;
     public reload_time = 0;
@@ -45,10 +45,15 @@ export default class Axie extends RaidObject {
     public attacking_axies = [];
     public incoming_bullets = [];
 
-    constructor(id: string, hp: int, range: int, damage: int, skin: string, mesh, target) {
+    constructor(id: string, hp: int, range: int, damage: int, level: int, skin: string, mesh, target) {
         super(id, skin, damage, mesh, target);
         this.hp = hp;
         this.range = range;
+        this.level = level;
+    }
+
+    clone(id: string): Axie {
+        return new Axie(id, this.hp, this.range, this.damage, this.level, this.skin, this.mesh.clone(), this.target);
     }
 
     setHp(hp: int): void {
@@ -135,10 +140,6 @@ export default class Axie extends RaidObject {
         this.incoming_bullets.forEach((bullet) => {
             bullet.mesh.dispose();
         })
-    }
-
-    clone(id: string): Axie {
-        return new Axie(id, this.hp, this.range, this.damage, this.skin, this.mesh.clone(), this.target);
     }
 
     offsetPositionForSpawn(isPlayer1: Boolean): void {

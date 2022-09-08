@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import { Button } from 'babylonjs-gui';
 import { Client } from "colyseus.js";
 
 import Game from './game';
@@ -217,13 +218,15 @@ export class MoveSetMenu {
     private horn_button;
     private back_button;
     private tail_button;
+    private buttons : Button[] = [];
 
     public scene: BABYLON.Scene;
-    public
+    public game;
 
-    constructor(engine) {
+    constructor(engine, game) {
         this.scene = new BABYLON.Scene(engine);
         this.scene.autoClear = false;
+        this.game = game;
         let camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this.scene);
         camera.useAutoRotationBehavior = true;
         camera.setTarget(BABYLON.Vector3.Zero());
@@ -244,18 +247,20 @@ export class MoveSetMenu {
         grid.addRowDefinition(0.5);
         grid.addRowDefinition(0.5);
 
-        this.mouth_button = createButton("mouth_button", './public/puffy-puff.png');
+        this.mouth_button = createButton("mouth", './public/puffy-puff.png', this.game);
         grid.addControl(this.mouth_button, 0, 0);
-        this.eyes_button = createButton("eyes_button", './public/puffy-baby.png');
+        this.eyes_button = createButton("eyes", './public/puffy-baby.png', this.game);
         grid.addControl(this.eyes_button, 0, 2);
-        this.ears_button = createButton("ears_button", './public/puffy-little crab.png');
+        this.ears_button = createButton("ears", './public/puffy-little crab.png', this.game);
         grid.addControl(this.ears_button, 1, 0);
-        this.horn_button = createButton("horn_button", './public/puffy-jellytackle.png');
+        this.horn_button = createButton("horn", './public/puffy-jellytackle.png', this.game);
         grid.addControl(this.horn_button, 1, 2);
-        this.back_button = createButton("back_button", './public/puffy-tiny-dino.png');
+        this.back_button = createButton("back", './public/puffy-tiny-dino.png', this.game);
         grid.addControl(this.back_button, 2, 0);
-        this.tail_button = createButton("tail_button", './public/puffy-puff-tail.png');
+        this.tail_button = createButton("tail", './public/puffy-puff-tail.png', this.game);
         grid.addControl(this.tail_button, 2, 2);
+
+        this.buttons = [this.mouth_button, this.eyes_button, this.ears_button, this.horn_button, this.back_button, this.tail_button];
 
         moveSetMenu.addControl(grid);
         advancedTexture.addControl(moveSetMenu);
@@ -268,5 +273,24 @@ export class MoveSetMenu {
         this.horn_button.image.source = axie_move_source_by_id_map.get(skin)[3];
         this.back_button.image.source = axie_move_source_by_id_map.get(skin)[4];
         this.tail_button.image.source = axie_move_source_by_id_map.get(skin)[5];
+    }
+
+    setSelectedCards(axie): void {
+        let index = 0;
+        for(let button of this.buttons){
+            console.log(axie.active_cards);
+            button.thickness = 3* axie.active_cards[index];
+            index++;
+        }
+    }
+
+    getActiveMoves(){
+        let active_moves = [];
+
+        for(let button of this.buttons){
+            if(button.thickness == 3){
+                active_moves.push(button);
+            }
+        }
     }
 }
