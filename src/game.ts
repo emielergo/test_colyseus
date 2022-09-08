@@ -290,37 +290,26 @@ export default class Game {
                                 this.selectedAxie.mesh.dispose();
                             }
 
-                            this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, null, this.target_bunker);
-                            let skin;
+                            // this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, null, this.target_bunker);
                             let hp;
-                            let range;
-                            let damage;
+                            let starter;
                             if (clicked_mesh_id === "puffy") {
-                                this.selectedAxie.setMesh(this.puffy.mesh.clone());
-                                this.selectedAxie.active_cards = this.puffy.active_cards;
-                                skin = "puffy";
-                                hp = 1;
-                                range = 15;
-                                damage = 1;
+                                starter = this.puffy;
+                                hp = 25;
                             } else if (clicked_mesh_id === "bubba") {
-                                this.selectedAxie.setMesh(this.bubba.mesh.clone());
-                                this.selectedAxie.active_cards = this.bubba.active_cards;
-                                skin = "bubba";
-                                hp = 4;
-                                range = 0;
-                                damage = 3;
+                                starter = this.bubba;
+                                hp = 100;
                             } else if (clicked_mesh_id === "olek") {
-                                this.selectedAxie.setMesh(this.olek.mesh.clone());
-                                this.selectedAxie.active_cards = this.olek.active_cards;
-                                skin = "olek";
-                                hp = 8;
-                                range = 0;
+                                starter = this.olek;
+                                hp = 200;
                             }
-                            this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
-                            this.selectedAxie.setSkin(skin);
+                            this.selectedAxie = starter.clone();
+                            this.selectedAxie.setTarget(this.target_bunker);
+                            this.selectedAxie.active_cards = starter.active_cards;
+                            this.selectedAxie.cards_list = starter.cards_list;
                             this.selectedAxie.setHp(hp);
-                            this.selectedAxie.setRange(range);
-                            this.selectedAxie.setDamage(damage);
+                            this.selectedAxie.setDamageAndRangeFromCards();
+                            this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
                             this.selectedAxie.mesh.isPickable = false;
                             this.MoveSetMenu.setMoveSetImages(this.selectedAxie.skin);
                             this.MoveSetMenu.setSelectedCards(this.selectedAxie);
@@ -330,7 +319,7 @@ export default class Game {
 
                 case BABYLON.PointerEventTypes.POINTERMOVE:
                     if (this.selectedAxie && this.selectedAxie.mesh) {
-                        if (this.isHoveringOverOwnDropZone) {
+                        if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
                             var target = BABYLON.Vector3.Unproject(
                                 new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
                                 canvas_client_rect.width,
