@@ -139,6 +139,8 @@ export var createButton = function createButton(name, source, game): Button {
 
                 game.crystal = game.crystal - 10;
                 game.selectedAxie.active_cards[type_map.get(button.name)] = 1;
+                game.selectedAxie.level ++;
+                game.selectedAxie.setDamageAndRangeFromCards();
                 setCrystalText(game);
 
                 if (game.selectedAxie.mesh.id.includes("puffy")) {

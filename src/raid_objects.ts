@@ -60,7 +60,23 @@ export default class Axie extends RaidObject {
         this.hp = hp;
     }
 
-    setRange(range: int): void {
+    setTarget(target): void {
+        this.target = target;
+    }
+
+    setDamageAndRangeFromCards(){
+        let damage = 0;
+        let range = 0;
+
+        for(let index = 0 ; index < 6; index++){
+            if(this.active_cards[index] == 1){
+                damage += this.cards_list[index].damage;
+                range += this.cards_list[index].range;
+            }
+        }
+        console.log(damage);
+        console.log(range);
+        this.damage = damage;
         this.range = range;
     }
 
