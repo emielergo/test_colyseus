@@ -4,6 +4,7 @@ import * as GUI from 'babylonjs-gui';
 import { Button } from "babylonjs-gui";
 import Card from "./card";
 import { int } from "babylonjs";
+import "@babylonjs/loaders/glTF"
 
 export const axie_move_source_by_id_map = new Map<String, string[]>();
 export var type_map: Map<String, int> = new Map<String, int>([["mouth", 0], ["eyes", 1], ["ears", 2], ["horn", 3], ["back", 4], ["tail", 5]]);
@@ -43,14 +44,19 @@ export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
     return BABYLON.Vector3.RotationFromAxis(forward, up, side);
 }
 
-export var createPuffy = function createPuffy(scene) {
-    const puffy = BABYLON.MeshBuilder.CreateSphere("puffy", { diameterZ: 1.5 });
+export var createPuffy = async function createPuffy(scene) {
+    let puffy;
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "puffy.babylon").then((result) => {
+        puffy = scene.getMeshByName("puffy");
+        result.meshes.forEach(mesh => {
+            if (mesh.id != "puffy") {
+                mesh.parent = puffy;
+            }
+        })
+        console.log(puffy);
+    });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
-
-    const puffy_material = new BABYLON.StandardMaterial("puffy_material");
-    puffy_material.diffuseColor = BABYLON.Color3.Blue();
-    puffy.material = puffy_material;
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
@@ -63,14 +69,19 @@ export var createPuffy = function createPuffy(scene) {
     return puffy_axie;
 }
 
-export var createBubba = function createBubba(scene) {
-    const bubba = BABYLON.MeshBuilder.CreateBox("bubba", { width: 1, height: 1, depth: 1 });
+export var createBubba = async function createBubba(scene) {
+    let bubba;
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "bubba.babylon").then((result) => {
+        bubba = scene.getMeshByName("bubba");
+        result.meshes.forEach(mesh => {
+            console.log(mesh.id);
+            if (mesh.id != "bubba") {
+                mesh.parent = bubba;
+            }
+        })
+    });
     bubba.position = new BABYLON.Vector3(0, 1, 180);
     bubba.actionManager = new BABYLON.ActionManager(scene);
-
-    const bubba_material = new BABYLON.StandardMaterial("bubba_material");
-    bubba_material.diffuseColor = BABYLON.Color3.Red();
-    bubba.material = bubba_material;
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
@@ -83,15 +94,18 @@ export var createBubba = function createBubba(scene) {
     return bubba_axie;
 }
 
-export var createOlek = function createOlek(scene) {
-    const olek = BABYLON.MeshBuilder.CreateCylinder("olek", { diameterTop: 0, height: 1, diameterBottom: 1 });
+export var createOlek = async function createOlek(scene) {
+    let olek;
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "olek.babylon").then((result) => {
+        olek = scene.getMeshByName("olek");
+        result.meshes.forEach(mesh => {
+            console.log(mesh.id);
+            if (mesh.id != "olek") {
+                mesh.parent = olek;
+            }
+        })
+    });
     olek.position = new BABYLON.Vector3(-5, 1, 180);
-    olek.actionManager = new BABYLON.ActionManager(scene);
-
-    const olek_material = new BABYLON.StandardMaterial("olek_material");
-    olek_material.diffuseColor = BABYLON.Color3.Green();
-    olek.material = olek_material;
-    olek.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, 1));
 
     axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
 
@@ -125,6 +139,16 @@ export var createBulletMesh = function createBulletMesh(scene) {
     return bullet_mesh;
 }
 
+export var createHealthBarMesh = function createHealthBarMesh(scene) {
+    const health_bar = BABYLON.MeshBuilder.CreateBox("health_bar", { width: 1, height: 0.2, depth: 0.2 });
+
+    const health_bar_material = new BABYLON.StandardMaterial("health_bar_material");
+    health_bar_material.diffuseColor = BABYLON.Color3.Green();
+    health_bar.material = health_bar_material;
+
+    return health_bar;
+}
+
 export var createButton = function createButton(name, source, game): Button {
     const button = GUI.Button.CreateImageOnlyButton(name, source);
     button.width = "80px";
@@ -139,16 +163,19 @@ export var createButton = function createButton(name, source, game): Button {
 
                 game.crystal = game.crystal - 10;
                 game.selectedAxie.active_cards[type_map.get(button.name)] = 1;
-                game.selectedAxie.level ++;
+                game.selectedAxie.level++;
                 game.selectedAxie.setDamageAndRangeFromCards();
                 setCrystalText(game);
 
                 if (game.selectedAxie.mesh.id.includes("puffy")) {
                     game.puffy.active_cards[type_map.get(button.id)] = 1;
+                    game.puffy.level++;
                 } else if (game.selectedAxie.mesh.id.includes("bubba")) {
                     game.bubba.active_cards[type_map.get(button.id)] = 1;
+                    game.bubba.level++;
                 } else {
                     game.olek.active_cards[type_map.get(button.id)] = 1;
+                    game.olek.level++;
                 }
             }
         }
