@@ -278,7 +278,6 @@ export class MoveSetMenu {
     setSelectedCards(axie): void {
         let index = 0;
         for(let button of this.buttons){
-            console.log(axie.active_cards);
             button.thickness = 3* axie.active_cards[index];
             index++;
         }

@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu, { MoveSetMenu } from "./menu";
-import { createBubba, createBulletMesh, createBunker, createButton, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
+import { createBubba, createBulletMesh, createBunker, createButton, createHealthBarMesh, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
 
@@ -13,6 +13,7 @@ export default class Game {
     private canvas: HTMLCanvasElement;
     private engine: BABYLON.Engine;
     private scene: BABYLON.Scene;
+    private room: Room<any>;
     private MoveSetMenu: MoveSetMenu;
     private camera: BABYLON.ArcRotateCamera;
     private light: BABYLON.Light;
@@ -37,10 +38,11 @@ export default class Game {
     private drop_zone_axies = [];
     private bullets = [];
 
-    private room: Room<any>;
     private axiesByAxieIdBySessionId: Map<String, Map<String, Axie>> = new Map<String, Map<String, Axie>>();
     private axieNextPositionByAxieId: Map<String, BABYLON.Vector3> = new Map<String, BABYLON.Vector3>();
     private bunkerBySessionId: Map<String, Bunker> = new Map<String, Bunker>();
+    private axiesByLongitude: Map<number, Axie[]> = new Map<number, Axie[]>();
+    private axiesByLatitude: Map<number, Axie[]> = new Map<number, Axie[]>();
 
     private own_bunker: Bunker;
     private target_bunker: Bunker;
@@ -48,6 +50,7 @@ export default class Game {
     private bubba: Axie;
     private olek: Axie;
     private bullet;
+    private health_bar;
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
         this.canvas = canvas;
@@ -111,7 +114,7 @@ export default class Game {
         advancedTexture.addControl(button);
     }
 
-    initWorld(): void {
+    async initWorld(): Promise<void> {
         this.ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 40, height: 300 }, this.scene);
         this.ground.isPickable = false;
 
@@ -131,10 +134,16 @@ export default class Game {
         this.drop_zone_2 = BABYLON.MeshBuilder.CreateGround("drop_zone_2", { width: 30, height: 15 }, this.scene);
         this.drop_zone_2.position = new BABYLON.Vector3(0, 0, -162.5);
 
-        this.puffy = createPuffy(this.scene);
-        this.bubba = createBubba(this.scene);
-        this.olek = createOlek(this.scene);
+        this.puffy = await createPuffy(this.scene);
+        this.bubba = await createBubba(this.scene);
+        this.olek = await createOlek(this.scene);
         this.bullet = createBulletMesh(this.scene);
+        this.health_bar = createHealthBarMesh(this.scene);
+
+        // const axes = new BABYLON.AxesViewer(this.scene, 10);
+        // axes.xAxis.parent = this.olek.mesh;
+        // axes.yAxis.parent = this.olek.mesh;
+        // axes.zAxis.parent = this.olek.mesh;
     }
 
     initPlayers(): void {
@@ -150,8 +159,8 @@ export default class Game {
                 if (player.number == 1) {
                     this.camera.target = new BABYLON.Vector3(0, 0, 162.5);
                     this.camera.position = new BABYLON.Vector3(30, 50, 192.5);
-                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, 150);
-                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, -150);
+                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1, 150);
+                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1, -150);
                 } else {
                     this.camera.target = new BABYLON.Vector3(0, 0, -162.5);
                     this.camera.position = new BABYLON.Vector3(-30, 50, -192.5);
@@ -189,6 +198,10 @@ export default class Game {
                     this.puffy.mesh.position.z = - this.puffy.mesh.position.z;
                     this.bubba.mesh.position.z = - this.bubba.mesh.position.z;
                     this.olek.mesh.position.z = - this.olek.mesh.position.z;
+                } else {
+                    this.puffy.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
+                    this.bubba.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
+                    this.olek.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
                 }
             } else {
                 this.enemy_session_id = sessionId;
@@ -204,6 +217,7 @@ export default class Game {
                 if (!isCurrentPlayer) {
                     let new_axie = new Axie(axie.id, axie.hp, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
+                    new_axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), new_axie.mesh, new_axie.target);
                     this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
                     this.axieNextPositionByAxieId.set(new_axie.id, new_axie.mesh.position);
 
@@ -290,18 +304,17 @@ export default class Game {
                                 this.selectedAxie.mesh.dispose();
                             }
 
-                            // this.selectedAxie = new Axie(this.room.sessionId, null, null, null, null, null, null, this.target_bunker);
                             let hp;
                             let starter;
                             if (clicked_mesh_id === "puffy") {
                                 starter = this.puffy;
-                                hp = 25;
+                                hp = 100;
                             } else if (clicked_mesh_id === "bubba") {
                                 starter = this.bubba;
                                 hp = 100;
                             } else if (clicked_mesh_id === "olek") {
                                 starter = this.olek;
-                                hp = 200;
+                                hp = 100;
                             }
                             this.selectedAxie = starter.clone();
                             this.selectedAxie.setTarget(this.target_bunker);
@@ -351,7 +364,8 @@ export default class Game {
     }
 
     setRenderLoopObservable(): void {
-        const axie_speed = 0.25;
+        // const axie_speed = this.player_number == 1 ? 0.25 : -0.25;
+        const axie_speed = -0.25;
         let frame = 0;
         let reload_time = 0;
 
@@ -359,7 +373,8 @@ export default class Game {
             const remaining_bullets = [];
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
-            if (frame % 120 == 0 && this.enemy_session_id) {
+            // if (frame % 300 == 0 && this.enemy_session_id) {
+            if (frame % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
@@ -370,12 +385,26 @@ export default class Game {
                         hp: clonedAxie.hp,
                         range: clonedAxie.range,
                         damage: clonedAxie.damage,
+                        level: clonedAxie.level,
                         skin: axie.skin,
                         x: clonedAxie.mesh.position.x,
                         y: clonedAxie.mesh.position.y,
                         z: clonedAxie.mesh.position.z,
                     });
+                    clonedAxie.longitude = clonedAxie.mesh.position.z;
+                    clonedAxie.latitude = clonedAxie.mesh.position.x;
                     this.axiesByAxieIdBySessionId.get(this.room.sessionId).set(clonedAxie.id, clonedAxie);
+                    if (this.axiesByLongitude.get(Math.round(axie.longitude)) == null) {
+                        this.axiesByLongitude.set(Math.round(axie.longitude), [clonedAxie]);
+                    } else {
+                        this.axiesByLongitude.get(Math.round(axie.longitude)).push(clonedAxie);
+                    }
+                    if (this.axiesByLatitude.get(Math.round(axie.latitude)) == null) {
+                        this.axiesByLatitude.set(Math.round(axie.latitude), [clonedAxie]);
+                    } else {
+                        this.axiesByLatitude.get(Math.round(axie.latitude)).push(clonedAxie);
+                    }
+                    clonedAxie.setHealthBar(this.health_bar);
                 })
             }
 
@@ -384,36 +413,66 @@ export default class Game {
             if (play_field_axies && play_field_axies.size > 0) {
                 play_field_axies.forEach((axie) => {
                     axie.locateTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id), this.target_bunker);
-                    if (!axie.isInRangeOfTarget()) {
-                        axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(-1, 0, 0), axie.mesh, axie.target);
-                        axie.mesh.movePOV(axie_speed, 0, 0);
-                        this.room.send("updateAxie", {
-                            id: axie.id,
-                            x: axie.mesh.position.x,
-                            y: axie.mesh.position.y,
-                            z: axie.mesh.position.z,
-                        });
-                    } else if (axie.reload_time <= 0 && axie.damage > 0) {
-                        const bullet_clone = axie.attackTarget(this.bullet);
-                        if (axie.target.hp <= 0) {
-                            var target = axie.target;
-                            enemyAxieMap.delete(target.id);
-                            target.dispose();
+                    if (this.render_loop) {
+                        if (!axie.isInRangeOfTarget()) {
+                            axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), axie.mesh, axie.target);
+                            let should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z + axie_speed + 1));
+                            // TODO: Dit moet veel performanter!
+                            if (should_move) {
+                                axie.mesh.movePOV(0, 0, axie_speed);
+                                this.room.send("updateAxie", {
+                                    id: axie.id,
+                                    x: axie.mesh.position.x,
+                                    y: axie.mesh.position.y,
+                                    z: axie.mesh.position.z,
+                                });
+                            } else {
+                                should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x + axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
+                                if (should_move) {
+                                    axie.mesh.movePOV(axie_speed, 0, 0);
+                                    this.room.send("updateAxie", {
+                                        id: axie.id,
+                                        x: axie.mesh.position.x,
+                                        y: axie.mesh.position.y,
+                                        z: axie.mesh.position.z,
+                                    });
+                                } else {
+                                    should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x - axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
+                                    if (should_move) {
+                                        axie.mesh.movePOV(-axie_speed, 0, 0);
+                                        this.room.send("updateAxie", {
+                                            id: axie.id,
+                                            x: axie.mesh.position.x,
+                                            y: axie.mesh.position.y,
+                                            z: axie.mesh.position.z,
+                                        });
+                                    }
+                                }
+                            }
 
-                            this.room.send("removeAxie", {
-                                id: target.id,
-                                sessionId: this.enemy_session_id
-                            });
-                        }
-                        if (bullet_clone) {
-                            this.bullets.push(bullet_clone);
-                        }
+                        } else if (axie.reload_time <= 0 && axie.damage > 0) {
+                            const bullet_clone = axie.attackTarget(this.bullet);
+                            if (axie.target.hp <= 0) {
+                                var target = axie.target;
+                                enemyAxieMap.delete(target.id);
+                                target.dispose();
 
-                        axie.reload_time = 10;
-                    } else {
-                        axie.reload_time--;
+                                this.room.send("removeAxie", {
+                                    id: target.id,
+                                    sessionId: this.enemy_session_id
+                                });
+                            }
+                            if (bullet_clone) {
+                                this.bullets.push(bullet_clone);
+                            }
+
+                            axie.reload_time = 10;
+                        } else {
+                            axie.reload_time--;
+                        }
                     }
-                })
+                }
+                )
             }
 
             if (enemyAxieMap && enemyAxieMap.values()) {
@@ -429,14 +488,13 @@ export default class Game {
                         }
                     }
                 }
-
             }
 
             // Move Bullets
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
-                    bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(1, 0, 0), bullet.mesh, bullet.target);
-                    bullet.mesh.movePOV(bullet.speed, 0, 0);
+                    bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), bullet.mesh, bullet.target);
+                    bullet.mesh.movePOV(0, 0, bullet.speed);
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
                         bullet.target.inflictDamage(bullet.damage);
                         if (bullet.target.hp <= 0) {
@@ -449,6 +507,7 @@ export default class Game {
                                 sessionId: this.enemy_session_id
                             });
                         }
+                        bullet.dispose();
                     } else {
                         remaining_bullets.push(bullet);
                     }
@@ -472,7 +531,7 @@ export default class Game {
         this.MoveSetMenu = new MoveSetMenu(this.engine, this);
     }
 
-    bootstrap(): void {
+    async bootstrap(): Promise<void> {
         this.scene = new BABYLON.Scene(this.engine);
         this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
         this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 4, Math.PI / 4, 30, new BABYLON.Vector3(25, 25, 120), this.scene);
@@ -480,7 +539,7 @@ export default class Game {
 
         createSkyBox(this.scene);
         this.displayGameControls();
-        this.initWorld();
+        await this.initWorld();
         this.initPlayers();
         this.setObservables();
         this.setRenderLoopObservable();
@@ -511,9 +570,8 @@ export default class Game {
 
         // Run the render loop.
         this.engine.runRenderLoop(() => {
-            if (this.render_loop) {
-                this.scene.render();
-            }
+            this.scene.render();
+
             if (this.selectedAxie && this.selectedAxie.mesh) {
                 this.MoveSetMenu.scene.render();
             }

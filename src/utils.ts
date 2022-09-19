@@ -37,11 +37,11 @@ export var getZeroPlaneVector = function (pos, rot) {
 };
 
 export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
-    let forward = mesh.position.subtract(target.mesh.position).normalize();
-    let up = BABYLON.Vector3.Cross(xnormal, forward);
-    let side = BABYLON.Vector3.Cross(forward, up);
+    let forward = target.mesh.position.subtract(mesh.position);
+    let up = xnormal;
+    let side = BABYLON.Vector3.Cross(up, forward);
 
-    return BABYLON.Vector3.RotationFromAxis(forward, up, side);
+    return BABYLON.Vector3.RotationFromAxis(side, up, forward);
 }
 
 export var createPuffy = async function createPuffy(scene) {
@@ -53,7 +53,6 @@ export var createPuffy = async function createPuffy(scene) {
                 mesh.parent = puffy;
             }
         })
-        console.log(puffy);
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
@@ -74,7 +73,6 @@ export var createBubba = async function createBubba(scene) {
     await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "bubba.babylon").then((result) => {
         bubba = scene.getMeshByName("bubba");
         result.meshes.forEach(mesh => {
-            console.log(mesh.id);
             if (mesh.id != "bubba") {
                 mesh.parent = bubba;
             }
@@ -99,7 +97,6 @@ export var createOlek = async function createOlek(scene) {
     await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "olek.babylon").then((result) => {
         olek = scene.getMeshByName("olek");
         result.meshes.forEach(mesh => {
-            console.log(mesh.id);
             if (mesh.id != "olek") {
                 mesh.parent = olek;
             }
@@ -117,6 +114,21 @@ export var createOlek = async function createOlek(scene) {
 
     return olek_axie;
 }
+
+// async function createMeshFromBabylonFile(name, scene){
+//     let mesh;
+//     await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "name.babylon").then((result) => {
+//         mesh = scene.getMeshByName("name");
+//         result.meshes.forEach(mesh => {
+//             console.log(mesh.name);
+//             if (mesh.id != "id") {
+//                 mesh.parent = mesh;
+//             }
+//         })
+//     });
+
+//     return mesh;
+// }
 
 export var createBunker = function createBunker(scene) {
     let bunker_mesh = BABYLON.MeshBuilder.CreateBox("bunker_mesh", { width: 1, height: 2, depth: 2 })

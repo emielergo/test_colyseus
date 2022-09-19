@@ -36,14 +36,19 @@ export default class Axie extends RaidObject {
     public hp: int;
 
     public cards_list = [];
-    public active_cards = [0,0,0,0,0,0];
+    public active_cards = [0, 0, 0, 0, 0, 0];
     public level = 0;
     public selected_move;
     public range: int;
     public reload_time = 0;
+    public longitude;
+    public latitude;
 
     public attacking_axies = [];
     public incoming_bullets = [];
+
+    private health_bar;
+
 
     constructor(id: string, hp: int, range: int, damage: int, level: int, skin: string, mesh, target) {
         super(id, skin, damage, mesh, target);
@@ -64,18 +69,16 @@ export default class Axie extends RaidObject {
         this.target = target;
     }
 
-    setDamageAndRangeFromCards(){
+    setDamageAndRangeFromCards() {
         let damage = 0;
         let range = 0;
 
-        for(let index = 0 ; index < 6; index++){
-            if(this.active_cards[index] == 1){
+        for (let index = 0; index < 6; index++) {
+            if (this.active_cards[index] == 1) {
                 damage += this.cards_list[index].damage;
                 range += this.cards_list[index].range;
             }
         }
-        console.log(damage);
-        console.log(range);
         this.damage = damage;
         this.range = range;
     }
@@ -120,6 +123,22 @@ export default class Axie extends RaidObject {
             return this.target && this.mesh ? this.mesh.position.subtract(this.target.mesh.position).length() < this.range ? true : false : false;
         }
     }
+
+    intersectsGivenAxies(axies, position): boolean {
+        let intersects_with_axies = false;
+        for(let other_axie of axies){
+            if (other_axie.id != this.id && other_axie.mesh.intersectsPoint(position)) {
+                intersects_with_axies = true;
+                break;
+            }
+        }
+
+        return intersects_with_axies;
+    }
+
+    // getCloseAxies(axies_by_longitude, axies_by_latitude){
+
+    // }
 
     inflictDamage(damage: int): void {
         this.hp -= damage;
@@ -168,12 +187,16 @@ export default class Axie extends RaidObject {
         }
     }
 
-
+    setHealthBar(mesh) {
+        this.health_bar = mesh.clone();
+        this.health_bar.parent = this.mesh;
+        this.health_bar.position.y = 2;
+    }
 
 }
 
 export class Bullet extends RaidObject {
-    public static BULLET_SPEED = 0.75;
+    public static BULLET_SPEED = -0.75;
 
     public speed: int;
 
@@ -190,6 +213,10 @@ export class Bullet extends RaidObject {
 
     intersectsWithTarget(): boolean {
         return this.target ? this.mesh.intersectsMesh(this.target.mesh) : false;
+    }
+
+    dispose() {
+        this.mesh.dispose();
     }
 }
 
