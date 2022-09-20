@@ -27,6 +27,23 @@ export default class Menu {
         this._engine = new BABYLON.Engine(this._canvas, true);
     }
 
+    //wire up the UI buttons to the create / join functions
+    wireButtons(): void {
+        let menu = document.querySelector('[data-start-menu]');
+        if (!menu) {
+            console.log('menu ui not found');
+            throw new Error('menu ui nnot found: no element found with "data-menu" attribute');
+        }
+        menu.querySelectorAll('[data-menu-action]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (!(e.target instanceof Element))
+                    return;
+                let action = ((e.target) as Element).dataset.menuAction;
+                this.createGame(action);
+            })
+        });
+    }
+
     createMenu(): void {
         this._scene = new BABYLON.Scene(this._engine);
         this._camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this._scene);
@@ -52,36 +69,6 @@ export default class Menu {
         logo.stretch = GUI.Image.STRETCH_UNIFORM;
         controlBox.addControl(logo);
 
-        // Button positioning
-        const stackPanel = new GUI.StackPanel();
-        stackPanel.isVertical = true;
-        stackPanel.height = "50%";
-        stackPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        stackPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-        const createGameButton = this.createMenuButton("createGame", "CREATE GAME");
-        createGameButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("create");
-        });
-        stackPanel.addControl(createGameButton);
-
-        const joinGameButton = this.createMenuButton("joinGame", "JOIN GAME");
-        joinGameButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("join");
-        });
-        stackPanel.addControl(joinGameButton);
-
-        const createOrJoinButton = this.createMenuButton("createOrJoinGame", "CREATE OR JOIN");
-        createOrJoinButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("joinOrCreate");
-        });
-        stackPanel.addControl(createOrJoinButton);
-
-        controlBox.addControl(stackPanel);
-
         this._advancedTexture.addControl(controlBox);
 
         this.initLoadingMessageBox();
@@ -90,18 +77,6 @@ export default class Menu {
         this.swapErrorMessageBox(false);
 
         this.doRender();
-    }
-
-    private createMenuButton(name: string, text: string): GUI.Button {
-        const button = GUI.Button.CreateImageWithCenterTextButton(name, text, "./public/btn-default.png");
-        button.width = "45%";
-        button.height = "55px";
-        button.fontFamily = "Roboto";
-        button.fontSize = "6%";
-        button.thickness = 0;
-        button.paddingTop = "10px"
-        button.color = "#c0c0c0";
-        return button;
     }
 
     private swapControls(isEnabled: boolean) {

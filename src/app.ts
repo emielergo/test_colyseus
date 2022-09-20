@@ -1,4 +1,9 @@
+// import styling
+import './index.scss'
+// import UI Components
+import './UI/gui'
 import Menu from './menu'
+
 
 window.addEventListener('DOMContentLoaded', () => {
     // Create the game using the 'renderCanvas'.
@@ -6,4 +11,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Create the scene.
     menu.createMenu();
+    menu.wireButtons();
 });
