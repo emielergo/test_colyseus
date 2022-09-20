@@ -267,6 +267,7 @@ export default class Game {
         const axie_names = ["puffy", "bubba", "olek"];
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
+                // drop axie mesh logic
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     if (pointerInfo.pickInfo.hit) {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
@@ -316,6 +317,7 @@ export default class Game {
                                 starter = this.olek;
                                 hp = 100;
                             }
+                            // array of all axie meshes, unhide selected?
                             this.selectedAxie = starter.clone();
                             this.selectedAxie.setTarget(this.target_bunker);
                             this.selectedAxie.active_cards = starter.active_cards;
