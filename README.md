@@ -11,7 +11,7 @@ This is the client code for a step-by-step tutorial on how to use BabylonJS + Co
 - Download and install [Node.js LTS](https://nodejs.org/en/download/)
 - Clone or download this repository.
 - Run `npm install`
-- Run `npm start`
+- Run `npm run start`
 
 The client should be accessible at [`http://localhost:8080`](http://localhost:8080).
 
