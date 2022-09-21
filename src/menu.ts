@@ -27,6 +27,19 @@ export default class Menu {
         this._engine = new BABYLON.Engine(this._canvas, true);
     }
 
+    //wire up the UI buttons to the create / join functions
+    wireButtons(): void {
+        
+            window.$game_state.addEventListener('start.create', _ => {
+                this.createGame('create');
+                window.$game_state.commitState('scene', '1v1');
+            });
+            window.$game_state.addEventListener('start.join', _ => {
+                this.createGame('join');
+                window.$game_state.commitState('scene', '1v1');
+            });
+    }
+
     createMenu(): void {
         this._scene = new BABYLON.Scene(this._engine);
         this._camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this._scene);
@@ -36,72 +49,12 @@ export default class Menu {
 
         createSkyBox(this._scene);
 
-        // Colyseus logo
-        const controlBox = new GUI.Rectangle("controlBox");
-        controlBox.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        controlBox.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        controlBox.height = "100%";
-        controlBox.width = "40%";
-        controlBox.thickness = 0;
-
-        const logo = new GUI.Image("ColyseusLogo", "./public/colyseus.png");
-        logo.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        logo.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        logo.height = "40%";
-        logo.paddingTop = "10px";
-        logo.stretch = GUI.Image.STRETCH_UNIFORM;
-        controlBox.addControl(logo);
-
-        // Button positioning
-        const stackPanel = new GUI.StackPanel();
-        stackPanel.isVertical = true;
-        stackPanel.height = "50%";
-        stackPanel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        stackPanel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-
-        const createGameButton = this.createMenuButton("createGame", "CREATE GAME");
-        createGameButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("create");
-        });
-        stackPanel.addControl(createGameButton);
-
-        const joinGameButton = this.createMenuButton("joinGame", "JOIN GAME");
-        joinGameButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("join");
-        });
-        stackPanel.addControl(joinGameButton);
-
-        const createOrJoinButton = this.createMenuButton("createOrJoinGame", "CREATE OR JOIN");
-        createOrJoinButton.onPointerClickObservable.add(async () => {
-            this.swapControls(false);
-            await this.createGame("joinOrCreate");
-        });
-        stackPanel.addControl(createOrJoinButton);
-
-        controlBox.addControl(stackPanel);
-
-        this._advancedTexture.addControl(controlBox);
-
         this.initLoadingMessageBox();
         this.initErrorMessageBox();
         this.swapLoadingMessageBox(false);
         this.swapErrorMessageBox(false);
 
         this.doRender();
-    }
-
-    private createMenuButton(name: string, text: string): GUI.Button {
-        const button = GUI.Button.CreateImageWithCenterTextButton(name, text, "./public/btn-default.png");
-        button.width = "45%";
-        button.height = "55px";
-        button.fontFamily = "Roboto";
-        button.fontSize = "6%";
-        button.thickness = 0;
-        button.paddingTop = "10px"
-        button.color = "#c0c0c0";
-        return button;
     }
 
     private swapControls(isEnabled: boolean) {

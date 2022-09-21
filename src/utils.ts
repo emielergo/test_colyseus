@@ -197,10 +197,12 @@ export var createButton = function createButton(name, source, game): Button {
 }
 
 export var setEnergyText = function setEnergyText(game) {
-    game.energy_text_block.text = `Energy: ${game.energy}`.toUpperCase();
+    window.$game_state.dispatchEvent('energy', {value: game.energy});
+    //game.energy_text_block.text = `Energy: ${game.energy}`.toUpperCase();
 }
 
 export var setCrystalText = function setCrystalText(game) {
-    game.crystal_text_block.text = `Crystal: ${game.crystal}`.toUpperCase();
+    window.$game_state.dispatchEvent('crystal', {value: game.crystal});
+    //game.crystal_text_block.text = `Crystal: ${game.crystal}`.toUpperCase();
 }
 
