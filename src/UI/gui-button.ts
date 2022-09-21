@@ -22,10 +22,9 @@ export class GuiButton extends LitElement {
 
             button.pill {
                 box-shadow: inset 0px 0px 16px 0px #1561eb21, 0px 0px 8px #000000ba;
-                backdrop-filter: blur(4px) contrast(1.1);
                 border: 1px solid #ffffff50;
                 border-top: 1px solid #ffffff6b;
-                background-color: #3289c7c2;
+                background-color: #3289c7;
                 color: white;
                 border-radius: 30px;
                 padding: 12px 24px;

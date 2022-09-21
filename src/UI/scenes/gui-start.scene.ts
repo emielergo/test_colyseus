@@ -15,12 +15,18 @@ export class GuiStartScene extends LitElement {
                 flex-direction: column;
                 grid-gap: var(--ui-spacing);
                 align-items: center;
+                background: rgb(254 169 45);
+                padding: 32px;
+                border-radius: 16px;
+                backdrop-filter: blur(12px);
+                box-shadow: inset -4px -4px 0px 7px #00000020, inset 4px 4px 0px 7px #00000020, 0px 0px 36px #00000080;
             }
 
             .logo {
                 animation: logoAnimation 1s linear infinite alternate;
                 object-fit: cover;
                 aspect-ratio: 1.5;
+                margin-top: -100px;
             }
 
             @keyframes logoAnimation {

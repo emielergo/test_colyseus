@@ -6,7 +6,10 @@ export class Gui1V1Scene extends LitElement {
     static styles = [
         css`
             :host {
-                display: block;
+                justify-content: space-between;
+                display: flex;
+                width: 100%;
+                flex-direction: column;
             }
 
             .top-bar {
@@ -15,15 +18,88 @@ export class Gui1V1Scene extends LitElement {
                 grid-gap: 16px;
             }
 
+            .bottom-bar {
+                display: flex;
+                grid-gap: 16px;
+                justify-content: center;
+                position: relative;
+            }
+            .side-bar {
+                margin-left: auto;
+                margin-right: 0px;
+                height: 100%;
+                width: 48px;
+                align-items: center;
+                display: flex;
+            }
+
             .right-align {
                 margin-left: auto;
                 margin-right: 0;
+            }
+
+            .moves {
+                pointer-events: all;
+                top: calc(-100% - 8px);
+                display: flex;
+                grid-gap: 8px;
+                flex-direction: column;
+            }
+
+            .moves .move {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                cursor: pointer;
+                display: flex;
+                border-radius: 8px;
+                border: 1px solid black;
             }
         `
     ];
 
     private energy: Number = 0;
     private crystals: Number = 0;
+    private selection = {
+        axie: undefined,
+        move: undefined
+    };
+
+    private axies = {
+        "puffy": {
+            active: false,
+            moves: [
+                {'img': '/public/puffy-puff.png', 'action': '', cost: ''},
+                {'img': '/public/puffy-baby.png', 'action': '', cost: ''},
+                {'img': '/public/puffy-jellytackle.png', 'action': '', cost: ''},
+                {'img': '/public/puffy-little crab.png', 'action': '', cost: ''},
+                {'img': '/public/puffy-puff-tail.png', 'action': '', cost: ''},
+                {'img': '/public/puffy-tiny-dino.png', 'action': '', cost: ''}
+            ]
+        },
+        "olek": {
+            active: false,
+            moves: [
+                {'img': '/public/olek-beetroot.png', 'action': '', cost: ''},
+                {'img': '/public/olek-hidden-ears.png', 'action': '', cost: ''},
+                {'img': '/public/olek-risky-trunk.png', 'action': '', cost: ''},
+                {'img': '/public/olek-rusty-helm.png', 'action': '', cost: ''},
+                {'img': '/public/olek-sprout.png', 'action': '', cost: ''},
+                {'img': '/public/olek-succulent.png', 'action': '', cost: ''}
+            ]
+        },
+        "bubba": {
+            active: false,
+            moves: [
+                {'img': '/public/bubba-buba-brush.png', 'action': '', cost: ''},
+                {'img': '/public/bubba-forest-hero.png', 'action': '', cost: ''},
+                {'img': '/public/bubba-foxy-mouth.png', 'action': '', cost: ''},
+                {'img': '/public/bubba-persimmon.png', 'action': '', cost: ''},
+                {'img': '/public/bubba-foxy.png', 'action': '', cost: ''},
+                {'img': '/public/bubba-sparky.png', 'action': '', cost: ''}
+            ]
+        }
+    }
 
     constructor() {
         super();
@@ -39,6 +115,46 @@ export class Gui1V1Scene extends LitElement {
 
     returnToStartScreen() {
         window.$game_state.dispatchEvent('1v1.back');
+    }
+
+    selectAxie(axie) {
+        if (this.selection.axie == axie)
+            this.selection.axie = null;
+        else
+            this.selection.axie = axie;
+        this.selection.move = null;
+        this.update();
+    }
+
+    selectMove(move) {
+        if (this.selection.move == move)
+            this.selection.move = move;
+        else
+            this.selection.move = move;
+        this.update();
+    }
+
+    renderAxies() {
+        return html`
+            ${Object.keys(this.axies).map(key => {
+                let axie = this.axies[key];
+                return html`
+                <gui-axie-preview @click=${() => this.selectAxie(axie)} meshName="${key}" ?active=${axie == this.selection.axie}>
+                </gui-axie-preview>`
+            })}
+        `
+    }
+
+    renderMoves() {
+
+        if (!this.selection.axie)
+            return html``;
+        return html`
+            ${    
+                this.selection.axie.moves.map(move => html`
+                    <button @click=${() => this.selectMove(move)} class="move ${this.selection.move == move ? 'active' : ''}"><img src=${move.img} width="48" height="48" /></button>
+            ` )}
+        `
     }
 
     render() {
@@ -60,8 +176,12 @@ export class Gui1V1Scene extends LitElement {
                 </gui-amount-display>
                 <gui-button class="right-align" @click="${this.returnToStartScreen}">Back</gui-button>
         </div>
+        <div class="side-bar">
+            <div class="moves">
+                ${this.renderMoves()}
+            </div>   </div>
         <div class="bottom-bar">
-            <gui-axie-preview meshName="olek"></gui-axie-preview>
+            ${this.renderAxies()}                     
         </div>
         `;
     }

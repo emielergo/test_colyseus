@@ -137,6 +137,13 @@ export default class Game {
         // axes.xAxis.parent = this.olek.mesh;
         // axes.yAxis.parent = this.olek.mesh;
         // axes.zAxis.parent = this.olek.mesh;
+
+        setInterval(() => {
+            if (!this.enemy_session_id)
+                return;
+            this.energy++;
+            setEnergyText(this);
+        }, 1000/3);
         
     }
 
@@ -516,8 +523,8 @@ export default class Game {
             }
             frame++;
             if (frame % 20 == 0 && this.enemy_session_id) {
-                this.energy++;
-                setEnergyText(this);
+                // this.energy++;
+                // setEnergyText(this);
             }
         })
 

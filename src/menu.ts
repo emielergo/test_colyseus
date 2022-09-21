@@ -49,10 +49,10 @@ export default class Menu {
 
         createSkyBox(this._scene);
 
-        this.initLoadingMessageBox();
-        this.initErrorMessageBox();
-        this.swapLoadingMessageBox(false);
-        this.swapErrorMessageBox(false);
+        //this.initLoadingMessageBox();
+        //this.initErrorMessageBox();
+        //this.swapLoadingMessageBox(false);
+        //this.swapErrorMessageBox(false);
 
         this.doRender();
     }
@@ -68,17 +68,17 @@ export default class Menu {
         try {
             switch (method) {
                 case "create":
-                    this.swapLoadingMessageBox(true);
+                    window.$game_state.dispatchEvent('start.loading');
                     game = new Game(this._canvas, this._engine, await this._colyseus.create(ROOM_NAME));
                     game.player_number = 1;
                     break;
                 case "join":
-                    this.swapLoadingMessageBox(true);
+                    window.$game_state.dispatchEvent('start.loading');
                     game = new Game(this._canvas, this._engine, await this._colyseus.join(ROOM_NAME));
                     game.player_number = 2;
                     break;
                 default:
-                    this.swapLoadingMessageBox(true);
+                    window.$game_state.dispatchEvent('start.loading');
                     game = new Game(this._canvas, this._engine, await this._colyseus.joinOrCreate(ROOM_NAME));
             }
             this._scene.dispose();
@@ -87,7 +87,7 @@ export default class Menu {
             console.log(error.message);
             console.log(error.stack);
             this._errorMessage.text = error.message;
-            this.swapErrorMessageBox(true);
+            //this.swapErrorMessageBox(true);
         }
     }
 
@@ -139,7 +139,7 @@ export default class Menu {
         button.paddingBottom = "20px";
         button.onPointerClickObservable.add(() => {
             this.swapControls(true);
-            this.swapLoadingMessageBox(false);
+            //this.swapLoadingMessageBox(false);
             this.swapErrorMessageBox(false);
         });
         errorMessageBox.addControl(button);
@@ -154,7 +154,7 @@ export default class Menu {
     }
 
     private swapErrorMessageBox(isEnabled: boolean) {
-        this.swapLoadingMessageBox(false);
+        //this.swapLoadingMessageBox(false);
 
         const messageBox = this._advancedTexture.getControlByName("errorMessageBox");
         this._advancedTexture.getControlByName("tryAgainButton").isEnabled = true;
