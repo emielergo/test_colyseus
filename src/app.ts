@@ -3,6 +3,7 @@ import './index.scss'
 // import UI Components
 import './UI/gui'
 import Menu from './menu'
+import { initState } from './state';
 
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -11,5 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Create the scene.
     menu.createMenu();
+    initState();
+    document.querySelector('.game-ui').innerHTML = '<gui-main></gui-main>';
     menu.wireButtons();
 });

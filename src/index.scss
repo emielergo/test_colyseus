@@ -3,21 +3,16 @@
     --ui-spacing: 32px;
     --ui-roundness: 8px;
     --ui-easing-bounce: cubic-bezier(0.63, 0.46, 0.25, 1.54);
+    --ui-palette-orange: #f1af3a;
+    --ui-palette-yellow: #fffb5e;
+    --ui-palette-blue: #074fcf;
+    --ui-palette-lightblue: #378dfc;
 }
 
 .game-ui {
     position: absolute;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--ui-spacing);
     inset: 0 0 0 0;
     pointer-events: none;
-
-    .start-menu {
-        display: flex;
-        flex-direction: column;
-        grid-gap: var(--ui-spacing);
-    }
 
 }

@@ -29,19 +29,15 @@ export default class Menu {
 
     //wire up the UI buttons to the create / join functions
     wireButtons(): void {
-        let menu = document.querySelector('[data-start-menu]');
-        if (!menu) {
-            console.log('menu ui not found');
-            throw new Error('menu ui nnot found: no element found with "data-menu" attribute');
-        }
-        menu.querySelectorAll('[data-menu-action]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                if (!(e.target instanceof Element))
-                    return;
-                let action = ((e.target) as Element).dataset.menuAction;
-                this.createGame(action);
-            })
-        });
+        
+            window.$game_state.addEventListener('start.create', _ => {
+                this.createGame('create');
+                window.$game_state.commitState('scene', '1v1');
+            });
+            window.$game_state.addEventListener('start.join', _ => {
+                this.createGame('join');
+                window.$game_state.commitState('scene', '1v1');
+            });
     }
 
     createMenu(): void {
@@ -52,24 +48,6 @@ export default class Menu {
         this._advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
         createSkyBox(this._scene);
-
-        // Colyseus logo
-        const controlBox = new GUI.Rectangle("controlBox");
-        controlBox.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        controlBox.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        controlBox.height = "100%";
-        controlBox.width = "40%";
-        controlBox.thickness = 0;
-
-        const logo = new GUI.Image("ColyseusLogo", "./public/colyseus.png");
-        logo.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        logo.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        logo.height = "40%";
-        logo.paddingTop = "10px";
-        logo.stretch = GUI.Image.STRETCH_UNIFORM;
-        controlBox.addControl(logo);
-
-        this._advancedTexture.addControl(controlBox);
 
         this.initLoadingMessageBox();
         this.initErrorMessageBox();
