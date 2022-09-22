@@ -65,7 +65,7 @@ export default class Game {
         playerInfo.text = `Room name: ${this.room.name}      Player ${this.player_number}: ${this.room.sessionId}`.toUpperCase();
         playerInfo.color = "#eaeaea";
         playerInfo.fontFamily = "Roboto";
-        playerInfo.fontSize = 20;
+        playerInfo.fontSize = 8;
         playerInfo.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
         playerInfo.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
         playerInfo.paddingTop = "10px";
@@ -83,7 +83,7 @@ export default class Game {
         this.energy_text_block.paddingTop = "30px";
         this.energy_text_block.paddingLeft = "10px";
         this.energy_text_block.outlineColor = "#000000";
-        advancedTexture.addControl(this.energy_text_block);
+        //advancedTexture.addControl(this.energy_text_block);
 
         this.crystal_text_block = new GUI.TextBlock("crystal");
         this.crystal_text_block.text = `Crystals: ${this.crystal}`.toUpperCase();
@@ -95,23 +95,16 @@ export default class Game {
         this.crystal_text_block.paddingTop = "50px";
         this.crystal_text_block.paddingLeft = "10px";
         this.crystal_text_block.outlineColor = "#000000";
-        advancedTexture.addControl(this.crystal_text_block);
+        //advancedTexture.addControl(this.crystal_text_block);
+        this.wireButtons();
+    }
 
-        // back to menu button
-        const button = GUI.Button.CreateImageWithCenterTextButton("back", "<- BACK", "./public/btn-default.png");
-        button.width = "100px";
-        button.height = "50px";
-        button.fontFamily = "Roboto";
-        button.thickness = 0;
-        button.color = "#f8f8f8";
-        button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        button.paddingTop = "10px";
-        button.paddingRight = "10px";
-        button.onPointerClickObservable.add(async () => {
-            await this.room.leave(true);
+    wireButtons(): void {
+        window.$game_state.addEventListener('1v1.back', _ => {
+            this.room.leave(true).then(_ => {
+                window.$game_state.commitState('scene', 'start');
+            });
         });
-        advancedTexture.addControl(button);
     }
 
     async initWorld(): Promise<void> {
@@ -144,6 +137,14 @@ export default class Game {
         // axes.xAxis.parent = this.olek.mesh;
         // axes.yAxis.parent = this.olek.mesh;
         // axes.zAxis.parent = this.olek.mesh;
+
+        setInterval(() => {
+            if (!this.enemy_session_id)
+                return;
+            this.energy++;
+            setEnergyText(this);
+        }, 1000/3);
+        
     }
 
     initPlayers(): void {
@@ -267,6 +268,7 @@ export default class Game {
         const axie_names = ["puffy", "bubba", "olek"];
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
+                // drop axie mesh logic
                 case BABYLON.PointerEventTypes.POINTERPICK:
                     if (pointerInfo.pickInfo.hit) {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
@@ -312,6 +314,7 @@ export default class Game {
                             } else if (clicked_mesh_id === "olek") {
                                 starter = this.olek;
                             }
+                            // array of all axie meshes, unhide selected?
                             this.selectedAxie = starter.clone();
                             this.selectedAxie.setTarget(this.target_bunker);
                             this.selectedAxie.active_cards = starter.active_cards;
@@ -516,8 +519,8 @@ export default class Game {
             }
             frame++;
             if (frame % 20 == 0 && this.enemy_session_id) {
-                this.energy++;
-                setEnergyText(this);
+                // this.energy++;
+                // setEnergyText(this);
             }
         })
 
