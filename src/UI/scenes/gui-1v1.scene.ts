@@ -62,7 +62,7 @@ export class Gui1V1Scene extends LitElement {
                 cursor: pointer;
                 display: flex;
                 border-radius: 8px;
-                border: 2px solid black;                
+                border: 2px solid black;
             }
 
             .move.active {
@@ -142,7 +142,6 @@ export class Gui1V1Scene extends LitElement {
             this.selection.axie = null;
         else
             this.selection.axie = axie;
-        this.selection.move = null;
         if (this.selection.axie)
             this.renderRoot.querySelector('.moves')?.classList.add('active');
         else
@@ -156,15 +155,10 @@ export class Gui1V1Scene extends LitElement {
         else
             this.selection.move = move;
         this.update();
-        window.$game_state.dispatchEvent('1v1.place', {
+        window.$game_state.dispatchEvent('1v1.move', {
             axie: this.selection.axie,
             move: this.selection.move
         })
-
-        console.log({
-            axie: this.selection.axie,
-            move: this.selection.move
-        });
     }
 
     renderAxies() {
@@ -210,7 +204,7 @@ export class Gui1V1Scene extends LitElement {
                 ${this.renderMoves()}
             </div>   </div>
         <div class="bottom-bar">
-            ${this.renderAxies()}                     
+            ${this.renderAxies()}
         </div>
         `;
     }
