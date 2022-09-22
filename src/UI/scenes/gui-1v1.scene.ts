@@ -62,7 +62,7 @@ export class Gui1V1Scene extends LitElement {
                 cursor: pointer;
                 display: flex;
                 border-radius: 8px;
-                border: 2px solid black;                
+                border: 2px solid black;
             }
 
             .move.active {
@@ -210,7 +210,7 @@ export class Gui1V1Scene extends LitElement {
                 ${this.renderMoves()}
             </div>   </div>
         <div class="bottom-bar">
-            ${this.renderAxies()}                     
+            ${this.renderAxies()}
         </div>
         `;
     }

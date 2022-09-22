@@ -4,7 +4,7 @@ import * as GUI from 'babylonjs-gui';
 import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
-import Menu, { MoveSetMenu } from "./menu";
+import Menu from "./menu";
 import { createBubba, createBulletMesh, createBunker, createButton, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
@@ -14,7 +14,6 @@ export default class Game {
     private engine: BABYLON.Engine;
     private scene!: BABYLON.Scene;
     private room: Room<any>;
-    private MoveSetMenu!: MoveSetMenu;
     private camera!: BABYLON.ArcRotateCamera;
     private light!: BABYLON.Light;
     private render_loop: Boolean = true;
@@ -26,7 +25,6 @@ export default class Game {
     private crystal_text_block!: GUI.TextBlock;
     private enemy_session_id!: String;
     private isHoveringOverOwnDropZone: Boolean = false;
-    private show_moveset_menu: Boolean = false;
     private selectedAxie!: Axie;
     private cloned_counter = 0;
 
@@ -100,11 +98,36 @@ export default class Game {
     }
 
     wireButtons(): void {
-        window.$game_state.addEventListener('1v1.back', (_: any) => {
+        window.$game_state.addEventListener('1v1.back', () => {
             this.room.leave(true).then(_ => {
                 window.$game_state.commitState('scene', 'start');
             });
         });
+
+        window.$game_state.addEventListener('1v1.move', (event) => {
+            if (this.selectedAxie && this.selectedAxie.mesh) {
+                this.selectedAxie.mesh.dispose();
+            }
+
+            let starter;
+            if (event.detail.axie.id === "puffy") {
+                starter = this.puffy;
+            } else if (event.detail.axie.id === "bubba") {
+                starter = this.bubba;
+            } else if (event.detail.axie.id === "olek") {
+                starter = this.olek;
+            }
+            // array of all axie meshes, unhide selected?
+            this.selectedAxie = starter.clone();
+            this.selectedAxie.setTarget(this.target_bunker);
+            this.selectedAxie.active_cards = starter.active_cards;
+            this.selectedAxie.cards_list = starter.cards_list;
+            this.selectedAxie.setHp(320);
+            this.selectedAxie.setDamageAndRangeFromCards();
+            this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
+            this.selectedAxie.mesh.isPickable = false;
+            this.selectedAxie.level =1;
+        })
     }
 
     async initWorld(): Promise<void> {
@@ -307,38 +330,18 @@ export default class Game {
                                 }
                             }
                         } else if (!axie_names.includes(clicked_mesh_id) && axie_names.includes(clicked_mesh_id.replace(/\./g, ''))) {
-                            this.show_moveset_menu = true;
+                            // this.show_moveset_menu = true;
                         } else if (axie_names.includes(clicked_mesh_id)) {
-                            if (this.selectedAxie && this.selectedAxie.mesh) {
-                                this.selectedAxie.mesh.dispose();
-                            }
 
-                            let starter;
-                            if (clicked_mesh_id === "puffy") {
-                                starter = this.puffy;
-                            } else if (clicked_mesh_id === "bubba") {
-                                starter = this.bubba;
-                            } else if (clicked_mesh_id === "olek") {
-                                starter = this.olek;
-                            }
-                            // array of all axie meshes, unhide selected?
-                            this.selectedAxie = starter.clone();
-                            this.selectedAxie.setTarget(this.target_bunker);
-                            this.selectedAxie.active_cards = starter.active_cards;
-                            this.selectedAxie.cards_list = starter.cards_list;
-                            this.selectedAxie.setHp(320);
-                            this.selectedAxie.setDamageAndRangeFromCards();
-                            this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
-                            this.selectedAxie.mesh.isPickable = false;
-                            this.MoveSetMenu.setMoveSetImages(this.selectedAxie.skin);
-                            this.MoveSetMenu.setSelectedCards(this.selectedAxie);
                         }
                     }
                     break;
 
                 case BABYLON.PointerEventTypes.POINTERMOVE:
                     if (this.selectedAxie && this.selectedAxie.mesh) {
+                        // console.log(this.selectedAxie.mesh.isEnabled);
                         if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
+                            this.selectedAxie.mesh.setEnabled(true);
                             var target = BABYLON.Vector3.Unproject(
                                 new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
                                 canvas_client_rect.width,
@@ -352,7 +355,7 @@ export default class Game {
                             target.z = this.camera.position.z - target.z;
                             this.selectedAxie.mesh.position = getZeroPlaneVector(this.camera.position, target);
                         } else {
-                            this.selectedAxie.mesh.position = new BABYLON.Vector3(0, -100, 0);
+                            this.selectedAxie.mesh.setEnabled(false);
                         }
                     }
             }
@@ -528,10 +531,6 @@ export default class Game {
 
     }
 
-    createMoveSetMenu(): void {
-        this.MoveSetMenu = new MoveSetMenu(this.engine, this);
-    }
-
     async bootstrap(): Promise<void> {
         this.scene = new BABYLON.Scene(this.engine);
         this.light = new BABYLON.HemisphericLight("pointLight", new BABYLON.Vector3(), this.scene);
@@ -544,7 +543,6 @@ export default class Game {
         this.initPlayers();
         this.setObservables();
         this.setRenderLoopObservable();
-        this.createMoveSetMenu();
 
 
         this.doRender();
@@ -572,10 +570,6 @@ export default class Game {
         // Run the render loop.
         this.engine.runRenderLoop(() => {
             this.scene.render();
-
-            if (this.selectedAxie && this.selectedAxie.mesh) {
-                this.MoveSetMenu.scene.render();
-            }
         });
 
         // The canvas/window resize event handler.
