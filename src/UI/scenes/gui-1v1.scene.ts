@@ -69,6 +69,11 @@ export class Gui1V1Scene extends LitElement {
                 border-color: white;
             }
 
+            .move:disabled:not(.active) {
+                filter: opacity(0.5);
+                cursor: unset;
+            }
+
             .moves .move.hidden {
                 display: none;
             }
@@ -87,36 +92,36 @@ export class Gui1V1Scene extends LitElement {
             id: "puffy",
             active: false,
             moves: [
-                {'img': '/public/puffy-puff.png', 'action': '', cost: ''},
-                {'img': '/public/puffy-baby.png', 'action': '', cost: ''},
-                {'img': '/public/puffy-jellytackle.png', 'action': '', cost: ''},
-                {'img': '/public/puffy-little crab.png', 'action': '', cost: ''},
-                {'img': '/public/puffy-puff-tail.png', 'action': '', cost: ''},
-                {'img': '/public/puffy-tiny-dino.png', 'action': '', cost: ''}
+                { active: false, 'img': '/public/puffy-puff.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/puffy-baby.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/puffy-jellytackle.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/puffy-little crab.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/puffy-puff-tail.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/puffy-tiny-dino.png', 'action': '', cost: 10}
             ]
         },
         "olek": {
             id: "olek",
             active: false,
             moves: [
-                {'img': '/public/olek-beetroot.png', 'action': '', cost: ''},
-                {'img': '/public/olek-hidden-ears.png', 'action': '', cost: ''},
-                {'img': '/public/olek-risky-trunk.png', 'action': '', cost: ''},
-                {'img': '/public/olek-rusty-helm.png', 'action': '', cost: ''},
-                {'img': '/public/olek-sprout.png', 'action': '', cost: ''},
-                {'img': '/public/olek-succulent.png', 'action': '', cost: ''}
+                { active: false, 'img': '/public/olek-beetroot.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/olek-hidden-ears.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/olek-risky-trunk.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/olek-rusty-helm.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/olek-sprout.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/olek-succulent.png', 'action': '', cost: 10}
             ]
         },
         "bubba": {
             id: "bubba",
             active: false,
             moves: [
-                {'img': '/public/bubba-buba-brush.png', 'action': '', cost: ''},
-                {'img': '/public/bubba-forest-hero.png', 'action': '', cost: ''},
-                {'img': '/public/bubba-foxy-mouth.png', 'action': '', cost: ''},
-                {'img': '/public/bubba-persimmon.png', 'action': '', cost: ''},
-                {'img': '/public/bubba-foxy.png', 'action': '', cost: ''},
-                {'img': '/public/bubba-sparky.png', 'action': '', cost: ''}
+                { active: false, 'img': '/public/bubba-buba-brush.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/bubba-forest-hero.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/bubba-foxy-mouth.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/bubba-persimmon.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/bubba-foxy.png', 'action': '', cost: 10},
+                { active: false, 'img': '/public/bubba-sparky.png', 'action': '', cost: 10}
             ]
         }
     }
@@ -149,15 +154,14 @@ export class Gui1V1Scene extends LitElement {
         setTimeout(this.update.bind(this), 100);
     }
 
-    selectMove(move) {
-        if (this.selection.move == move)
-            this.selection.move = move;
-        else
-            this.selection.move = move;
+    activateMove(move) {
+        debugger;
+            if (this.crystals >= move.cost)
+                this.selection.axie.moves.find(m => m == move).active = true;
         this.update();
         window.$game_state.dispatchEvent('1v1.move', {
             axie: this.selection.axie,
-            move: this.selection.move
+            move: move
         })
     }
 
@@ -175,7 +179,7 @@ export class Gui1V1Scene extends LitElement {
     renderMoves() {
         return html`
                 ${Object.keys(this.axies).map(key => this.axies[key].moves.map(move => html`
-                    <button @click=${() => this.selectMove(move)} class="move ${this.selection.move == move ? 'active' : ''} ${this.selection.axie == this.axies[key] ? '' : 'hidden'}"><img draggable="false" src=${move.img} width="48" height="48" /></button>
+                    <button @click=${() => this.activateMove(move)} class="move ${move.active ? 'active' : ''} ${this.selection.axie == this.axies[key] ? '' : 'hidden'}" ?disabled=${move.cost > this.crystals}><img draggable="false" src=${move.img} width="48" height="48" /></button>
                 `))}
                 `
     }
