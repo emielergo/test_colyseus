@@ -271,8 +271,8 @@ export default class Game {
                     if (pointerInfo.pickInfo.hit) {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
                         if (clicked_mesh_id === this.own_drop_zone.id) {
-                            if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
-                                // if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
+                            // if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
+                                if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
@@ -304,23 +304,19 @@ export default class Game {
                                 this.selectedAxie.mesh.dispose();
                             }
 
-                            let hp;
                             let starter;
                             if (clicked_mesh_id === "puffy") {
                                 starter = this.puffy;
-                                hp = 100;
                             } else if (clicked_mesh_id === "bubba") {
                                 starter = this.bubba;
-                                hp = 100;
                             } else if (clicked_mesh_id === "olek") {
                                 starter = this.olek;
-                                hp = 100;
                             }
                             this.selectedAxie = starter.clone();
                             this.selectedAxie.setTarget(this.target_bunker);
                             this.selectedAxie.active_cards = starter.active_cards;
                             this.selectedAxie.cards_list = starter.cards_list;
-                            this.selectedAxie.setHp(hp);
+                            this.selectedAxie.setHp(320);
                             this.selectedAxie.setDamageAndRangeFromCards();
                             this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
                             this.selectedAxie.mesh.isPickable = false;
@@ -373,8 +369,8 @@ export default class Game {
             const remaining_bullets = [];
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
-            // if (frame % 300 == 0 && this.enemy_session_id) {
-            if (frame % 300 == 0) { // TESTING
+            if (frame % 300 == 0 && this.enemy_session_id) {
+            // if (frame % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;

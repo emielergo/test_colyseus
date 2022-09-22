@@ -61,9 +61,12 @@ export var createPuffy = async function createPuffy(scene) {
 
     const puffy_axie = new Axie(puffy.id, 0, 0, 0, 0, 'puffy', puffy, null);
 
-    for (let i = 0; i < axie_move_source_by_id_map.get('puffy').length; i++) {
-        puffy_axie.cards_list.push(new Card(i, i * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('puffy')[i]));
-    }
+    puffy_axie.cards_list.push(new Card('mouth', 0, 60, 0, 30, null, axie_move_source_by_id_map.get('puffy')[0]));
+    puffy_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'baby buff', axie_move_source_by_id_map.get('puffy')[1]));
+    puffy_axie.cards_list.push(new Card('ears', 5, 70, 0, 0, null, axie_move_source_by_id_map.get('puffy')[2]));
+    puffy_axie.cards_list.push(new Card('horns', 0, 65, 0, 15, null, axie_move_source_by_id_map.get('puffy')[3]));
+    puffy_axie.cards_list.push(new Card('back', 0, 80, 0, 0, null, axie_move_source_by_id_map.get('puffy')[4]));
+    puffy_axie.cards_list.push(new Card('tail', 5, 63, 0, 0, null, axie_move_source_by_id_map.get('puffy')[5]));
 
     return puffy_axie;
 }
@@ -85,9 +88,13 @@ export var createBubba = async function createBubba(scene) {
 
     const bubba_axie = new Axie(bubba.id, 0, 0, 0, 0, 'bubba', bubba, null);
 
-    for (let i = 0; i < axie_move_source_by_id_map.get('bubba').length; i++) {
-        bubba_axie.cards_list.push(new Card(i, i * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('bubba')[i]));
-    }
+    bubba_axie.cards_list.push(new Card('mouth', 0, 65, 0, 0, null, axie_move_source_by_id_map.get('bubba')[0]));
+    bubba_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'rage buff', axie_move_source_by_id_map.get('bubba')[1]));
+    bubba_axie.cards_list.push(new Card('ears', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[2]));
+    bubba_axie.cards_list.push(new Card('horns', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[3]));
+    bubba_axie.cards_list.push(new Card('back', 0, 120, 0, 0, null, axie_move_source_by_id_map.get('bubba')[4]));
+    bubba_axie.cards_list.push(new Card('tail', 0, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[5]));
+
 
     return bubba_axie;
 }
@@ -108,9 +115,13 @@ export var createOlek = async function createOlek(scene) {
 
     const olek_axie = new Axie(olek.id, 0, 0, 0, 0, 'olek', olek, null);
 
-    for (let i = 0; i < axie_move_source_by_id_map.get('olek').length; i++) {
-        olek_axie.cards_list.push(new Card(i, (i + 1) * 5, 25 - i * 5, 0, null, axie_move_source_by_id_map.get('olek')[i]));
-    }
+    //TODO: This should really be different
+    olek_axie.cards_list.push(new Card('mouth', 0, 60, 0, 0, null, axie_move_source_by_id_map.get('olek')[0]));
+    olek_axie.cards_list.push(new Card('eyes', 0, 0, 0, 50, 'heal allies', axie_move_source_by_id_map.get('olek')[1]));
+    olek_axie.cards_list.push(new Card('ears', 0, 0, 60, 0, null, axie_move_source_by_id_map.get('olek')[2]));
+    olek_axie.cards_list.push(new Card('horns', 0, 40, 40, 0, null, axie_move_source_by_id_map.get('olek')[3]));
+    olek_axie.cards_list.push(new Card('back', 0, 0, 50, 0, null, axie_move_source_by_id_map.get('olek')[4]));
+    olek_axie.cards_list.push(new Card('tail', 0, 0, 40, 40, null, axie_move_source_by_id_map.get('olek')[5]));
 
     return olek_axie;
 }
