@@ -18,11 +18,13 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
+    "d3-delaunay": "^6.0.2",
     "lit": "^2.3.1"
   },
   "devDependencies": {
     "@babylonjs/core": "preview",
     "@babylonjs/inspector": "preview",
+    "@types/d3-delaunay": "^6.0.1",
     "@types/node": "^17.0.12",
     "babylonjs": "5.16.0",
     "babylonjs-gui": "5.16.0",

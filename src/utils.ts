@@ -4,7 +4,8 @@ import * as GUI from 'babylonjs-gui';
 import { Button } from "babylonjs-gui";
 import Card from "./card";
 import { int } from "babylonjs";
-import "@babylonjs/loaders/glTF"
+import "@babylonjs/loaders/glTF";
+import { Delaunay } from 'd3-delaunay';
 
 export const axie_move_source_by_id_map = new Map<String, string[]>();
 export var type_map: Map<String, int> = new Map<String, int>([["mouth", 0], ["eyes", 1], ["ears", 2], ["horn", 3], ["back", 4], ["tail", 5]]);
@@ -206,3 +207,48 @@ export var setCrystalText = function setCrystalText(game) {
     //game.crystal_text_block.text = `Crystal: ${game.crystal}`.toUpperCase();
 }
 
+
+export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 1, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52)) {
+    let points = [];
+    for (let y = 0; y < mapSize.y; y++) {
+      for (let x = 0; x < mapSize.x; x++) {
+  
+        points.push([
+          (x + Math.random()),
+          (y + Math.random()),
+        ])
+  
+      }
+    }
+    let delaunay = Delaunay.from(points);
+    let voronoi = delaunay.voronoi([0,0,mapSize.x,mapSize.y]);
+  
+    let material = new BABYLON.StandardMaterial('terrain', scene);
+    material.diffuseColor = color;
+    material.ambientColor = new BABYLON.Color3(0.5,0.5,0.5);
+    material.specularPower = 100;
+    material.specularColor = color;
+  
+    for (var polygon of voronoi.cellPolygons()) {
+      let x = points[polygon.index][0];
+      let y = points[polygon.index][1];
+      let baseHeight = minHeight * 1000;
+      if ((x > 2 && x < mapSize.x - 2) && (y > 2 && y < mapSize.y - 2))
+      continue;
+      if ((x > 1 && x < mapSize.x - 1) && (y > 1 && y < mapSize.y - 1))
+        baseHeight = baseHeight / 3;
+      
+      // TODO: add terrain to root object
+      let mesh = BABYLON.MeshBuilder.ExtrudeShape('polygon' + polygon.index, {
+        shape: polygon.map(p => new BABYLON.Vector3(p[0], p[1], 0)),
+        path: [new BABYLON.Vector3(x,0,y), new BABYLON.Vector3(x, Math.random() * baseHeight + baseHeight, y)],
+        updatable: false,
+        closeShape: true,
+        cap: BABYLON.Mesh.CAP_ALL,
+        scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
+      }, scene);
+      mesh.material = material;
+      mesh.scaling = new BABYLON.Vector3(0.001,0.001,0.001);
+    }
+  
+  }
