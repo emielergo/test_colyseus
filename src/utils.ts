@@ -130,21 +130,6 @@ export var createOlek = async function createOlek(scene) {
     return olek_axie;
 }
 
-// async function createMeshFromBabylonFile(name, scene){
-//     let mesh;
-//     await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "name.babylon").then((result) => {
-//         mesh = scene.getMeshByName("name");
-//         result.meshes.forEach(mesh => {
-//             console.log(mesh.name);
-//             if (mesh.id != "id") {
-//                 mesh.parent = mesh;
-//             }
-//         })
-//     });
-
-//     return mesh;
-// }
-
 export var createBunker = function createBunker(scene) {
     let bunker_mesh = BABYLON.MeshBuilder.CreateBox("bunker_mesh", { width: 1, height: 2, depth: 2 })
     let bunker_material = new BABYLON.StandardMaterial("bunker_material", scene);
@@ -243,6 +228,12 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     material.specularPower = 100;
     material.specularColor = color;
 
+    let second_material = new BABYLON.StandardMaterial('terrain', scene);
+    second_material.diffuseColor =  new BABYLON.Color3(0.5, 0.6, 0.7);
+    second_material.ambientColor = new BABYLON.Color3(0.5, 0.6, 0.8);
+    second_material.specularPower = 100;
+    second_material.specularColor = color;
+
     for (var polygon of voronoi.cellPolygons()) {
         let x = points[polygon.index][0];
         let y = points[polygon.index][1];
@@ -261,7 +252,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
             cap: BABYLON.Mesh.CAP_ALL,
             scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
         }, scene);
-        mesh.material = material;
+        mesh.material = Math.random() < 0.5 ? material : second_material;
         mesh.scaling = new BABYLON.Vector3(0.00082, 0.001, 0.000835);
         mesh.parent = ground;
         mesh.position.x = 20;

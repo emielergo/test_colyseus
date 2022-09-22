@@ -155,7 +155,6 @@ export class Gui1V1Scene extends LitElement {
     }
 
     activateMove(move) {
-        debugger;
             if (this.crystals >= move.cost)
                 this.selection.axie.moves.find(m => m == move).active = true;
         this.update();
