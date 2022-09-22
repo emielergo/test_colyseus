@@ -44,6 +44,15 @@ export class Gui1V1Scene extends LitElement {
                 display: flex;
                 grid-gap: 8px;
                 flex-direction: column;
+                transition: 400ms all ease;
+                transform: translateX(200%);
+                opacity: 0;
+            }
+
+            .moves.active {
+                transition: 400ms all ease;
+                transform: translateX(0);
+                opacity: 1;
             }
 
             .moves .move {
@@ -53,7 +62,15 @@ export class Gui1V1Scene extends LitElement {
                 cursor: pointer;
                 display: flex;
                 border-radius: 8px;
-                border: 1px solid black;
+                border: 2px solid black;                
+            }
+
+            .move.active {
+                border-color: white;
+            }
+
+            .moves .move.hidden {
+                display: none;
             }
         `
     ];
@@ -67,6 +84,7 @@ export class Gui1V1Scene extends LitElement {
 
     private axies = {
         "puffy": {
+            id: "puffy",
             active: false,
             moves: [
                 {'img': '/public/puffy-puff.png', 'action': '', cost: ''},
@@ -78,6 +96,7 @@ export class Gui1V1Scene extends LitElement {
             ]
         },
         "olek": {
+            id: "olek",
             active: false,
             moves: [
                 {'img': '/public/olek-beetroot.png', 'action': '', cost: ''},
@@ -89,6 +108,7 @@ export class Gui1V1Scene extends LitElement {
             ]
         },
         "bubba": {
+            id: "bubba",
             active: false,
             moves: [
                 {'img': '/public/bubba-buba-brush.png', 'action': '', cost: ''},
@@ -123,7 +143,11 @@ export class Gui1V1Scene extends LitElement {
         else
             this.selection.axie = axie;
         this.selection.move = null;
-        this.update();
+        if (this.selection.axie)
+            this.renderRoot.querySelector('.moves')?.classList.add('active');
+        else
+            this.renderRoot.querySelector('.moves')?.classList.remove('active');
+        setTimeout(this.update.bind(this), 100);
     }
 
     selectMove(move) {
@@ -132,6 +156,15 @@ export class Gui1V1Scene extends LitElement {
         else
             this.selection.move = move;
         this.update();
+        window.$game_state.dispatchEvent('1v1.place', {
+            axie: this.selection.axie,
+            move: this.selection.move
+        })
+
+        console.log({
+            axie: this.selection.axie,
+            move: this.selection.move
+        });
     }
 
     renderAxies() {
@@ -146,15 +179,11 @@ export class Gui1V1Scene extends LitElement {
     }
 
     renderMoves() {
-
-        if (!this.selection.axie)
-            return html``;
         return html`
-            ${    
-                this.selection.axie.moves.map(move => html`
-                    <button @click=${() => this.selectMove(move)} class="move ${this.selection.move == move ? 'active' : ''}"><img src=${move.img} width="48" height="48" /></button>
-            ` )}
-        `
+                ${Object.keys(this.axies).map(key => this.axies[key].moves.map(move => html`
+                    <button @click=${() => this.selectMove(move)} class="move ${this.selection.move == move ? 'active' : ''} ${this.selection.axie == this.axies[key] ? '' : 'hidden'}"><img draggable="false" src=${move.img} width="48" height="48" /></button>
+                `))}
+                `
     }
 
     render() {
