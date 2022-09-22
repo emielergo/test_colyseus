@@ -57,6 +57,7 @@ export var createPuffy = async function createPuffy(scene) {
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
+    puffy.setEnabled(false);
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
@@ -84,6 +85,7 @@ export var createBubba = async function createBubba(scene) {
     });
     bubba.position = new BABYLON.Vector3(0, 1, 180);
     bubba.actionManager = new BABYLON.ActionManager(scene);
+    bubba.setEnabled(false);
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
@@ -111,6 +113,7 @@ export var createOlek = async function createOlek(scene) {
         })
     });
     olek.position = new BABYLON.Vector3(-5, 1, 180);
+    olek.setEnabled(false);
 
     axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
 
