@@ -5,36 +5,36 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu, { MoveSetMenu } from "./menu";
-import { createBubba, createBulletMesh, createBunker, createButton, createHealthBarMesh, createOlek, createPuffy, createSkyBox, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
+import { createBubba, createBulletMesh, createBunker, createButton, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
 
 const GROUND_SIZE = 500;
 
 export default class Game {
     private canvas: HTMLCanvasElement;
     private engine: BABYLON.Engine;
-    private scene: BABYLON.Scene;
+    private scene!: BABYLON.Scene;
     private room: Room<any>;
-    private MoveSetMenu: MoveSetMenu;
-    private camera: BABYLON.ArcRotateCamera;
-    private light: BABYLON.Light;
+    private MoveSetMenu!: MoveSetMenu;
+    private camera!: BABYLON.ArcRotateCamera;
+    private light!: BABYLON.Light;
     private render_loop: Boolean = true;
 
-    public player_number;
+    public player_number!: number;
     public energy = 0;
-    private energy_text_block;
-    public crystal = 0;
-    private crystal_text_block;
-    private enemy_session_id;
+    private energy_text_block!: GUI.TextBlock;
+    public crystals!: number;
+    private crystal_text_block!: GUI.TextBlock;
+    private enemy_session_id!: String;
     private isHoveringOverOwnDropZone: Boolean = false;
     private show_moveset_menu: Boolean = false;
-    private selectedAxie: Axie;
+    private selectedAxie!: Axie;
     private cloned_counter = 0;
 
     // World
-    private ground;
-    private drop_zone_1;
-    private drop_zone_2;
-    private own_drop_zone;
+    private ground!: BABYLON.GroundMesh;
+    private drop_zone_1!: BABYLON.GroundMesh;
+    private drop_zone_2!: BABYLON.GroundMesh;
+    private own_drop_zone!: BABYLON.GroundMesh;
     private drop_zone_axies = [];
     private bullets = [];
 
@@ -44,13 +44,13 @@ export default class Game {
     private axiesByLongitude: Map<number, Axie[]> = new Map<number, Axie[]>();
     private axiesByLatitude: Map<number, Axie[]> = new Map<number, Axie[]>();
 
-    private own_bunker: Bunker;
-    private target_bunker: Bunker;
-    private puffy: Axie;
-    private bubba: Axie;
-    private olek: Axie;
-    private bullet;
-    private health_bar;
+    private own_bunker!: Bunker;
+    private target_bunker!: Bunker;
+    private puffy!: Axie;
+    private bubba!: Axie;
+    private olek!: Axie;
+    private bullet!: BABYLON.Mesh;
+    private health_bar!: BABYLON.Mesh;
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
         this.canvas = canvas;
@@ -85,8 +85,8 @@ export default class Game {
         this.energy_text_block.outlineColor = "#000000";
         //advancedTexture.addControl(this.energy_text_block);
 
-        this.crystal_text_block = new GUI.TextBlock("crystal");
-        this.crystal_text_block.text = `Crystals: ${this.crystal}`.toUpperCase();
+        this.crystal_text_block = new GUI.TextBlock("crystals");
+        this.crystal_text_block.text = `Crystals: ${this.crystals}`.toUpperCase();
         this.crystal_text_block.color = "#eaeaea";
         this.crystal_text_block.fontFamily = "Roboto";
         this.crystal_text_block.fontSize = 20;
@@ -100,7 +100,7 @@ export default class Game {
     }
 
     wireButtons(): void {
-        window.$game_state.addEventListener('1v1.back', _ => {
+        window.$game_state.addEventListener('1v1.back', (_: any) => {
             this.room.leave(true).then(_ => {
                 window.$game_state.commitState('scene', 'start');
             });
@@ -113,7 +113,9 @@ export default class Game {
 
         const groundMat = new BABYLON.StandardMaterial("groundMat");
         groundMat.diffuseColor = new BABYLON.Color3(0, 1, 1);
-        this.ground.material = groundMat; //Place the material property of the ground
+        this.ground.material = groundMat;
+
+        generateMap(this.scene, { x: 360, y: 50 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
 
         this.own_bunker = createBunker(this.scene);
         this.own_bunker.id = this.own_bunker.id + ' ' + this.player_number;
@@ -138,13 +140,6 @@ export default class Game {
         // axes.yAxis.parent = this.olek.mesh;
         // axes.zAxis.parent = this.olek.mesh;
 
-        setInterval(() => {
-            if (!this.enemy_session_id)
-                return;
-            this.energy++;
-            setEnergyText(this);
-        }, 1000/3);
-        
     }
 
     initPlayers(): void {
@@ -154,7 +149,7 @@ export default class Game {
             // Set Player Specific Attributes
             if (isCurrentPlayer) {
                 this.player_number = player.number;
-                this.crystal = 10;
+                this.crystals = player.crystals;
                 setCrystalText(this);
 
                 if (player.number == 1) {
@@ -210,6 +205,13 @@ export default class Game {
                 this.bunkerBySessionId.set(sessionId, this.target_bunker);
             }
 
+            player.onChange((changes: any) => {
+                this.energy = player.energy;
+                this.crystals = player.crystals;
+                setCrystalText(this);
+                setEnergyText(this);
+            });
+
             // Set Global Attributes
             this.axiesByAxieIdBySessionId.set(sessionId, new Map<String, Axie>());
 
@@ -222,7 +224,7 @@ export default class Game {
                     this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
                     this.axieNextPositionByAxieId.set(new_axie.id, new_axie.mesh.position);
 
-                    axie.onChange((changes) => {
+                    axie.onChange((changes: any) => {
                         this.axieNextPositionByAxieId.set(axie.id, new BABYLON.Vector3(axie.x, axie.y, axie.z));
 
                     });
@@ -239,7 +241,7 @@ export default class Game {
             })
 
             player.bunker.onChange((changes) => {
-                changes.forEach(change => {
+                changes.forEach((change: { value: number; }) => {
                     if (!isCurrentPlayer) {
                         // if (this.target_bunker) {
                         //     this.target_bunker.hp = change.value;
@@ -252,11 +254,11 @@ export default class Game {
 
         });
 
-        this.room.state.players.onRemove((player, playerId) => {
-            // this.axiesByAxieIdBySessionId[playerId].forEach(axie =>{ axie.mesh.dispose()});
-            // delete this.axiesByAxieIdBySessionId[playerId];
-            // delete this.playerNextPosition[playerId];
-        });
+        // this.room.state.players.onRemove((player, playerId) => {
+        //     // this.axiesByAxieIdBySessionId[playerId].forEach(axie =>{ axie.mesh.dispose()});
+        //     // delete this.axiesByAxieIdBySessionId[playerId];
+        //     // delete this.playerNextPosition[playerId];
+        // });
 
         this.room.onLeave(code => {
             this.gotoMenu();
@@ -274,7 +276,7 @@ export default class Game {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
                         if (clicked_mesh_id === this.own_drop_zone.id) {
                             // if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
-                                if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
+                            if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
@@ -292,12 +294,17 @@ export default class Game {
                                     clonedAxie.mesh.isPickable = true;
                                     this.drop_zone_axies.push(clonedAxie);
                                     this.energy -= 20;
+                                    this.room.send("updateEnergy", {
+                                        energy_cost: 20
+                                    });
                                     setEnergyText(this);
+                                    this.room.send("updateCrystals", {
+                                        crystals: this.crystals + 1
+                                    });
+                                    setCrystalText(this);
                                 } else {
                                     intersectsMesh = false;
                                 }
-                                this.crystal++;
-                                setCrystalText(this);
                             }
                         } else if (!axie_names.includes(clicked_mesh_id) && axie_names.includes(clicked_mesh_id.replace(/\./g, ''))) {
                             this.show_moveset_menu = true;
@@ -363,8 +370,7 @@ export default class Game {
     }
 
     setRenderLoopObservable(): void {
-        // const axie_speed = this.player_number == 1 ? 0.25 : -0.25;
-        const axie_speed = -0.25;
+        const axie_speed = - 0.25;
         let frame = 0;
         let reload_time = 0;
 
@@ -373,7 +379,7 @@ export default class Game {
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
             if (frame % 300 == 0 && this.enemy_session_id) {
-            // if (frame % 300 == 0) { // TESTING
+                // if (frame % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
@@ -518,10 +524,6 @@ export default class Game {
                 reload_time--;
             }
             frame++;
-            if (frame % 20 == 0 && this.enemy_session_id) {
-                // this.energy++;
-                // setEnergyText(this);
-            }
         })
 
     }

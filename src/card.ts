@@ -5,14 +5,16 @@ export default class Card {
     private range;
     private damage;
     private shield;
+    private heal;
     private status_effects;
 
     private source;
 
-    constructor(type, range, damage, shield, status_effects, source) {
+    constructor(type, range, damage, heal, shield, status_effects, source) {
         this.type = type;
         this.range = range;
         this.damage = damage;
+        this.heal = heal;
         this.shield = shield;
         this.status_effects = status_effects;
         this.source = source;

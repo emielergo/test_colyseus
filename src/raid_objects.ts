@@ -88,8 +88,8 @@ export default class Axie extends RaidObject {
         if (!this.target || !this.isInViewingRangeOfTarget(this.target)) {
 
             if (enemy_axies_by_id && enemy_axies_by_id.size > 0) {
-                let closest_axie;
-                let closest_axie_distance
+                let closest_axie: Axie;
+                let closest_axie_distance: number
                 enemy_axies_by_id.forEach((value, key) => {
                     if (this.isInViewingRangeOfTarget(value)) {
                         if (!closest_axie) {
