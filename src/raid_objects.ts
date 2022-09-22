@@ -84,6 +84,7 @@ export default class Axie extends RaidObject {
     }
 
     locateTarget(enemy_axies_by_id: Map<String, Axie>, enemy_bunker) {
+        // TODO: When a target is found within range -> Break. Any Target within range will do fine!
         if (!this.target || !this.isInViewingRangeOfTarget(this.target)) {
 
             if (enemy_axies_by_id && enemy_axies_by_id.size > 0) {
