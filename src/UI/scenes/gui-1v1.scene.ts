@@ -152,6 +152,9 @@ export class Gui1V1Scene extends LitElement {
         else
             this.renderRoot.querySelector('.moves')?.classList.remove('active');
         setTimeout(this.update.bind(this), 100);
+        window.$game_state.dispatchEvent('1v1.axie', {
+            axie: this.selection.axie,
+        })
     }
 
     activateMove(move) {
@@ -159,7 +162,6 @@ export class Gui1V1Scene extends LitElement {
                 this.selection.axie.moves.find(m => m == move).active = true;
         this.update();
         window.$game_state.dispatchEvent('1v1.move', {
-            axie: this.selection.axie,
             move: move
         })
     }

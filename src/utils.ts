@@ -221,12 +221,12 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     }
     let delaunay = Delaunay.from(points);
     let voronoi = delaunay.voronoi([0, 0, mapSize.x, mapSize.y]);
-
     let material = new BABYLON.StandardMaterial('terrain', scene);
     material.diffuseColor = color;
+    material.spe
     material.ambientColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-    material.specularPower = 100;
-    material.specularColor = color;
+    material.specularPower = 0;
+    //material.specularColor = color;
 
     let second_material = new BABYLON.StandardMaterial('terrain', scene);
     second_material.diffuseColor =  new BABYLON.Color3(0.5, 0.6, 0.7);
