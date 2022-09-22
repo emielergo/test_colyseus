@@ -51,7 +51,7 @@ export class GuiAxiePreview extends LitElement {
     private img: string;
 
     initScene() {
-        const canvas = document.createElement('canvas');
+        let canvas = document.createElement('canvas');
         canvas.height = 100;
         canvas.width = 100;
         canvas.style.visibility = 'hidden';
