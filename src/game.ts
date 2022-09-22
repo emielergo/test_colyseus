@@ -138,7 +138,7 @@ export default class Game {
         groundMat.diffuseColor = new BABYLON.Color3(0, 1, 1);
         this.ground.material = groundMat;
 
-        generateMap(this.scene, { x: 360, y: 50 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
+        generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
 
         this.own_bunker = createBunker(this.scene);
         this.own_bunker.id = this.own_bunker.id + ' ' + this.player_number;

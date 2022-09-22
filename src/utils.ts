@@ -222,7 +222,7 @@ export var setCrystalText = function setCrystalText(game) {
 }
 
 
-export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 1, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52), ground) {
+export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 4, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52), ground) {
     let points = [];
     for (let y = 0; y < mapSize.y; y++) {
         for (let x = 0; x < mapSize.x; x++) {
@@ -238,10 +238,9 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     let voronoi = delaunay.voronoi([0, 0, mapSize.x, mapSize.y]);
     let material = new BABYLON.StandardMaterial('terrain', scene);
     material.diffuseColor = color;
-    material.spe
     material.ambientColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-    material.specularPower = 0;
-    //material.specularColor = color;
+    material.specularPower = 100;
+    material.specularColor = color;
 
     for (var polygon of voronoi.cellPolygons()) {
         let x = points[polygon.index][0];
@@ -262,7 +261,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
             scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
         }, scene);
         mesh.material = material;
-        mesh.scaling = new BABYLON.Vector3(0.00082, 0.001, 0.000835);
+        mesh.scaling = new BABYLON.Vector3(0.00164, 0.002, 0.001670);
         mesh.parent = ground;
         mesh.position.x = 20;
         mesh.position.z = 150;
