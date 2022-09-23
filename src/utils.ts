@@ -221,19 +221,17 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     }
     let delaunay = Delaunay.from(points);
     let voronoi = delaunay.voronoi([0, 0, mapSize.x, mapSize.y]);
-    let material = new BABYLON.StandardMaterial('terrain', scene);
-    material.diffuseColor = color;
-    material.specularColor = color;
-    material.specularPower = 100;
-    material.ambientColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-    material.specularPower = 0;
-    //material.specularColor = color;
+    let materials = [];
+    for (let i = 0; i < 3; i++) {
+        let material = new BABYLON.StandardMaterial('terrain-' + i, scene);
+        let generatedColor = new BABYLON.Color3(color.r + i * 0.05, color.g +  i * 0.05, color.b + i * 0.05);
+        material.ambientColor =  generatedColor;
+        material.diffuseColor = generatedColor;
+        material.specularPower = 1000;
+        material.specularColor = new BABYLON.Color3(0,0,0);
+        materials.push(material);
+    }
 
-    let second_material = new BABYLON.StandardMaterial('terrain', scene);
-    second_material.diffuseColor =  new BABYLON.Color3(0.5, 0.6, 0.7);
-    second_material.ambientColor = new BABYLON.Color3(0.5, 0.6, 0.8);
-    second_material.specularPower = 100;
-    second_material.specularColor = color;
 
     for (var polygon of voronoi.cellPolygons()) {
         let x = points[polygon.index][0];
@@ -253,8 +251,8 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
             cap: BABYLON.Mesh.CAP_ALL,
             scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
         }, scene);
-        mesh.material = Math.random() < 0.5 ? material : second_material;
-        mesh.scaling = new BABYLON.Vector3(0.00082, 0.001, 0.000835);
+        mesh.material = materials[Math.floor(Math.random() * 2.99)];
+        mesh.scaling = new BABYLON.Vector3(0.00164, 0.002, 0.001670);
         mesh.parent = ground;
         mesh.position.x = 20;
         mesh.position.z = 150;
