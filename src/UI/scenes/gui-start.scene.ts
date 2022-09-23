@@ -46,9 +46,9 @@ export class GuiStartScene extends LitElement {
         return html`
             <div class="start-menu" data-start-menu>
                 <img class="logo" width="250" src="/public/axie-raids.png"/>
-                <gui-button @click=${()=> this.menuClick('create')} btn-style="pill">Create game</gui-button>
-                <gui-button @click=${()=> this.menuClick('join')} btn-style="pill">Join game</gui-button>
-                <gui-button @click=${()=> this.menuClick('createOrJoin')} btn-style="pill">Create or join</gui-button>
+                <gui-button @click=${()=> this.menuClick('create')} btnStyle="stylized">Create game</gui-button>
+                <gui-button @click=${()=> this.menuClick('join')} btnStyle="stylized">Join game</gui-button>
+                <gui-button @click=${()=> this.menuClick('createOrJoin')} btnStyle="stylized">Create or join</gui-button>
             </div>
         `;
     }
