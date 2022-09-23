@@ -135,7 +135,16 @@ export default class Game {
         this.ground.isPickable = false;
 
         const groundMat = new BABYLON.StandardMaterial("groundMat");
-        groundMat.diffuseColor = new BABYLON.Color3(0, 1, 1);
+        //groundMat.diffuseTexture = new BABYLON.Texture('/public/textures/ground/rock_05_col.png');
+        //groundMat.diffuseTexture.uScale = 6;
+        //groundMat.diffuseTexture.vScale = 45;
+        groundMat.diffuseColor = new BABYLON.Color3(0.10, 0.62, 0.52);
+        groundMat.bumpTexture = new BABYLON.Texture('/public/textures/ground/rock_05_norm_01.png');
+        groundMat.bumpTexture.uScale = 4;
+        groundMat.bumpTexture.vScale = 30;
+        //groundMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+        groundMat.specularColor = new BABYLON.Color3(0.010, 0.062, 0.052);
+        groundMat.specularPower = 1;
         this.ground.material = groundMat;
 
         generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
