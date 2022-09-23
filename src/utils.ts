@@ -61,7 +61,7 @@ export var createPuffy = async function createPuffy(scene) {
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
-    const puffy_axie = new Axie(puffy.id, 0, 0, 0, 0, 'puffy', puffy, null);
+    const puffy_axie = new Axie(puffy.id, 0, 0, 0, 0, 0, 'puffy', puffy, null);
 
     puffy_axie.cards_list.push(new Card('mouth', 0, 60, 0, 30, null, axie_move_source_by_id_map.get('puffy')[0]));
     puffy_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'baby buff', axie_move_source_by_id_map.get('puffy')[1]));
@@ -89,7 +89,7 @@ export var createBubba = async function createBubba(scene) {
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
-    const bubba_axie = new Axie(bubba.id, 0, 0, 0, 0, 'bubba', bubba, null);
+    const bubba_axie = new Axie(bubba.id, 0, 0, 0, 0, 0, 'bubba', bubba, null);
 
     bubba_axie.cards_list.push(new Card('mouth', 0, 65, 0, 0, null, axie_move_source_by_id_map.get('bubba')[0]));
     bubba_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'rage buff', axie_move_source_by_id_map.get('bubba')[1]));
@@ -117,7 +117,7 @@ export var createOlek = async function createOlek(scene) {
 
     axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
 
-    const olek_axie = new Axie(olek.id, 0, 0, 0, 0, 'olek', olek, null);
+    const olek_axie = new Axie(olek.id, 0, 0, 0, 0, 0, 'olek', olek, null);
 
     //TODO: This should really be different
     olek_axie.cards_list.push(new Card('mouth', 0, 60, 0, 0, null, axie_move_source_by_id_map.get('olek')[0]));
@@ -224,11 +224,11 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     let materials = [];
     for (let i = 0; i < 3; i++) {
         let material = new BABYLON.StandardMaterial('terrain-' + i, scene);
-        let generatedColor = new BABYLON.Color3(color.r + i * 0.05, color.g +  i * 0.05, color.b + i * 0.05);
-        material.ambientColor =  generatedColor;
+        let generatedColor = new BABYLON.Color3(color.r + i * 0.05, color.g + i * 0.05, color.b + i * 0.05);
+        material.ambientColor = generatedColor;
         material.diffuseColor = generatedColor;
         material.specularPower = 1000;
-        material.specularColor = new BABYLON.Color3(0,0,0);
+        material.specularColor = new BABYLON.Color3(0, 0, 0);
         materials.push(material);
     }
 

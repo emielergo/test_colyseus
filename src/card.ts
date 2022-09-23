@@ -1,12 +1,12 @@
 import { int } from "babylonjs";
 
 export default class Card {
-    private type;
-    private range;
-    private damage;
-    private shield;
-    private heal;
-    private status_effects;
+    public type;
+    public range;
+    public damage;
+    public shield;
+    public heal;
+    public status_effects;
 
     private source;
 

@@ -106,11 +106,10 @@ export default class Game {
 
         window.$game_state.addEventListener('1v1.axie', (event) => {
             if (event.detail.axie) {
-                let number_of_active_moves = event.detail.axie.moves.filter(move => move.active ).length;
+                let number_of_active_moves = event.detail.axie.moves.filter(move => move.active).length;
                 if (this.selectedAxie && this.selectedAxie.mesh) {
                     this.selectedAxie.mesh.dispose();
                 }
-
                 let starter;
                 if (event.detail.axie.id === "puffy") {
                     starter = this.puffy;
@@ -122,14 +121,13 @@ export default class Game {
                 // array of all axie meshes, unhide selected?
                 this.selectedAxie = starter.clone();
                 this.selectedAxie.setTarget(this.target_bunker);
-                this.selectedAxie.active_cards = starter.active_cards;
                 this.selectedAxie.cards_list = starter.cards_list;
                 this.selectedAxie.setHp(320);
                 this.selectedAxie.setDamageAndRangeFromCards();
                 this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
                 this.selectedAxie.mesh.isPickable = false;
+                this.selectedAxie.setActiveCards(event.detail.axie.moves);
                 this.selectedAxie.level = number_of_active_moves;
-                console.log(number_of_active_moves);
             } else {
                 this.selectedAxie.dispose();
             }
@@ -137,6 +135,7 @@ export default class Game {
         });
 
         window.$game_state.addEventListener('1v1.move', (event) => {
+            this.selectedAxie.setActiveCard(event.detail.move);
             this.selectedAxie.level = this.selectedAxie.level + 1;
             this.room.send("updateCrystals", {
                 crystals: this.crystals - 10
@@ -235,16 +234,6 @@ export default class Game {
                         'isHoveringOverOwnDropZone'
                     )
                 )
-
-                if (this.player_number == 2) {
-                    this.puffy.mesh.position.z = - this.puffy.mesh.position.z;
-                    this.bubba.mesh.position.z = - this.bubba.mesh.position.z;
-                    this.olek.mesh.position.z = - this.olek.mesh.position.z;
-                } else {
-                    this.puffy.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
-                    this.bubba.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
-                    this.olek.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(-1, 0, 0), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(0, 0, -1));
-                }
             } else {
                 this.enemy_session_id = sessionId;
 
@@ -252,10 +241,12 @@ export default class Game {
             }
 
             player.onChange((changes: any) => {
-                this.energy = player.energy;
-                this.crystals = player.crystals;
-                setCrystalText(this);
-                setEnergyText(this);
+                if (isCurrentPlayer) {
+                    this.energy = player.energy;
+                    this.crystals = player.crystals;
+                    setCrystalText(this);
+                    setEnergyText(this);
+                }
             });
 
             // Set Global Attributes
@@ -264,7 +255,8 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    let new_axie = new Axie(axie.id, axie.hp, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
+                    let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
+                    new_axie.mesh.setEnabled(true);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     new_axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), new_axie.mesh, new_axie.target);
                     this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
@@ -362,7 +354,6 @@ export default class Game {
 
                 case BABYLON.PointerEventTypes.POINTERMOVE:
                     if (this.selectedAxie && this.selectedAxie.mesh) {
-                        // console.log(this.selectedAxie.mesh.isEnabled);
                         if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
                             this.selectedAxie.mesh.setEnabled(true);
                             var target = BABYLON.Vector3.Unproject(
@@ -414,6 +405,7 @@ export default class Game {
                     this.room.send("insertAxie", {
                         id: clonedAxie.id,
                         hp: clonedAxie.hp,
+                        shield: clonedAxie.shield,
                         range: clonedAxie.range,
                         damage: clonedAxie.damage,
                         level: clonedAxie.level,
@@ -481,8 +473,11 @@ export default class Game {
                                 }
                             }
 
-                        } else if (axie.reload_time <= 0 && axie.damage > 0) {
-                            const bullet_clone = axie.attackTarget(this.bullet);
+                        } else if (axie.reload_time <= 0) {
+                            const bullet_clone = axie.useCards(this.bullet);
+                            if (bullet_clone) {
+                                this.bullets.push(bullet_clone);
+                            }
                             if (axie.target.hp <= 0) {
                                 var target = axie.target;
                                 enemyAxieMap.delete(target.id);
@@ -493,11 +488,7 @@ export default class Game {
                                     sessionId: this.enemy_session_id
                                 });
                             }
-                            if (bullet_clone) {
-                                this.bullets.push(bullet_clone);
-                            }
 
-                            axie.reload_time = 10;
                         } else {
                             axie.reload_time--;
                         }

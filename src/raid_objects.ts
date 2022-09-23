@@ -3,7 +3,7 @@ import { int } from 'babylonjs';
 
 export abstract class RaidObject {
     public id: string;
-    public damage: int;
+    public damage: int = 0;
     public skin: string;
     public mesh: BABYLON.Mesh;
     public target;
@@ -34,12 +34,17 @@ export default class Axie extends RaidObject {
     public static AXIE_VIEW_RANGE = 20;
 
     public hp: int;
+    public maxHp: int;
+    public shield: int;
+    public maxShield: int;
 
     public cards_list = [];
     public active_cards = [0, 0, 0, 0, 0, 0];
     public level = 0;
     public selected_move;
     public range: int;
+    public heal: int = 0;
+    public shielding: int = 0;
     public reload_time = 0;
     public longitude;
     public latitude;
@@ -50,15 +55,18 @@ export default class Axie extends RaidObject {
     private health_bar;
 
 
-    constructor(id: string, hp: int, range: int, damage: int, level: int, skin: string, mesh, target) {
+    constructor(id: string, hp: int, shield: int, range: int, damage: int, level: int, skin: string, mesh, target) {
         super(id, skin, damage, mesh, target);
         this.hp = hp;
+        this.maxHp = hp;
+        this.shield = shield;
+        this.maxShield = shield;
         this.range = range;
         this.level = level;
     }
 
     clone(id: string): Axie {
-        return new Axie(id, this.hp, this.range, this.damage, this.level, this.skin, this.mesh.clone(), this.target);
+        return new Axie(id, this.hp, this.shield, this.range, this.damage, this.level, this.skin, this.mesh.clone(), this.target);
     }
 
     setHp(hp: int): void {
@@ -67,6 +75,33 @@ export default class Axie extends RaidObject {
 
     setTarget(target): void {
         this.target = target;
+    }
+
+    setActiveCards(moveList): void {
+        this.damage = 0;
+        this.heal = 0;
+        this.shielding = 0;
+        for (let i = 0; i < 6; i++) {
+            if (moveList[i].active) {
+                this.active_cards[i] = 1;
+                this.damage += this.cards_list[i].damage;
+                this.heal += this.cards_list[i].heal;
+                this.shielding += this.cards_list[i].shield;
+            }
+        }
+    }
+
+    setActiveCard(move): void {
+        // let card = this.cards_list.filter(card => card.source == move.img)[0]; Maybe via deze filtering?
+        for (let i = 0; i < 6; i++) {
+            //TODO: source van cards_list moet zelfde zijn als move.img
+            if (this.cards_list[i].source == '.' + move.img) {
+                this.active_cards[i] = 1;
+                this.damage += this.cards_list[i].damage;
+                this.heal += this.cards_list[i].heal;
+                this.shielding += this.cards_list[i].shield;
+            }
+        }
     }
 
     setDamageAndRangeFromCards() {
@@ -127,7 +162,7 @@ export default class Axie extends RaidObject {
 
     intersectsGivenAxies(axies, position): boolean {
         let intersects_with_axies = false;
-        for(let other_axie of axies){
+        for (let other_axie of axies) {
             if (other_axie.id != this.id && other_axie.mesh.intersectsPoint(position)) {
                 intersects_with_axies = true;
                 break;
@@ -142,24 +177,43 @@ export default class Axie extends RaidObject {
     // }
 
     inflictDamage(damage: int): void {
-        this.hp -= damage;
+        if (this.shield) {
+            if (this.shield - damage <= 0) {
+                this.hp -= (this.damage - this.shield)
+                this.shield = 0;
+            } else {
+                this.shield -= this.damage;
+            }
+        } else {
+            this.hp -= damage;
+        }
     }
 
     isInViewingRangeOfTarget(potential_target): boolean {
         return this.mesh.position.subtract(potential_target.mesh.position).length() < Axie.AXIE_VIEW_RANGE;
     }
 
-    attackTarget(bullet): Bullet {
+    useCards(bullet): Bullet {
         let bullet_clone;
-        if (this.range == 0 && this.damage) {
-            this.target.inflictDamage(this.damage);
-        } else {
-            let bullet_mesh_clone = bullet.clone();
-            bullet_mesh_clone.position = this.mesh.position.clone();
-            bullet_clone = new Bullet(bullet.id, this.damage, Bullet.BULLET_SPEED, 'bullet', bullet_mesh_clone, this.target);
+        if (this.damage) {
+            if (this.range == 0) {
+                this.target.inflictDamage(this.damage);
+            } else {
+                let bullet_mesh_clone = bullet.clone();
+                bullet_mesh_clone.position = this.mesh.position.clone();
+                bullet_clone = new Bullet(bullet.id, this.damage, Bullet.BULLET_SPEED, 'bullet', bullet_mesh_clone, this.target);
+            }
+            this.target.attacking_axies.push(this);
         }
-        this.target.attacking_axies.push(this);
-        this.reload_time = 5;
+        if (this.heal) {
+            this.hp = Math.min(this.maxHp, this.hp + this.heal);
+        }
+        if (this.shielding) {
+            this.shield = Math.min(this.maxHp, this.hp + this.shielding);
+        }
+        console.log(this.hp + '  ' + this.shield + '   VS   ' + this.target.hp + '  ' + this.target.shield);
+
+        this.reload_time = 10;
 
         return bullet_clone;
     }
