@@ -104,29 +104,43 @@ export default class Game {
             });
         });
 
-        window.$game_state.addEventListener('1v1.move', (event) => {
-            if (this.selectedAxie && this.selectedAxie.mesh) {
-                this.selectedAxie.mesh.dispose();
+        window.$game_state.addEventListener('1v1.axie', (event) => {
+            if (event.detail.axie) {
+                let number_of_active_moves = event.detail.axie.moves.filter(move => move.active ).length;
+                if (this.selectedAxie && this.selectedAxie.mesh) {
+                    this.selectedAxie.mesh.dispose();
+                }
+
+                let starter;
+                if (event.detail.axie.id === "puffy") {
+                    starter = this.puffy;
+                } else if (event.detail.axie.id === "bubba") {
+                    starter = this.bubba;
+                } else if (event.detail.axie.id === "olek") {
+                    starter = this.olek;
+                }
+                // array of all axie meshes, unhide selected?
+                this.selectedAxie = starter.clone();
+                this.selectedAxie.setTarget(this.target_bunker);
+                this.selectedAxie.active_cards = starter.active_cards;
+                this.selectedAxie.cards_list = starter.cards_list;
+                this.selectedAxie.setHp(320);
+                this.selectedAxie.setDamageAndRangeFromCards();
+                this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
+                this.selectedAxie.mesh.isPickable = false;
+                this.selectedAxie.level = number_of_active_moves;
+                console.log(number_of_active_moves);
+            } else {
+                this.selectedAxie.dispose();
             }
 
-            let starter;
-            if (event.detail.axie.id === "puffy") {
-                starter = this.puffy;
-            } else if (event.detail.axie.id === "bubba") {
-                starter = this.bubba;
-            } else if (event.detail.axie.id === "olek") {
-                starter = this.olek;
-            }
-            // array of all axie meshes, unhide selected?
-            this.selectedAxie = starter.clone();
-            this.selectedAxie.setTarget(this.target_bunker);
-            this.selectedAxie.active_cards = starter.active_cards;
-            this.selectedAxie.cards_list = starter.cards_list;
-            this.selectedAxie.setHp(320);
-            this.selectedAxie.setDamageAndRangeFromCards();
-            this.selectedAxie.offsetPositionForSpawn(this.player_number == 1);
-            this.selectedAxie.mesh.isPickable = false;
-            this.selectedAxie.level =1;
+        });
+
+        window.$game_state.addEventListener('1v1.move', (event) => {
+            this.selectedAxie.level = this.selectedAxie.level + 1;
+            this.room.send("updateCrystals", {
+                crystals: this.crystals - 10
+            });
         })
     }
 
