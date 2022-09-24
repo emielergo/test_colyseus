@@ -45,8 +45,8 @@ export default class Menu {
         this._camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this._scene);
         this._camera.useAutoRotationBehavior = true;
         this._camera.setTarget(BABYLON.Vector3.Zero());
-        this._advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-
+        //this._advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        debugger;
         createSkyBox(this._scene);
 
         //this.initLoadingMessageBox();
