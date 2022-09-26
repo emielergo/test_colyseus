@@ -153,6 +153,7 @@ export var createBulletMesh = function createBulletMesh(scene) {
 
 export var createHealthBarMesh = function createHealthBarMesh(scene) {
     const health_bar = BABYLON.MeshBuilder.CreateBox("health_bar", { width: 1, height: 0.2, depth: 0.2 });
+    health_bar.setEnabled(false);
 
     const health_bar_material = new BABYLON.StandardMaterial("health_bar_material");
     health_bar_material.diffuseColor = BABYLON.Color3.Green();
