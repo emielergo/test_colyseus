@@ -1,0 +1,2827 @@
+[
+    {
+      "id": "dawn-tail-03",
+      "class": "dawn",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Aegis Talisman",
+      "value": 65,
+      "effect": "shield",
+      "description": "Target any ally.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "aquatic-back-10",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Anemone",
+      "value": 50,
+      "effect": "damage",
+      "description": "Whenever this is drawn, heal 20 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-horn-08",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Anemone",
+      "value": 50,
+      "effect": "damage",
+      "description": "Whenever this is drawn, heal 20 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-tail-02",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Ant",
+      "value": 70,
+      "effect": "shield",
+      "description": "Apply Taunt to this Axie for 4 turns.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-horn-04",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Antenna",
+      "value": 0,
+      "effect": null,
+      "description": "Scry 4 cards. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "beast-horn-12",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Arco",
+      "value": 65,
+      "effect": "damage",
+      "description": "This does not trigger Secrets.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-mouth-08",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Axie Kiss",
+      "value": 60,
+      "effect": "damage",
+      "description": "Target any Enemy. Apply Death Mark for 4 turns if this Axie's HP is below 50%.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-eyes-01",
+      "class": "aquatic",
+      "part": "eyes",
+      "energyCost": 2,
+      "name": "Baby",
+      "value": 0,
+      "effect": null,
+      "description": "Attacks deal 33 bonus DMG if HP is above 66%",
+      "abilities": [
+        "power"
+      ]
+    },
+    {
+      "id": "aquatic-horn-02",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Babylonia",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Weak for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-back-02",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Balloon",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fear for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-horn-02",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Bamboo Shoot",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 20 more DMG for each Bamboo card used this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-horn-04",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 2,
+      "name": "Beech",
+      "value": 90,
+      "effect": "damage",
+      "description": "Gain 75 Shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-ears-04",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Beetle Spike",
+      "value": 45,
+      "effect": "damage",
+      "description": "Deal pure DMG. Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-mouth-01",
+      "class": "plant",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Beetroot",
+      "value": 60,
+      "effect": "damage",
+      "description": "Draw 1 Card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-ears-12",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Belieber",
+      "value": 20,
+      "effect": "damage",
+      "description": "Randomly deal 3 hits. Gain 1 Rage per Enemy hit.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-back-06",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Bidens",
+      "value": 0,
+      "effect": null,
+      "description": "Target any Ally. Remove all debuffs on target.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-eyes-10",
+      "class": "plant",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Blossom",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Plant card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-back-04",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Blue Moon",
+      "value": 50,
+      "effect": "damage",
+      "description": "Draw 1 card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-back-02",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Bone Sail",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, draw 1 card.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "bug-eyes-02",
+      "class": "bug",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Bookworm",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Bug card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "beast-tail-03",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Buba Brush",
+      "value": 60,
+      "effect": "damage",
+      "description": "Gain 2 Rage.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-ears-06",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Bubblemaker",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Target gains 2 Bubble.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "reptile-horn-12",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 2,
+      "name": "Bumpy",
+      "value": 0,
+      "effect": null,
+      "description": "Innate. Whenever you play a card this battle, this Axie gains 10 Shield.",
+      "abilities": [
+        "power"
+      ]
+    },
+    {
+      "id": "bug-back-06",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Buzz Buzz",
+      "value": 20,
+      "effect": "damage",
+      "description": "Attack all enemies. Shuffle 1 Daze into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-horn-10",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Cactus",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-tail-02",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Carrot",
+      "value": 40,
+      "effect": "damage",
+      "description": "Gain 1 Energy if this Attack causes HP loss to target.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-horn-06",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Caterpillars",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fear for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-mouth-04",
+      "class": "aquatic",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Catfish",
+      "value": 60,
+      "effect": "damage",
+      "description": "Heal HP equal to 50% of unblocked DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-tail-04",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Cattail",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Taunt to this Axie for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-horn-06",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Cerastes",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Next attack against the target is reflected for 85 DMG.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "beast-eyes-10",
+      "class": "beast",
+      "part": "eyes",
+      "energyCost": 2,
+      "name": "Chubby",
+      "value": 50,
+      "effect": "damage",
+      "description": "Attack all enemies.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-horn-06",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Clamshell",
+      "value": 60,
+      "effect": "damage",
+      "description": "Gain 4 Damage Boost if this attack causes HP loss to target.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-eyes-04",
+      "class": "aquatic",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Clear",
+      "value": 0,
+      "effect": null,
+      "description": "Discard up to 2 cards then draw that many. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "bird-tail-08",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Cloud",
+      "value": 70,
+      "effect": "damage",
+      "description": "This attack targets the frontmost non-summoned enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-ears-04",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Clover",
+      "value": 0,
+      "effect": null,
+      "description": "Summon 1 Clover.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-mouth-10",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 0,
+      "name": "Confident",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Cleanse 1 debuff and grant 2 Rage.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-eyes-04",
+      "class": "plant",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Confused",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Confused into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-tail-02",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 0,
+      "name": "Cottontail",
+      "value": 15,
+      "effect": "heal",
+      "description": "Heal any ally. Gain 1 Energy. Banish",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "reptile-back-12",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Croc",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, apply Bleed to the attacker for 4 turns.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "beast-mouth-05",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Cub",
+      "value": 60,
+      "effect": "damage",
+      "description": "If Initial, draw 1 Skill/Secret Card",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-horn-04",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 0,
+      "name": "Cuckoo",
+      "value": 0,
+      "effect": null,
+      "description": "Target an ally. Remove Sleep. The next attack of the target this turn deals 50 more DMG.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-eyes-08",
+      "class": "plant",
+      "part": "eyes",
+      "energyCost": 2,
+      "name": "Cucumber Slice",
+      "value": 50,
+      "effect": "heal",
+      "description": "Heal your team and apply 5 Healing Boost.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-back-04",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Cupid",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-10",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Curly",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 25% more DMG to shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-06",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Curved Spine",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, apply Bleed to the attacker for 4 turns.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "bug-mouth-08",
+      "class": "bug",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Cute Bunny",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fear for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-mouth-02",
+      "class": "bird",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Doubletalk",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, apply Sleep for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-horn-10",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Dual Blade",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fragile for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-ears-06",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 2,
+      "name": "Ear Breathing",
+      "value": 30,
+      "effect": "damage",
+      "description": "Randomly deal 4 hits. Shuffle 1 Goo per enemy hit into opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-04",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Early Bird",
+      "value": 60,
+      "effect": "damage",
+      "description": "If Initial, draw 1 card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-ears-12",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Earwing",
+      "value": 20,
+      "effect": "damage",
+      "description": "Attack all enemies. Deal 3 bonus DMG per Card in your hand.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-horn-02",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Eggshell",
+      "value": 75,
+      "effect": "damage",
+      "description": "Apply Taunt to this Axie for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-tail-04",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Feather Fan",
+      "value": 35,
+      "effect": "damage",
+      "description": "Randomly deal 4 hits. Your team gains 1 Feather per enemy hit.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-horn-12",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Feather Spear",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 20 more DMG for each Spear card used this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-tail-06",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Fish Snack",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, apply Weak to the Attacker for 4 turns.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "plant-back-03",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 2,
+      "name": "Forest Hero",
+      "value": 145,
+      "effect": "damage",
+      "description": null,
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-ears-03",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Foxy",
+      "value": 60,
+      "effect": "damage",
+      "description": "Target the furthest enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-mouth-01",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Foxy",
+      "value": 65,
+      "effect": "damage",
+      "description": "Retain. Gain 1 Rage. If Retained, +1 Rage when played (cap:3 rounds).",
+      "abilities": [
+        "attack",
+        "retain"
+      ]
+    },
+    {
+      "id": "reptile-ears-04",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Friezard",
+      "value": 20,
+      "effect": "heal",
+      "description": "Randomly apply effect 4 times to your team. Heal and apply 1 Damage Boost each time.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-back-12",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Furball",
+      "value": 40,
+      "effect": "damage",
+      "description": "Deal 2 hits.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-back-04",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 2,
+      "name": "Garish Worm",
+      "value": 120,
+      "effect": "damage",
+      "description": "Apply 2 Poison per Attack Card played this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-eyes-02",
+      "class": "reptile",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Gecko",
+      "value": 25,
+      "effect": "heal",
+      "description": "This Axie loses 50 HP. Heal and Cleanse 1 debuff on other allies.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-tail-12",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Gerbil",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, this attack targets the second-frontmost enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-eyes-08",
+      "class": "aquatic",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Gero",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fragile for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-tail-10",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Gila",
+      "value": 40,
+      "effect": "damage",
+      "description": "Attack all enemies. Deal 2 bonus DMG per Poison stack on Enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-ears-10",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Gill",
+      "value": 50,
+      "effect": "damage",
+      "description": "Your team gains 1 Bubble.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-mouth-04",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Goda",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Void into your opponent's discard pile. Banish.",
+      "abilities": [
+        "attack",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-back-06",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Goldfish",
+      "value": 60,
+      "effect": "damage",
+      "description": "If Initial, draw 1 card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-tail-10",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Granma's Fan",
+      "value": 15,
+      "effect": "damage",
+      "description": "Innate. Attack all enemies. Apply Vulnerable for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-tail-12",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Grass Snake",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Hex for 4 turns",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-tail-08",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Gravel Ant",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, apply Fear to the Attacker for 4 turns.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "reptile-back-06",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Green Thorns",
+      "value": 0,
+      "effect": null,
+      "description": "Apply 2 Poison x 6 times to random targets. Heal this Axie for 20 HP.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-tail-08",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Hare",
+      "value": 60,
+      "effect": "damage",
+      "description": "If Initial, draw 1 card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-tail-06",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Hatsune",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, apply Fear to the attacker for 4 turns.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "plant-mouth-08",
+      "class": "plant",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Herbivore",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, heal 15 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-back-02",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Hermit",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Negate 1 next attack on targeted ally.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "beast-back-04",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Hero",
+      "value": 50,
+      "effect": "damage",
+      "description": "Draw 1 card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-03",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Hidden Ears",
+      "value": 60,
+      "effect": "shield",
+      "description": "Innate.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-ears-10",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Hollow",
+      "value": 0,
+      "effect": null,
+      "description": "This Axie loses 75 HP. Summon a Trunk.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-tail-12",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Hot Butt",
+      "value": 0,
+      "effect": null,
+      "description": "Shuffle 3 Burns into your opponent's discard pile.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-mouth-08",
+      "class": "bird",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Hungry Bird",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, heal 15 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-tail-04",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Iguana",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Weak for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-horn-04",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Imp",
+      "value": 70,
+      "effect": "damage",
+      "description": "Cost 0 Energy in Fury Form.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-horn-10",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Incisor",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-back-08",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Indian Star",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, reflect 25% of Shield lost.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "aquatic-ears-08",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Inkling",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Jinx into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-ears-06",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Innocent Lamb",
+      "value": 0,
+      "effect": null,
+      "description": "Innate. Select and add 1 copy of this Axie's Skill Card to your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "beast-back-06",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Jaguar",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-horn-01",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Jellytacle",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, restore 15 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-horn-08",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Kestrel",
+      "value": 50,
+      "effect": "damage",
+      "description": "Apply Disarmed for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-back-10",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Kingfisher",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Next attack against the target is reflected for 85 DMG.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "aquatic-tail-02",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Koi",
+      "value": 120,
+      "effect": "damage",
+      "description": "Deal 15 bonus DMG per Aquatic Ally.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-eyes-10",
+      "class": "bug",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Kotaro",
+      "value": 50,
+      "effect": "damage",
+      "description": "Attack 1 random enemy and apply Death Mark for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-mouth-04",
+      "class": "reptile",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Kotaro",
+      "value": 30,
+      "effect": "damage",
+      "description": "Deal 2 hits to random Enemies. Gain 1 Energy if hit at least 2 Enemies.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-horn-02",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Lagging",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Weak for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-mouth-02",
+      "class": "aquatic",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Lam",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 20 bonus DMG if this Axie's HP is above 75%.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-ears-02",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Larva",
+      "value": 0,
+      "effect": null,
+      "description": "Scry 2 cards. Gain 1 Energy if you discard a skill card upon scrying.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-horn-12",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Leaf Bug",
+      "value": 55,
+      "effect": "shield",
+      "description": "Whenever this is drawn, gain 30 Shield.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-ears-08",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Leaf Bug",
+      "value": 55,
+      "effect": "shield",
+      "description": "Whenever this is drawn, gain 30 Shield.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-ears-02",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Leafy",
+      "value": 10,
+      "effect": "damage",
+      "description": "Randomly deal 2 hits. Consume up to 3 Leafs to deal 5 DMG per Leaf consumed.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-horn-02",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 2,
+      "name": "Little Branch",
+      "value": 130,
+      "effect": "damage",
+      "description": "Gain 1 Rage per 1 alive Ally (including Summons).",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-ears-01",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Little Crab",
+      "value": 80,
+      "effect": "damage",
+      "description": "Ethereal.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-mouth-10",
+      "class": "bird",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Little Owl",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Little Owl cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-eyes-08",
+      "class": "bird",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Little Owl",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Little Owl cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-06",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Little Owl",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Little Owl cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-eyes-04",
+      "class": "beast",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Little Peas",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Vulnerable for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-ears-12",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Lotus",
+      "value": 50,
+      "effect": "shield",
+      "description": null,
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-eyes-04",
+      "class": "bird",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Lucas",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Bird card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "dawn-back-03",
+      "class": "dawn",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Magic Sack",
+      "value": 0,
+      "effect": null,
+      "description": "Retain. Pick a card. Next turn, add 2 copies of it to your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish",
+        "retain"
+      ]
+    },
+    {
+      "id": "plant-horn-03",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Mandarine",
+      "value": 0,
+      "effect": null,
+      "description": "Innate. Add 2 Mandarines to your hand.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-eyes-02",
+      "class": "bird",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Mavis",
+      "value": 0,
+      "effect": null,
+      "description": "Summon 1 Mavis.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-horn-06",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Merry",
+      "value": 80,
+      "effect": "shield",
+      "description": "Target any ally.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-back-10",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Mint",
+      "value": 30,
+      "effect": "shield",
+      "description": "Shield your team and apply 1 Cleanser.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-mouth-02",
+      "class": "bug",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Mosquito",
+      "value": 60,
+      "effect": "damage",
+      "description": "Heal HP equal to 50% of unblocked DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-tail-10",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Navaga",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-eyes-04",
+      "class": "bug",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Neo",
+      "value": 0,
+      "effect": null,
+      "description": "Look at the top 4 cards of your opponent's draw pile. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "bug-eyes-08",
+      "class": "bug",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Nerdy",
+      "value": 0,
+      "effect": null,
+      "description": "Discard up to 2 cards then draw that many. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-tail-04",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 0,
+      "name": "Nimo",
+      "value": 15,
+      "effect": "heal",
+      "description": "Gain 1 Energy. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-ears-02",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Nimo",
+      "value": 0,
+      "effect": null,
+      "description": "Gain 1 Energy if this Axie's HP is full.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-mouth-02",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Nut Cracker",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Nut Cracker cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-tail-10",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Nut Cracker",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Nut Cracker cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-ears-04",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Nut Cracker",
+      "value": 60,
+      "effect": "damage",
+      "description": "All Nut Cracker cards of this Axie gain 6 DMG this battle.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-ears-02",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Nyan",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 15 bonus DMG against Bleeding Enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-horn-10",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 2,
+      "name": "Oranda",
+      "value": 120,
+      "effect": "damage",
+      "description": "Dispel up to 2 buffs on target.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-eyes-02",
+      "class": "plant",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Papi",
+      "value": 45,
+      "effect": "heal",
+      "description": "Target any ally. Whenever this is drawn, heal 20 HP.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-horn-10",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Parasite",
+      "value": 70,
+      "effect": "damage",
+      "description": "Look at the top 2 cards of your opponent's draw pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-mouth-04",
+      "class": "bird",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Peace Maker",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Weak for 2 turns. If target previously has Weak, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-08",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Peace Maker",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Weak for 2 turns. If target previously has Weak, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-back-12",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 2,
+      "name": "Perch",
+      "value": 30,
+      "effect": "damage",
+      "description": "Deal 4 hits. Priotize target with lowest HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-horn-01",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Persimmon",
+      "value": 60,
+      "effect": "damage",
+      "description": "Target any Enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-back-08",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Pigeon Post",
+      "value": 55,
+      "effect": "damage",
+      "description": "Add 1 Blackmail to Opponent's hand.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-mouth-04",
+      "class": "bug",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Pincer",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-02",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Pink Cheek",
+      "value": 0,
+      "effect": null,
+      "description": "Discard up to 2 cards then draw that many. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-mouth-10",
+      "class": "aquatic",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Piranha",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Bleed for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-horn-08",
+      "class": "bug",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Pliers",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 25% more DMG to shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-horn-08",
+      "class": "beast",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Pocky",
+      "value": 65,
+      "effect": "damage",
+      "description": "Attack random enemy. Apply Taunt for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-02",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Pogona",
+      "value": 60,
+      "effect": "damage",
+      "description": "Apply Fragile for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-tail-12",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Post Fight",
+      "value": 100,
+      "effect": "damage",
+      "description": "This Axie loses 35 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-tail-10",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Potato Leaf",
+      "value": 65,
+      "effect": "damage",
+      "description": "Gain Stealth if there is at least 1 living Ally.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-tail-01",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 0,
+      "name": "Puff",
+      "value": 66,
+      "effect": "damage",
+      "description": "Retain. Randomly deal X hits.",
+      "abilities": [
+        "attack",
+        "retain"
+      ]
+    },
+    {
+      "id": "beast-mouth-03",
+      "class": "beast",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Puff",
+      "value": 60,
+      "effect": "damage",
+      "description": "Heal HP equal to 50% of unblocked DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-back-12",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Pumpkin",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, draw 1 card.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "bug-tail-10",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Pupae",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, it gains 2 Damage Boost",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "beast-ears-10",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Puppy",
+      "value": 25,
+      "effect": "heal",
+      "description": "Heal your team. If Initial, remove 1 Curse Card from your deck.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-eyes-08",
+      "class": "beast",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Puppy",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Beast card from your discard pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "aquatic-tail-08",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Ranchu",
+      "value": 40,
+      "effect": "damage",
+      "description": "Attack all enemies. Apply Weak for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-back-06",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Raven",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Jinx into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-mouth-08",
+      "class": "reptile",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Razor Bite",
+      "value": 60,
+      "effect": "damage",
+      "description": "Heal HP equal to 50% of unblocked DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-back-10",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Red Ear",
+      "value": 80,
+      "effect": "shield",
+      "description": "Target any ally.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-tail-04",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Rice",
+      "value": 0,
+      "effect": null,
+      "description": "Steal 40 HP. Gain 1 Energy if this Axie's HP is full. Banish.",
+      "abilities": [
+        "attack",
+        "banish"
+      ]
+    },
+    {
+      "id": "beast-back-08",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Risky Beast",
+      "value": 90,
+      "effect": "damage",
+      "description": "Apply Weak to this Axie for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-ears-12",
+      "class": "bird",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Risky Bird",
+      "value": 90,
+      "effect": "damage",
+      "description": "Apply Weak to this Axie for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-mouth-08",
+      "class": "aquatic",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Risky Fish",
+      "value": 90,
+      "effect": "damage",
+      "description": "Apply Weak to this Axie for 2 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-eyes-01",
+      "class": "plant",
+      "part": "eyes",
+      "energyCost": 2,
+      "name": "Risky Trunk",
+      "value": 50,
+      "effect": "heal",
+      "description": "Heal all allies.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-eyes-10",
+      "class": "bird",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Robin",
+      "value": 0,
+      "effect": null,
+      "description": "Summon a Little Robin.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "beast-back-02",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Ronin",
+      "value": 40,
+      "effect": "damage",
+      "description": "Deal 50% more DMG per Energy spent this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-ears-06",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Rosa",
+      "value": 5,
+      "effect": "damage",
+      "description": "Innate. Apply 2 Poison and Sleep for 2 turns to a random enemy. Banish.",
+      "abilities": [
+        "attack",
+        "banish"
+      ]
+    },
+    {
+      "id": "plant-horn-06",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Rose Bud",
+      "value": 70,
+      "effect": "heal",
+      "description": null,
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "mech-horn-03",
+      "class": "mech",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Rusty Helm",
+      "value": 40,
+      "effect": "damage",
+      "description": "Gain 40 Shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-ears-08",
+      "class": "plant",
+      "part": "ears",
+      "energyCost": 2,
+      "name": "Sakura",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Whenever you play a card this battle, heal this Axie 10 HP.",
+      "abilities": [
+        "power"
+      ]
+    },
+    {
+      "id": "bug-back-08",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 2,
+      "name": "Sandal",
+      "value": 100,
+      "effect": "damage",
+      "description": "Apply Fear for 2 turns. If target previously has Fear, deal 50% more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-horn-04",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Scaly Spear",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 20 more DMG for each Spear card used this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-horn-08",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Scaly Spoon",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, reflect 25% of Shield lost.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "reptile-eyes-08",
+      "class": "reptile",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Scar",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Reptile card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "bug-back-10",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Scarab",
+      "value": 30,
+      "effect": "damage",
+      "description": "Gain 40 Shield. Apply Doubt for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-ears-12",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 2,
+      "name": "Seaslug",
+      "value": 110,
+      "effect": "damage",
+      "description": "Cleanse 2 debuffs. Gain 2 Cleanser.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-mouth-02",
+      "class": "plant",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Serious",
+      "value": 90,
+      "effect": "damage",
+      "description": "Discard 1 card from your hand.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-tail-06",
+      "class": "beast",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Shiba",
+      "value": 130,
+      "effect": "damage",
+      "description": "Your team gains 3 Rage if this Axie's HP is below 50%.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-back-04",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Shiitake",
+      "value": 0,
+      "effect": null,
+      "description": "Summon a Mushroom.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "aquatic-horn-12",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Shoal Star",
+      "value": 50,
+      "effect": "damage",
+      "description": "If the target has no more than 120 HP, kill it instantly.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-tail-12",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Shrimp",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, this attack targets the furthest enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-12",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Sidebarb",
+      "value": 50,
+      "effect": "damage",
+      "description": "Apply 2 Poison and Bleed for 4 turns to a random Enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-mouth-10",
+      "class": "plant",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Silence Whisper",
+      "value": 65,
+      "effect": "heal",
+      "description": "Target any ally.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "aquatic-eyes-02",
+      "class": "aquatic",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Sleepless",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Daze into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-08",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Small Frill",
+      "value": 0,
+      "effect": null,
+      "description": "Apply 3 Poison to all Enemies. Heal this Axie for 30 HP.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-back-02",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Snail Shell",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after the target is attacked, shuffle 1 Goo into your opponent's discard pile.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "reptile-tail-08",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Snake Jar",
+      "value": 0,
+      "effect": null,
+      "description": "Target any ally. Negate the next HP loss against the target, up to 90 HP.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "beast-eyes-03",
+      "class": "beast",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Sparky",
+      "value": 0,
+      "effect": null,
+      "description": "Gain 4 Rage.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-back-12",
+      "class": "bug",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Spiky Wing",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 25% more DMG to shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-back-08",
+      "class": "aquatic",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Sponge",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, apply 5 Damage Boost to shielded target if its shield is broken.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "plant-tail-01",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Sprout",
+      "value": 40,
+      "effect": "shield",
+      "description": "Target any ally.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bug-mouth-10",
+      "class": "bug",
+      "part": "mouth",
+      "energyCost": 0,
+      "name": "Square Teeth",
+      "value": 25,
+      "effect": "damage",
+      "description": "If Initial, deal bonus DMG equal to current Shield.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-horn-08",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 2,
+      "name": "Strawberry Shortcake",
+      "value": 0,
+      "effect": null,
+      "description": "Add 2 Strawberry to your hand.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-back-01",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 0,
+      "name": "Succulent",
+      "value": 40,
+      "effect": "shield",
+      "description": "Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "bird-tail-02",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Swallow",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-ears-10",
+      "class": "reptile",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Swirl",
+      "value": 0,
+      "effect": null,
+      "description": "Shuffle 3 Confused into your opponent's discard pile.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "aquatic-tail-06",
+      "class": "aquatic",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Tadpole",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Jinx into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-ears-10",
+      "class": "bug",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Tassels",
+      "value": 10,
+      "effect": "heal",
+      "description": "Heal your team. Heal for 4 bonus HP per Card in your hand.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "aquatic-horn-04",
+      "class": "aquatic",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Teal Shell",
+      "value": 0,
+      "effect": null,
+      "description": "Targeted Ally gains 20 shield for each card played this turn.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "aquatic-eyes-10",
+      "class": "aquatic",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Telescope",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Aquatic card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "bird-tail-06",
+      "class": "bird",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "The Last One",
+      "value": 70,
+      "effect": "damage",
+      "description": "Deal 20 more DMG if this is the only card in your hand.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-tail-12",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 2,
+      "name": "Thorny Caterpillar",
+      "value": 100,
+      "effect": "damage",
+      "description": "Deal 50% more DMG against debuffed enemies.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-back-10",
+      "class": "beast",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Timber",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after an ally is attacked, add 1 Lumber Shield to your hand.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "reptile-tail-06",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Tiny Dino",
+      "value": 60,
+      "effect": "damage",
+      "description": "Retain. This card gains 15 bonus DMG per turn if Retained. Max: 4 turns.",
+      "abilities": [
+        "attack",
+        "retain"
+      ]
+    },
+    {
+      "id": "reptile-back-03",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Tiny Dino",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, deal 15 more DMG.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "aquatic-ears-04",
+      "class": "aquatic",
+      "part": "ears",
+      "energyCost": 0,
+      "name": "Tiny Fan",
+      "value": 0,
+      "effect": null,
+      "description": "Draw 1 card. Gain 3 Damage Boost.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "reptile-mouth-10",
+      "class": "reptile",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Tiny Turtle",
+      "value": 50,
+      "effect": "damage",
+      "description": "Target any Enemy. Apply Stunned for 2 turns if this attack causes HP loss to target.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-mouth-02",
+      "class": "reptile",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Toothless Bite",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, this attack targets the furthest enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-eyes-10",
+      "class": "reptile",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Topaz",
+      "value": 25,
+      "effect": "damage",
+      "description": "Deal 10 bonus DMG per your banished card.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-back-12",
+      "class": "bird",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Tri Feather",
+      "value": 25,
+      "effect": "damage",
+      "description": "Attack all enemies.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-back-04",
+      "class": "reptile",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Tri Spikes",
+      "value": 25,
+      "effect": "damage",
+      "description": "Deal 3 hits.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-eyes-04",
+      "class": "reptile",
+      "part": "eyes",
+      "energyCost": 1,
+      "name": "Tricky",
+      "value": 50,
+      "effect": "heal",
+      "description": "If Initial, swap this card with 1 selected Card in your Banish Pile.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "bird-horn-06",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Trump",
+      "value": 65,
+      "effect": "damage",
+      "description": "Deal 20 more DMG for each Trump card used this turn.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-back-02",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Turnip",
+      "value": 60,
+      "effect": "damage",
+      "description": "After your opponent summons a unit, deal 25 DMG to it.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bug-tail-04",
+      "class": "bug",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Twin Tail",
+      "value": 40,
+      "effect": "damage",
+      "description": "Deal 2 hits.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-horn-02",
+      "class": "reptile",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Unko",
+      "value": 60,
+      "effect": "damage",
+      "description": "Shuffle 1 Goo into your opponent's discard pile.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "reptile-tail-02",
+      "class": "reptile",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Wall Gecko",
+      "value": 60,
+      "effect": "damage",
+      "description": "This Axie loses 50 HP. Takes 30% less DMG for 4 turns.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-back-08",
+      "class": "plant",
+      "part": "back",
+      "energyCost": 1,
+      "name": "Watering Can",
+      "value": 70,
+      "effect": "shield",
+      "description": "Target any ally. Next turn, after an ally is attacked, add 1 Pure Water to your hand.",
+      "abilities": [
+        "skill",
+        "secret"
+      ]
+    },
+    {
+      "id": "plant-horn-12",
+      "class": "plant",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Watermelon",
+      "value": 50,
+      "effect": "damage",
+      "description": "Whenever this is drawn, heal 20 HP.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "bird-horn-10",
+      "class": "bird",
+      "part": "horn",
+      "energyCost": 1,
+      "name": "Wing Horn",
+      "value": 65,
+      "effect": "damage",
+      "description": "If Initial, this attack targets the second-frontmost enemy.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "plant-tail-08",
+      "class": "plant",
+      "part": "tail",
+      "energyCost": 1,
+      "name": "Yam",
+      "value": 15,
+      "effect": "damage",
+      "description": "Attack and apply 2 Poison to all enemies.",
+      "abilities": [
+        "attack"
+      ]
+    },
+    {
+      "id": "beast-eyes-02",
+      "class": "beast",
+      "part": "eyes",
+      "energyCost": 0,
+      "name": "Zeal",
+      "value": 0,
+      "effect": null,
+      "description": "Put 1 Beast card from your draw pile into your hand. Banish.",
+      "abilities": [
+        "skill",
+        "banish"
+      ]
+    },
+    {
+      "id": "beast-ears-08",
+      "class": "beast",
+      "part": "ears",
+      "energyCost": 1,
+      "name": "Zen",
+      "value": 65,
+      "effect": "heal",
+      "description": "If Initial, this Axie Meditates.",
+      "abilities": [
+        "skill"
+      ]
+    },
+    {
+      "id": "plant-mouth-04",
+      "class": "plant",
+      "part": "mouth",
+      "energyCost": 1,
+      "name": "Zigzag",
+      "value": 60,
+      "effect": "damage",
+      "description": "Heal HP equal to 50% of unblocked DMG.",
+      "abilities": [
+        "attack"
+      ]
+    }
+  ]

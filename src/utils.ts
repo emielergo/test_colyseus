@@ -6,20 +6,34 @@ import Card from "./card";
 import { int } from "babylonjs";
 import "@babylonjs/loaders/glTF";
 import { Delaunay } from 'd3-delaunay';
+import * as BABYLONMaterials from 'babylonjs-materials'
 
 export const axie_move_source_by_id_map = new Map<String, string[]>();
 export var type_map: Map<String, int> = new Map<String, int>([["mouth", 0], ["eyes", 1], ["ears", 2], ["horn", 3], ["back", 4], ["tail", 5]]);
 
 export const createSkyBox = (scene: BABYLON.Scene) => {
-    const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
-    const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./public/textures/skybox", scene);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skybox.material = skyboxMaterial;
-    skybox.isPickable = false;
+    // const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+    // const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    // skyboxMaterial.backFaceCulling = false;
+    // skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./public/textures/skybox", scene);
+    // skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    // skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    // skybox.material = skyboxMaterial;
+    // skybox.isPickable = false;
+    
+    var box = BABYLON.MeshBuilder.CreateSphere("gradient-sky",{diameter:1000}, scene);
+    box.position.y = 0;
+	var gradientMaterial = new BABYLONMaterials.GradientMaterial("sky-gradient", scene);
+    gradientMaterial.topColor = new BABYLON.Color3(0, 0.88, 1);
+    gradientMaterial.bottomColor = new BABYLON.Color3(0, 0.52, 1);
+    gradientMaterial.offset = 2;
+    gradientMaterial.smoothness = 1;
+    gradientMaterial.scale = 0.005;
+    gradientMaterial.backFaceCulling=false;
+    box.material = gradientMaterial;
+    box.isPickable = false;
+
 }
 
 export var getHorizontalPlaneVector = function (y, pos, rot) {
@@ -233,7 +247,10 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
         materials.push(material);
     }
 
-
+        ground.renderOutline = true;	
+	    ground.outlineWidth = 100.0;
+	    ground.outlineColor = new BABYLON.Color3(0, 0, 0);
+    let meshes = [];
     for (var polygon of voronoi.cellPolygons()) {
         let x = points[polygon.index][0];
         let y = points[polygon.index][1];
@@ -252,11 +269,16 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
             cap: BABYLON.Mesh.CAP_ALL,
             scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
         }, scene);
+        
         mesh.material = materials[Math.floor(Math.random() * 2.99)];
         mesh.scaling = new BABYLON.Vector3(0.00164, 0.002, 0.001670);
-        mesh.parent = ground;
+        //mesh.parent = ground;
         mesh.position.x = 20;
         mesh.position.z = 150;
+        meshes.push(mesh);
     }
 
+    let mesh = BABYLON.Mesh.MergeMeshes(meshes, true,undefined, undefined, undefined, true)
+    
+    mesh.parent = ground;
 }

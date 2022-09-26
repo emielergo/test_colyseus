@@ -1,0 +1,44 @@
+[
+ {
+   "Axie Class": "Aquatic",
+   "HP": 1,
+   "Speed": 3,
+   "Skill": "",
+   "Morale": null
+ },
+ {
+   "Axie Class": "Beast",
+   "HP": null,
+   "Speed": 1,
+   "Skill": "",
+   "Morale": 3
+ },
+ {
+   "Axie Class": "Bird",
+   "HP": null,
+   "Speed": 3,
+   "Skill": "",
+   "Morale": 1
+ },
+ {
+   "Axie Class": "Bug",
+   "HP": 1,
+   "Speed": null,
+   "Skill": "",
+   "Morale": 3
+ },
+ {
+   "Axie Class": "Plant",
+   "HP": 3,
+   "Speed": null,
+   "Skill": "",
+   "Morale": 1
+ },
+ {
+   "Axie Class": "Reptile",
+   "HP": 3,
+   "Speed": 1,
+   "Skill": "",
+   "Morale": null
+ }
+]
