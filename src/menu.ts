@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs';
+import { Vector3 } from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import { Button } from 'babylonjs-gui';
 import { Client } from "colyseus.js";
@@ -42,11 +43,11 @@ export default class Menu {
 
     createMenu(): void {
         this._scene = new BABYLON.Scene(this._engine);
-        this._camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this._scene);
+        let light = new BABYLON.HemisphericLight('main-light', Vector3.Zero(), this._scene);
+        this._camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 50, BABYLON.Vector3.Zero(), this._scene);
         this._camera.useAutoRotationBehavior = true;
         this._camera.setTarget(BABYLON.Vector3.Zero());
         //this._advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        debugger;
         createSkyBox(this._scene);
 
         //this.initLoadingMessageBox();
@@ -93,6 +94,7 @@ export default class Menu {
 
     private doRender(): void {
         // Run the render loop.
+        console.log(this._scene);
         this._engine.runRenderLoop(() => {
             this._scene.render();
         });

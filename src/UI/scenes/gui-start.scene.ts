@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, html, css, PropertyValueMap } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js'
 
 @customElement('gui-start-scene')
 export class GuiStartScene extends LitElement {
@@ -28,6 +28,49 @@ export class GuiStartScene extends LitElement {
                 aspect-ratio: 1.5;
                 margin-top: -100px;
             }
+            
+            .message {
+                border-top-left-radius: 2px;
+                border-top-right-radius: 2px;
+                position: relative;
+                font-size: 36px;
+                background: red;
+                width: calc(100% + 96px);
+                margin: -32px -50px 0px;
+                height: 64px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-family: cursive;
+                font-weight: bold;
+                text-shadow: 0px 2px 4px #00000080;
+                box-shadow: rgb(52 0 0 / 40%) 0px -2px 2px 0px inset, rgb(247 233 165 / 80%) 0px 2px 2px 0px inset, inset 0px -32px 0px 0px #ff7600ab;
+            }
+
+            .message:before {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: -11px;
+                width: 0;
+                width: 16px;
+                height: 12px;
+                background: #9b0000;
+                clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+            }
+
+            .message:after {
+                content: '';
+                position: absolute;
+                right: 0;
+                bottom: -11px;
+                width: 0;
+                width: 16px;
+                height: 12px;
+                background: #9b0000;
+                clip-path: polygon(0% 0%, 0% 100%, 100% 0%);                
+            }
 
             @keyframes logoAnimation {
                 0% {
@@ -41,11 +84,23 @@ export class GuiStartScene extends LitElement {
             }
         `
     ];
+    public won: boolean | undefined = undefined;
+
+
+    connectedCallback() {
+        super.connectedCallback();
+        window.$game_state.addEventListener('1v1.won', (event) => {
+            this.won = event.detail;
+            this.update();
+            window.$game_state.commitState('1v1.won', undefined);
+        })
+    }
 
     render() {
         return html`
             <div class="start-menu" data-start-menu>
                 <img class="logo" width="250" src="/public/axie-raids.png"/>
+                <div style="${this.won == undefined ? 'display: none;' : ''}" class="message">${(this.won ? 'You won!' : 'You lost...')}</div>
                 <gui-button @click=${()=> this.menuClick('create')} btnStyle="stylized">Create game</gui-button>
                 <gui-button @click=${()=> this.menuClick('join')} btnStyle="stylized">Join game</gui-button>
                 <gui-button @click=${()=> this.menuClick('createOrJoin')} btnStyle="stylized">Create or join</gui-button>

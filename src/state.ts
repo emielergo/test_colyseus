@@ -22,8 +22,12 @@ class State {
       
     }
 
-    commitState(prop, value) {
+    commitState(prop: string, value: any | undefined) {
         this._state[prop] = value;
+    }
+
+    getState(prop: string) {
+        return this._state[prop];
     }
 
     addEventListener(event: string, callback)
