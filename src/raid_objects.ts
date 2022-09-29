@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import { int } from 'babylonjs';
+import Game from './game';
 
 export abstract class RaidObject {
     public id: string;
@@ -187,6 +188,15 @@ export default class Axie extends RaidObject {
         } else {
             this.hp -= damage;
         }
+
+        // this.health_bar.scaling.x = this.maxHp / this.hp;
+        // if (this.hp < 0.33 * this.maxHp) {
+        //     this.health_bar.material.diffuseColor = BABYLON.Color3.Red();
+        // } else if (this.hp < 0.66 * this.maxHp) {
+        //     this.health_bar.material.diffuseColor = BABYLON.Color3.Purple();
+        // }else{
+        //     this.health_bar.material.diffuseColor = BABYLON.Color3.Green();
+        // }
     }
 
     isInViewingRangeOfTarget(potential_target): boolean {
@@ -211,7 +221,17 @@ export default class Axie extends RaidObject {
         if (this.shielding) {
             this.shield = Math.min(this.maxHp, this.hp + this.shielding);
         }
-        console.log(this.hp + '  ' + this.shield + '   VS   ' + this.target.hp + '  ' + this.target.shield);
+
+        this.health_bar.scaling.x = this.maxHp / this.hp;
+        if (this.hp < 0.33 * this.maxHp) {
+            this.health_bar.material.diffuseColor = BABYLON.Color3.Red();
+        } else if (this.hp < 0.66 * this.maxHp) {
+            this.health_bar.material.diffuseColor = BABYLON.Color3.Purple();
+        }else{
+            this.health_bar.material.diffuseColor = BABYLON.Color3.Green();
+        }
+
+        // console.log(this.hp + '  ' + this.shield + '   VS   ' + this.target.hp + '  ' + this.target.shield);
 
         this.reload_time = 10;
 
@@ -246,6 +266,8 @@ export default class Axie extends RaidObject {
         this.health_bar = mesh.clone();
         this.health_bar.parent = this.mesh;
         this.health_bar.position.y = 2;
+        this.health_bar.setEnabled(true);
+        this.health_bar.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
     }
 
 }
@@ -276,15 +298,17 @@ export class Bullet extends RaidObject {
 }
 
 export class Bunker extends RaidObject {
+    private game;
     public range: int;
     public hp: int;
     public incoming_bullets = [];
     public attacking_axies = [];
 
-    constructor(id: string, hp: int, range: int, damage: int, skin: string, mesh, target) {
+    constructor(id: string, hp: int, range: int, damage: int, skin: string, mesh, target, game) {
         super(id, skin, damage, mesh, target);
         this.hp = hp;
         this.range = range;
+        this.game = game;
     }
 
     setHp(hp: int): void {
@@ -333,7 +357,10 @@ export class Bunker extends RaidObject {
         this.disposeIncomingBullets();
         this.mesh.dispose();
 
-        throw new Error('You Lose!');
+        this.game.room.send("updateBunker", {
+            hp: this.hp,
+            enemy_id: this.game.enemy_session_id
+        });
     }
 
     disposeIncomingBullets(): void {

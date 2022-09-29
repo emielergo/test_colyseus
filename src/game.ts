@@ -5,15 +5,13 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
-import { createBubba, createBulletMesh, createBunker, createButton, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
-
-const GROUND_SIZE = 500;
+import { createBubba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
 
 export default class Game {
     private canvas: HTMLCanvasElement;
     private engine: BABYLON.Engine;
     private scene!: BABYLON.Scene;
-    private room: Room<any>;
+    public room: Room<any>;
     private camera!: BABYLON.ArcRotateCamera;
     private light!: BABYLON.Light;
     private render_loop: Boolean = true;
@@ -23,7 +21,7 @@ export default class Game {
     private energy_text_block!: GUI.TextBlock;
     public crystals!: number;
     private crystal_text_block!: GUI.TextBlock;
-    private enemy_session_id!: String;
+    public enemy_session_id!: String;
     private isHoveringOverOwnDropZone: Boolean = false;
     private selectedAxie!: Axie;
     private cloned_counter = 0;
@@ -148,24 +146,20 @@ export default class Game {
         this.ground.isPickable = false;
 
         const groundMat = new BABYLON.StandardMaterial("groundMat");
-        //groundMat.diffuseTexture = new BABYLON.Texture('/public/textures/ground/rock_05_col.png');
-        //groundMat.diffuseTexture.uScale = 6;
-        //groundMat.diffuseTexture.vScale = 45;
         groundMat.diffuseColor = new BABYLON.Color3(0.10, 0.62, 0.52);
         groundMat.bumpTexture = new BABYLON.Texture('/public/textures/ground/rock_05_norm_01.png');
         groundMat.bumpTexture.uScale = 4;
         groundMat.bumpTexture.vScale = 30;
-        //groundMat.diffuseColor = new BABYLON.Color3(1, 1, 1);
         groundMat.specularColor = new BABYLON.Color3(0.010, 0.062, 0.052);
         groundMat.specularPower = 1;
         this.ground.material = groundMat;
 
         generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
 
-        this.own_bunker = createBunker(this.scene);
+        this.own_bunker = createBunker(this.scene, this);
         this.own_bunker.id = this.own_bunker.id + ' ' + this.player_number;
 
-        this.target_bunker = createBunker(this.scene);
+        this.target_bunker = createBunker(this.scene, this);
         (this.target_bunker.mesh.material as StandardMaterial).diffuseColor = BABYLON.Color3.Red();
 
         this.drop_zone_1 = BABYLON.MeshBuilder.CreateGround("drop_zone_1", { width: 30, height: 15 }, this.scene);
@@ -200,13 +194,13 @@ export default class Game {
                 if (player.number == 1) {
                     this.camera.target = new BABYLON.Vector3(0, 0, 162.5);
                     this.camera.position = new BABYLON.Vector3(30, 50, 192.5);
-                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1, 150);
-                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1, -150);
+                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1, 147);
+                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1, -147);
                 } else {
                     this.camera.target = new BABYLON.Vector3(0, 0, -162.5);
                     this.camera.position = new BABYLON.Vector3(-30, 50, -192.5);
-                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, -150);
-                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, 150);
+                    this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, -147);
+                    this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1.5, 147);
                 }
 
                 // Create Bunker
@@ -264,7 +258,7 @@ export default class Game {
 
                     axie.onChange((changes: any) => {
                         this.axieNextPositionByAxieId.set(axie.id, new BABYLON.Vector3(axie.x, axie.y, axie.z));
-
+                        this.axiesByAxieIdBySessionId.get(sessionId).get(axie.id).hp = axie.hp;
                     });
                 }
             });
@@ -278,17 +272,23 @@ export default class Game {
                 }
             })
 
-            player.bunker.onChange((changes) => {
-                changes.forEach((change: { value: number; }) => {
-                    if (!isCurrentPlayer) {
-                        // if (this.target_bunker) {
-                        //     this.target_bunker.hp = change.value;
-                        // }
-                    } else {
-                        this.own_bunker.hp = change.value;
+            player.bunker.onChange((changes: any) => {
+                changes.forEach(change => {
+                    if(change.field == 'hp'){
+                        this.bunkerBySessionId.get(sessionId).hp = change.value;
+                        if (change.value <= 0) {
+                            if (isCurrentPlayer) {
+                                console.log('You Lose');
+                            } else {
+                                console.log('You Win');
+                            }
+                            this.render_loop = false;
+                        }
                     }
-                })
-            })
+                });
+
+            });
+
 
         });
 
@@ -387,7 +387,8 @@ export default class Game {
     }
 
     setRenderLoopObservable(): void {
-        const axie_speed = - 0.25;
+        // const axie_speed = - 0.25;
+        const axie_speed = - 5;//TESTING
         let frame = 0;
         let reload_time = 0;
 

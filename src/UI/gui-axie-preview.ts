@@ -57,23 +57,32 @@ export class GuiAxiePreview extends LitElement {
         canvas.style.visibility = 'hidden';
         canvas.style.background = 'var(--ui-palette-blue)';
         this.renderRoot.appendChild(canvas);
-        const engine = new BABYLON.Engine(canvas, true);
+        let engine = new BABYLON.Engine(canvas, true);
         const scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
         scene.autoClear = false;
-        const camera = new BABYLON.FreeCamera('pre-render', new BABYLON.Vector3(0, 2, -4), scene);
+        const camera = new BABYLON.FreeCamera('pre-render', new BABYLON.Vector3(1, 1, 3), scene);
         camera.setTarget(BABYLON.Vector3.Zero());
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         let rootMesh: Nullable<BABYLON.AbstractMesh>;
         BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", `${this.meshName}.babylon`).then((result) => {
             rootMesh = scene.getMeshByName(this.meshName);
+            if(!rootMesh){
+                this.meshName = "Cube";
+                rootMesh = scene.getMeshByName(this.meshName);
+                console.log(rootMesh);
+                console.log(rootMesh.position);
+                camera.position = new BABYLON.Vector3(2, 2, 6)
+            }
             rootMesh?.position.set(0,0,0);
-            rootMesh?.rotate(BABYLON.Vector3.Up(), 45);
             result.meshes.forEach(mesh => {
                 if (mesh.id != this.meshName) {
                     mesh.parent = rootMesh;
                 }
             });
+            if(this.meshName == "Cube"){
+                rootMesh?.rotate(BABYLON.Vector3.Up(), -90);
+            }
             engine.runRenderLoop(() => scene.render());
             setTimeout(() => BABYLON.Tools.CreateScreenshot(engine, camera, {width: 64, height: 64}, (data) => {
                 console.log(data);
@@ -82,7 +91,7 @@ export class GuiAxiePreview extends LitElement {
                 engine.dispose();
                 this.renderRoot.removeChild(canvas);
                 this.update();
-            }), 0);
+            }), 1000);
         });
     }
 

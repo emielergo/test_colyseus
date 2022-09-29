@@ -21,16 +21,16 @@ export const createSkyBox = (scene: BABYLON.Scene) => {
     // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     // skybox.material = skyboxMaterial;
     // skybox.isPickable = false;
-    
-    var box = BABYLON.MeshBuilder.CreateSphere("gradient-sky",{diameter:1000}, scene);
+
+    var box = BABYLON.MeshBuilder.CreateSphere("gradient-sky", { diameter: 1000 }, scene);
     box.position.y = 0;
-	var gradientMaterial = new BABYLONMaterials.GradientMaterial("sky-gradient", scene);
+    var gradientMaterial = new BABYLONMaterials.GradientMaterial("sky-gradient", scene);
     gradientMaterial.topColor = new BABYLON.Color3(0, 0.88, 1);
     gradientMaterial.bottomColor = new BABYLON.Color3(0, 0.52, 1);
     gradientMaterial.offset = 2;
     gradientMaterial.smoothness = 1;
     gradientMaterial.scale = 0.005;
-    gradientMaterial.backFaceCulling=false;
+    gradientMaterial.backFaceCulling = false;
     box.material = gradientMaterial;
     box.isPickable = false;
 
@@ -71,7 +71,7 @@ export var createPuffy = async function createPuffy(scene) {
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
-    puffy.setEnabled(false);
+    // puffy.setEnabled(false);
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
@@ -90,9 +90,9 @@ export var createPuffy = async function createPuffy(scene) {
 export var createBubba = async function createBubba(scene) {
     let bubba;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "bubba.babylon").then((result) => {
-        bubba = scene.getMeshByName("bubba");
+        bubba = scene.getMeshByName("Cube");
         result.meshes.forEach(mesh => {
-            if (mesh.id != "bubba") {
+            if (mesh.id != "Cube") {
                 mesh.parent = bubba;
             }
         })
@@ -100,6 +100,7 @@ export var createBubba = async function createBubba(scene) {
     bubba.position = new BABYLON.Vector3(0, 1, 180);
     bubba.actionManager = new BABYLON.ActionManager(scene);
     bubba.setEnabled(false);
+    bubba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0,0,1), new BABYLON.Vector3(0,1,0), new BABYLON.Vector3(-1,0,0));
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
@@ -144,14 +145,14 @@ export var createOlek = async function createOlek(scene) {
     return olek_axie;
 }
 
-export var createBunker = function createBunker(scene) {
-    let bunker_mesh = BABYLON.MeshBuilder.CreateBox("bunker_mesh", { width: 1, height: 2, depth: 2 })
+export var createBunker = function createBunker(scene, game) {
+    let bunker_mesh = BABYLON.MeshBuilder.CreateBox("bunker_mesh", { width: 2, height: 2, depth: 2 })
     let bunker_material = new BABYLON.StandardMaterial("bunker_material", scene);
 
     bunker_material.diffuseColor = BABYLON.Color3.Black();
     bunker_mesh.material = bunker_material;
 
-    return new Bunker(bunker_mesh.id, 200, 50, 1, 'bunker', bunker_mesh, null);
+    return new Bunker(bunker_mesh.id, 200, 50, 1, 'bunker', bunker_mesh, null, game);
 }
 
 export var createBulletMesh = function createBulletMesh(scene) {
@@ -247,9 +248,6 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
         materials.push(material);
     }
 
-        ground.renderOutline = true;	
-	    ground.outlineWidth = 100.0;
-	    ground.outlineColor = new BABYLON.Color3(0, 0, 0);
     let meshes = [];
     for (var polygon of voronoi.cellPolygons()) {
         let x = points[polygon.index][0];
@@ -269,16 +267,16 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
             cap: BABYLON.Mesh.CAP_ALL,
             scale: 1000 // scale up, when not scaling by a huge number, the whole thing gets warped for some reason
         }, scene);
-        
+
         mesh.material = materials[Math.floor(Math.random() * 2.99)];
         mesh.scaling = new BABYLON.Vector3(0.00164, 0.002, 0.001670);
-        //mesh.parent = ground;
+        // mesh.parent = ground;
         mesh.position.x = 20;
         mesh.position.z = 150;
         meshes.push(mesh);
     }
 
-    let mesh = BABYLON.Mesh.MergeMeshes(meshes, true,undefined, undefined, undefined, true)
-    
+    let mesh = BABYLON.Mesh.MergeMeshes(meshes, true, undefined, undefined, undefined, true)
+
     mesh.parent = ground;
 }
