@@ -8,7 +8,7 @@ import Game from './game';
 import { axie_move_source_by_id_map, createButton, createSkyBox } from "./utils";
 
 const ROOM_NAME = "my_room";
-const ENDPOINT = "ws://localhost:2567";
+const ENDPOINT = "ws://axie-raids-server.herokuapp.com/";
 // const ENDPOINT = "wss://tutorial-babylonjs-server.glitch.me";
 
 export default class Menu {
@@ -30,7 +30,7 @@ export default class Menu {
 
     //wire up the UI buttons to the create / join functions
     wireButtons(): void {
-        
+
             window.$game_state.addEventListener('start.create', _ => {
                 this.createGame('create');
                 window.$game_state.commitState('scene', '1v1');
