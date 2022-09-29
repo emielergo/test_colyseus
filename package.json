@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "start": "vite",
+    "start": "",
     "build": "vite build"
   },
   "dependencies": {
