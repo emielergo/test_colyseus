@@ -64,7 +64,7 @@ export class GuiAxiePreview extends LitElement {
         camera.setTarget(BABYLON.Vector3.Zero());
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         let rootMesh: Nullable<BABYLON.AbstractMesh>;
-        BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", `${this.meshName}.babylon`).then((result) => {
+        BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", `${this.meshName}.babylon`).then((result) => {
             rootMesh = scene.getMeshByName(this.meshName);
             if(!rootMesh){
                 this.meshName = "Cube";
