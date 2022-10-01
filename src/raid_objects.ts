@@ -230,9 +230,6 @@ export default class Axie extends RaidObject {
         }else{
             this.health_bar.material.diffuseColor = BABYLON.Color3.Green();
         }
-
-        // console.log(this.hp + '  ' + this.shield + '   VS   ' + this.target.hp + '  ' + this.target.shield);
-
         this.reload_time = 10;
 
         return bullet_clone;
