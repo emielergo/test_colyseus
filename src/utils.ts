@@ -61,7 +61,7 @@ export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
 
 export var createPuffy = async function createPuffy(scene) {
     let puffy;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "puffy.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "puffy.babylon").then((result) => {
         puffy = scene.getMeshByName("puffy");
         result.meshes.forEach(mesh => {
             if (mesh.id != "puffy") {
