@@ -11,7 +11,7 @@ export default defineConfig({
             formats: ['es']
         },
         rollupOptions: {
-            external: /^lit/
+            //external: /^lit/
         }
     }
 })
