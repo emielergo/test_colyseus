@@ -94,7 +94,6 @@ export default class Menu {
 
     private doRender(): void {
         // Run the render loop.
-        console.log(this._scene);
         this._engine.runRenderLoop(() => {
             this._scene.render();
         });
