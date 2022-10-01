@@ -8,8 +8,8 @@ import Game from './game';
 import { axie_move_source_by_id_map, createButton, createSkyBox } from "./utils";
 
 const ROOM_NAME = "my_room";
-const ENDPOINT = "ws://axie-raids-server.herokuapp.com/";
-// const ENDPOINT = "wss://tutorial-babylonjs-server.glitch.me";
+//const ENDPOINT = "ws://axie-raids-server.herokuapp.com/";
+const ENDPOINT = "ws://server.axie-raids.com/";
 
 export default class Menu {
     private _canvas: HTMLCanvasElement;
