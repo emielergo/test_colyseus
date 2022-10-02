@@ -54,9 +54,9 @@ export var getZeroPlaneVector = function (pos, rot) {
 export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
     let forward = target.mesh.position.subtract(mesh.position);
     let up = xnormal;
-    let side = BABYLON.Vector3.Cross(up, forward);
+    let side = BABYLON.Vector3.Cross(forward, up);
 
-    return BABYLON.Vector3.RotationFromAxis(side, up, forward);
+    return BABYLON.Vector3.RotationFromAxis(forward, up, side);
 }
 
 export var createPuffy = async function createPuffy(scene) {
@@ -71,7 +71,7 @@ export var createPuffy = async function createPuffy(scene) {
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
-    // puffy.setEnabled(false);
+    puffy.setEnabled(false);
 
     axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
 
