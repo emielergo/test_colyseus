@@ -64,13 +64,11 @@ export class GuiAxiePreview extends LitElement {
         camera.setTarget(BABYLON.Vector3.Zero());
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         let rootMesh: Nullable<BABYLON.AbstractMesh>;
-        BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", `${this.meshName}.babylon`).then((result) => {
+        BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", `${this.meshName}.babylon`).then((result) => {
             rootMesh = scene.getMeshByName(this.meshName);
             if(!rootMesh){
                 this.meshName = "Cube";
                 rootMesh = scene.getMeshByName(this.meshName);
-                console.log(rootMesh);
-                console.log(rootMesh.position);
                 camera.position = new BABYLON.Vector3(2, 2, 6)
             }
             rootMesh?.position.set(0,0,0);
@@ -84,7 +82,6 @@ export class GuiAxiePreview extends LitElement {
             }
             engine.runRenderLoop(() => scene.render());
             setTimeout(() => BABYLON.Tools.CreateScreenshot(engine, camera, {width: 64, height: 64}, (data) => {
-                console.log(data);
                 this.img = data;
                 scene.dispose();
                 engine.dispose();

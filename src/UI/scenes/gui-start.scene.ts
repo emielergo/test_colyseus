@@ -99,7 +99,7 @@ export class GuiStartScene extends LitElement {
     render() {
         return html`
             <div class="start-menu" data-start-menu>
-                <img class="logo" width="250" src="/public/axie-raids.png"/>
+                <img class="logo" width="250" src="/axie-raids.png"/>
                 <div style="${this.won == undefined ? 'display: none;' : ''}" class="message">${(this.won ? 'You won!' : 'You lost...')}</div>
                 <gui-button @click=${()=> this.menuClick('create')} btnStyle="stylized">Create game</gui-button>
                 <gui-button @click=${()=> this.menuClick('join')} btnStyle="stylized">Join game</gui-button>

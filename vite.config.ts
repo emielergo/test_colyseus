@@ -7,11 +7,11 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: 'src/app.ts',
+            entry: 'index.html',
             formats: ['es']
         },
         rollupOptions: {
-            external: /^lit/
+            //external: /^lit/
         }
     }
 })

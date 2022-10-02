@@ -92,36 +92,36 @@ export class Gui1V1Scene extends LitElement {
             id: "puffy",
             active: false,
             moves: [
-                { active: false, 'img': '/public/puffy-puff.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/puffy-baby.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/puffy-jellytackle.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/puffy-little crab.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/puffy-puff-tail.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/puffy-tiny-dino.png', 'action': '', cost: 10}
+                { active: false, 'img': '/puffy-puff.png', 'action': '', cost: 10},
+                { active: false, 'img': '/puffy-baby.png', 'action': '', cost: 10},
+                { active: false, 'img': '/puffy-jellytackle.png', 'action': '', cost: 10},
+                { active: false, 'img': '/puffy-little crab.png', 'action': '', cost: 10},
+                { active: false, 'img': '/puffy-puff-tail.png', 'action': '', cost: 10},
+                { active: false, 'img': '/puffy-tiny-dino.png', 'action': '', cost: 10}
             ]
         },
         "olek": {
             id: "olek",
             active: false,
             moves: [
-                { active: false, 'img': '/public/olek-beetroot.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/olek-hidden-ears.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/olek-risky-trunk.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/olek-rusty-helm.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/olek-sprout.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/olek-succulent.png', 'action': '', cost: 10}
+                { active: false, 'img': '/olek-beetroot.png', 'action': '', cost: 10},
+                { active: false, 'img': '/olek-hidden-ears.png', 'action': '', cost: 10},
+                { active: false, 'img': '/olek-risky-trunk.png', 'action': '', cost: 10},
+                { active: false, 'img': '/olek-rusty-helm.png', 'action': '', cost: 10},
+                { active: false, 'img': '/olek-sprout.png', 'action': '', cost: 10},
+                { active: false, 'img': '/olek-succulent.png', 'action': '', cost: 10}
             ]
         },
         "bubba": {
             id: "bubba",
             active: false,
             moves: [
-                { active: false, 'img': '/public/bubba-buba-brush.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/bubba-forest-hero.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/bubba-foxy-mouth.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/bubba-persimmon.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/bubba-foxy.png', 'action': '', cost: 10},
-                { active: false, 'img': '/public/bubba-sparky.png', 'action': '', cost: 10}
+                { active: false, 'img': '/bubba-buba-brush.png', 'action': '', cost: 10},
+                { active: false, 'img': '/bubba-forest-hero.png', 'action': '', cost: 10},
+                { active: false, 'img': '/bubba-foxy-mouth.png', 'action': '', cost: 10},
+                { active: false, 'img': '/bubba-persimmon.png', 'action': '', cost: 10},
+                { active: false, 'img': '/bubba-foxy.png', 'action': '', cost: 10},
+                { active: false, 'img': '/bubba-sparky.png', 'action': '', cost: 10}
             ]
         }
     }

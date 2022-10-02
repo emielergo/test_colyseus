@@ -147,7 +147,7 @@ export default class Game {
 
         const groundMat = new BABYLON.StandardMaterial("groundMat");
         groundMat.diffuseColor = new BABYLON.Color3(0.10, 0.62, 0.52);
-        groundMat.bumpTexture = new BABYLON.Texture('/public/textures/ground/rock_05_norm_01.png');
+        groundMat.bumpTexture = new BABYLON.Texture('/textures/ground/rock_05_norm_01.png');
         groundMat.bumpTexture.uScale = 4;
         groundMat.bumpTexture.vScale = 30;
         groundMat.specularColor = new BABYLON.Color3(0.010, 0.062, 0.052);

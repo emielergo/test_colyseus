@@ -61,7 +61,7 @@ export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
 
 export var createPuffy = async function createPuffy(scene) {
     let puffy;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "puffy.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "puffy.babylon").then((result) => {
         puffy = scene.getMeshByName("puffy");
         result.meshes.forEach(mesh => {
             if (mesh.id != "puffy") {
@@ -89,7 +89,7 @@ export var createPuffy = async function createPuffy(scene) {
 
 export var createBubba = async function createBubba(scene) {
     let bubba;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "bubba.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "bubba.babylon").then((result) => {
         bubba = scene.getMeshByName("Cube");
         result.meshes.forEach(mesh => {
             if (mesh.id != "Cube") {
@@ -119,7 +119,7 @@ export var createBubba = async function createBubba(scene) {
 
 export var createOlek = async function createOlek(scene) {
     let olek;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/public/Meshes/", "olek.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "olek.babylon").then((result) => {
         olek = scene.getMeshByName("olek");
         result.meshes.forEach(mesh => {
             if (mesh.id != "olek") {

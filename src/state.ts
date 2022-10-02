@@ -14,7 +14,6 @@ class State {
                     property: prop,
                     value: value
                 }}));
-                console.log(`${prop} changed: ${value}`);
                 return true;
             }
          }
