@@ -112,16 +112,16 @@ export class Gui1V1Scene extends LitElement {
                 { active: false, 'img': '/olek-succulent.png', 'action': '', cost: 10}
             ]
         },
-        "bubba": {
-            id: "bubba",
+        "buba": {
+            id: "buba",
             active: false,
             moves: [
-                { active: false, 'img': '/bubba-buba-brush.png', 'action': '', cost: 10},
-                { active: false, 'img': '/bubba-forest-hero.png', 'action': '', cost: 10},
-                { active: false, 'img': '/bubba-foxy-mouth.png', 'action': '', cost: 10},
-                { active: false, 'img': '/bubba-persimmon.png', 'action': '', cost: 10},
-                { active: false, 'img': '/bubba-foxy.png', 'action': '', cost: 10},
-                { active: false, 'img': '/bubba-sparky.png', 'action': '', cost: 10}
+                { active: false, 'img': '/buba-buba-brush.png', 'action': '', cost: 10},
+                { active: false, 'img': '/buba-forest-hero.png', 'action': '', cost: 10},
+                { active: false, 'img': '/buba-foxy-mouth.png', 'action': '', cost: 10},
+                { active: false, 'img': '/buba-persimmon.png', 'action': '', cost: 10},
+                { active: false, 'img': '/buba-foxy.png', 'action': '', cost: 10},
+                { active: false, 'img': '/buba-sparky.png', 'action': '', cost: 10}
             ]
         }
     }

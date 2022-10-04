@@ -184,40 +184,7 @@ export class MoveSetMenu {
         let camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, 1.0, 110, BABYLON.Vector3.Zero(), this.scene);
         camera.useAutoRotationBehavior = true;
         camera.setTarget(BABYLON.Vector3.Zero());
-        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
 
-        const moveSetMenu = new GUI.Rectangle("moveSetMenu");
-        moveSetMenu.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        moveSetMenu.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        moveSetMenu.height = "30%";
-        moveSetMenu.width = "10%";
-        moveSetMenu.thickness = 0;
-
-        var grid = new GUI.Grid();
-        grid.addColumnDefinition(100, true);
-        grid.addColumnDefinition(10);
-        grid.addColumnDefinition(100, true);
-        grid.addRowDefinition(0.5);
-        grid.addRowDefinition(0.5);
-        grid.addRowDefinition(0.5);
-
-        this.mouth_button = createButton("mouth", './public/puffy-puff.png', this.game);
-        grid.addControl(this.mouth_button, 0, 0);
-        this.eyes_button = createButton("eyes", './public/puffy-baby.png', this.game);
-        grid.addControl(this.eyes_button, 0, 2);
-        this.ears_button = createButton("ears", './public/puffy-little crab.png', this.game);
-        grid.addControl(this.ears_button, 1, 0);
-        this.horn_button = createButton("horn", './public/puffy-jellytackle.png', this.game);
-        grid.addControl(this.horn_button, 1, 2);
-        this.back_button = createButton("back", './public/puffy-tiny-dino.png', this.game);
-        grid.addControl(this.back_button, 2, 0);
-        this.tail_button = createButton("tail", './public/puffy-puff-tail.png', this.game);
-        grid.addControl(this.tail_button, 2, 2);
-
-        this.buttons = [this.mouth_button, this.eyes_button, this.ears_button, this.horn_button, this.back_button, this.tail_button];
-
-        moveSetMenu.addControl(grid);
-        advancedTexture.addControl(moveSetMenu);
     }
 
     setMoveSetImages(skin): void {

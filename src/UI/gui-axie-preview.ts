@@ -41,11 +41,11 @@ export class GuiAxiePreview extends LitElement {
         this.initScene();
     }
 
-    @property({type: String})
-    public meshName :string = '';
+    @property({ type: String })
+    public meshName: string = '';
 
-    @property({type: Boolean})
-    public active :boolean = false;
+    @property({ type: Boolean })
+    public active: boolean = false;
 
     private img: string;
 
@@ -64,24 +64,12 @@ export class GuiAxiePreview extends LitElement {
         camera.setTarget(BABYLON.Vector3.Zero());
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         let rootMesh: Nullable<BABYLON.AbstractMesh>;
-        BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", `${this.meshName}.babylon`).then((result) => {
+        BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", `${this.meshName}.glb`).then((result) => {
             rootMesh = scene.getMeshByName(this.meshName);
-            if(!rootMesh){
-                this.meshName = "Cube";
-                rootMesh = scene.getMeshByName(this.meshName);
-                camera.position = new BABYLON.Vector3(2, 2, 6)
-            }
-            rootMesh?.position.set(0,0,0);
-            result.meshes.forEach(mesh => {
-                if (mesh.id != this.meshName) {
-                    mesh.parent = rootMesh;
-                }
-            });
-            if(this.meshName == "Cube"){
-                rootMesh?.rotate(BABYLON.Vector3.Up(), -90);
-            }
+            camera.position = new BABYLON.Vector3(2, 2, 6)
+            rootMesh?.position.set(0, 0, 0);
             engine.runRenderLoop(() => scene.render());
-            setTimeout(() => BABYLON.Tools.CreateScreenshot(engine, camera, {width: 64, height: 64}, (data) => {
+            setTimeout(() => BABYLON.Tools.CreateScreenshot(engine, camera, { width: 64, height: 64 }, (data) => {
                 this.img = data;
                 scene.dispose();
                 engine.dispose();

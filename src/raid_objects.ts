@@ -96,7 +96,7 @@ export default class Axie extends RaidObject {
         // let card = this.cards_list.filter(card => card.source == move.img)[0]; Maybe via deze filtering?
         for (let i = 0; i < 6; i++) {
             //TODO: source van cards_list moet zelfde zijn als move.img
-            if (this.cards_list[i].source == '.' + move.img) {
+            if (this.cards_list[i].source == move.img) {
                 this.active_cards[i] = 1;
                 this.damage += this.cards_list[i].damage;
                 this.heal += this.cards_list[i].heal;
@@ -262,7 +262,7 @@ export default class Axie extends RaidObject {
     setHealthBar(mesh) {
         this.health_bar = mesh.clone();
         this.health_bar.parent = this.mesh;
-        this.health_bar.position.y = 2;
+        this.health_bar.position.y = -2;
         this.health_bar.setEnabled(true);
         this.health_bar.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
     }

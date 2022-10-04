@@ -44,7 +44,7 @@ export var createPuffy = async function createPuffy(scene) {
     puffy.actionManager = new BABYLON.ActionManager(scene);
     puffy.setEnabled(false);
 
-    axie_move_source_by_id_map.set('puffy', ['./public/puffy-puff.png', './public/puffy-baby.png', './public/puffy-little crab.png', './public/puffy-jellytackle.png', './public/puffy-tiny-dino.png', './public/puffy-puff-tail.png']);
+    axie_move_source_by_id_map.set('puffy', ['/puffy-puff.png', '/puffy-baby.png', '/puffy-little crab.png', '/puffy-jellytackle.png', '/puffy-tiny-dino.png', '/puffy-puff-tail.png']);
 
     const puffy_axie = new Axie(puffy.id, 0, 0, 0, 0, 0, 'puffy', puffy, null);
 
@@ -58,29 +58,29 @@ export var createPuffy = async function createPuffy(scene) {
     return puffy_axie;
 }
 
-export var createBubba = async function createBubba(scene) {
-    let bubba;
+export var createbuba = async function createbuba(scene) {
+    let buba;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "buba.glb").then((result) => {
-        bubba = scene.getMeshByName("buba");
+        buba = scene.getMeshByName("buba");
     });
-    bubba.position = new BABYLON.Vector3(0, 1, 180);
-    bubba.actionManager = new BABYLON.ActionManager(scene);
-    bubba.setEnabled(false);
-    bubba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, 1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(-1, 0, 0));
+    buba.position = new BABYLON.Vector3(0, 1, 180);
+    buba.actionManager = new BABYLON.ActionManager(scene);
+    buba.setEnabled(false);
+    buba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, 1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(-1, 0, 0));
 
-    axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
+    axie_move_source_by_id_map.set('buba', ['/buba-foxy-mouth.png', '/buba-sparky.png', '/buba-foxy.png', '/buba-persimmon.png', '/buba-forest-hero.png', '/buba-buba-brush.png']);
 
-    const bubba_axie = new Axie(bubba.id, 0, 0, 0, 0, 0, 'bubba', bubba, null);
+    const buba_axie = new Axie(buba.id, 0, 0, 0, 0, 0, 'buba', buba, null);
 
-    bubba_axie.cards_list.push(new Card('mouth', 0, 65, 0, 0, null, axie_move_source_by_id_map.get('bubba')[0]));
-    bubba_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'rage buff', axie_move_source_by_id_map.get('bubba')[1]));
-    bubba_axie.cards_list.push(new Card('ears', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[2]));
-    bubba_axie.cards_list.push(new Card('horns', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[3]));
-    bubba_axie.cards_list.push(new Card('back', 0, 120, 0, 0, null, axie_move_source_by_id_map.get('bubba')[4]));
-    bubba_axie.cards_list.push(new Card('tail', 0, 60, 0, 0, null, axie_move_source_by_id_map.get('bubba')[5]));
+    buba_axie.cards_list.push(new Card('mouth', 0, 65, 0, 0, null, axie_move_source_by_id_map.get('buba')[0]));
+    buba_axie.cards_list.push(new Card('eyes', 0, 60, 0, 0, 'rage buff', axie_move_source_by_id_map.get('buba')[1]));
+    buba_axie.cards_list.push(new Card('ears', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('buba')[2]));
+    buba_axie.cards_list.push(new Card('horns', 15, 60, 0, 0, null, axie_move_source_by_id_map.get('buba')[3]));
+    buba_axie.cards_list.push(new Card('back', 0, 120, 0, 0, null, axie_move_source_by_id_map.get('buba')[4]));
+    buba_axie.cards_list.push(new Card('tail', 0, 60, 0, 0, null, axie_move_source_by_id_map.get('buba')[5]));
 
 
-    return bubba_axie;
+    return buba_axie;
 }
 
 export var createOlek = async function createOlek(scene) {
@@ -91,7 +91,7 @@ export var createOlek = async function createOlek(scene) {
     olek.position = new BABYLON.Vector3(-5, 1, 180);
     olek.setEnabled(false);
 
-    axie_move_source_by_id_map.set('olek', ['./public/olek-beetroot.png', './public/olek-risky-trunk.png', './public/olek-hidden-ears.png', './public/olek-rusty-helm.png', './public/olek-succulent.png', './public/olek-sprout.png']);
+    axie_move_source_by_id_map.set('olek', ['/olek-beetroot.png', '/olek-risky-trunk.png', '/olek-hidden-ears.png', '/olek-rusty-helm.png', '/olek-succulent.png', '/olek-sprout.png']);
 
     const olek_axie = new Axie(olek.id, 0, 0, 0, 0, 0, 'olek', olek, null);
 
@@ -159,9 +159,9 @@ export var createButton = function createButton(name, source, game): Button {
                 if (game.selectedAxie.mesh.id.includes("puffy")) {
                     game.puffy.active_cards[type_map.get(button.id)] = 1;
                     game.puffy.level++;
-                } else if (game.selectedAxie.mesh.id.includes("bubba")) {
-                    game.bubba.active_cards[type_map.get(button.id)] = 1;
-                    game.bubba.level++;
+                } else if (game.selectedAxie.mesh.id.includes("buba")) {
+                    game.buba.active_cards[type_map.get(button.id)] = 1;
+                    game.buba.level++;
                 } else {
                     game.olek.active_cards[type_map.get(button.id)] = 1;
                     game.olek.level++;

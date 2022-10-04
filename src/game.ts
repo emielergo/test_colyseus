@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
-import { createBubba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setCrystalText, setEnergyText } from "./utils";
+import { createbuba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setCrystalText, setEnergyText } from "./utils";
 
 export default class Game {
     private canvas: HTMLCanvasElement;
@@ -43,7 +43,7 @@ export default class Game {
     private own_bunker!: Bunker;
     private target_bunker!: Bunker;
     private puffy!: Axie;
-    private bubba!: Axie;
+    private buba!: Axie;
     private olek!: Axie;
     private bullet!: BABYLON.Mesh;
     private health_bar!: BABYLON.Mesh;
@@ -111,8 +111,8 @@ export default class Game {
                 let starter;
                 if (event.detail.axie.id === "puffy") {
                     starter = this.puffy;
-                } else if (event.detail.axie.id === "bubba") {
-                    starter = this.bubba;
+                } else if (event.detail.axie.id === "buba") {
+                    starter = this.buba;
                 } else if (event.detail.axie.id === "olek") {
                     starter = this.olek;
                 }
@@ -162,14 +162,22 @@ export default class Game {
         this.target_bunker = createBunker(this.scene, this);
         (this.target_bunker.mesh.material as StandardMaterial).diffuseColor = BABYLON.Color3.Red();
 
-        this.drop_zone_1 = BABYLON.MeshBuilder.CreateGround("drop_zone_1", { width: 30, height: 15 }, this.scene);
+        this.drop_zone_1 = BABYLON.MeshBuilder.CreateBox("drop_zone_1", { width: 30, height: 1, depth: 15 }, this.scene);
         this.drop_zone_1.position = new BABYLON.Vector3(0, 0, 162.5);
 
-        this.drop_zone_2 = BABYLON.MeshBuilder.CreateGround("drop_zone_2", { width: 30, height: 15 }, this.scene);
+        const drop_zone_1_mat = new BABYLON.StandardMaterial("drop_zone_1_mat");
+        drop_zone_1_mat.diffuseColor = BABYLON.Color3.Teal();
+        this.drop_zone_1.material = drop_zone_1_mat;
+
+        this.drop_zone_2 = BABYLON.MeshBuilder.CreateBox("drop_zone_2", { width: 30, height: 1, depth: 15 }, this.scene);
         this.drop_zone_2.position = new BABYLON.Vector3(0, 0, -162.5);
 
+        const drop_zone_2_mat = new BABYLON.StandardMaterial("drop_zone_2_mat");
+        drop_zone_2_mat.diffuseColor = BABYLON.Color3.Purple();
+        this.drop_zone_2.material = drop_zone_2_mat;
+
         this.puffy = await createPuffy(this.scene);
-        this.bubba = await createBubba(this.scene);
+        this.buba = await createbuba(this.scene);
         this.olek = await createOlek(this.scene);
         this.bullet = createBulletMesh(this.scene);
         this.health_bar = createHealthBarMesh(this.scene);
@@ -197,7 +205,7 @@ export default class Game {
                     this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1, 147);
                     this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1, -147);
                     this.puffy.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
-                    this.bubba.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
+                    this.buba.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
                     this.olek.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
                 } else {
                     this.camera.target = new BABYLON.Vector3(0, 0, -162.5);
@@ -281,9 +289,11 @@ export default class Game {
                         this.bunkerBySessionId.get(sessionId).hp = change.value;
                         if (change.value <= 0) {
                             if (isCurrentPlayer) {
-                                console.log('You Lose');
+                                window.$game_state.commitState('scene', 'start');
+                                window.$game_state.dispatchEvent('1v1.won', false);
                             } else {
-                                console.log('You Win');
+                                window.$game_state.commitState('scene', 'start');
+                                window.$game_state.dispatchEvent('1v1.won', true);
                             }
                             this.render_loop = false;
                         }
@@ -307,8 +317,7 @@ export default class Game {
     }
 
     setObservables(): void {
-        var canvas_client_rect = this.scene.getEngine().getRenderingCanvasClientRect();
-        const axie_names = ["puffy", "bubba", "olek"];
+        const axie_names = ["puffy", "buba", "olek"];
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 // drop axie mesh logic
@@ -317,7 +326,7 @@ export default class Game {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
                         if (clicked_mesh_id === this.own_drop_zone.id) {
                             // if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
-                                if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
+                            if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
@@ -359,7 +368,7 @@ export default class Game {
                     if (this.selectedAxie && this.selectedAxie.mesh) {
                         if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
                             this.selectedAxie.mesh.setEnabled(true);
-                            if(pointerInfo.pickInfo.pickedPoint){
+                            if (pointerInfo.pickInfo.pickedPoint) {
                                 this.selectedAxie.mesh.position = pointerInfo.pickInfo.pickedPoint;
                                 this.selectedAxie.mesh.position.x = -this.selectedAxie.mesh.position.x;
                                 this.selectedAxie.mesh.position.y += 1;
@@ -393,7 +402,7 @@ export default class Game {
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
             if (frame % 300 == 0 && this.enemy_session_id) {
-            // if (frame % 300 == 0) { // TESTING
+                // if (frame % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
@@ -436,39 +445,13 @@ export default class Game {
                     if (this.render_loop) {
                         if (!axie.isInRangeOfTarget()) {
                             axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), axie.mesh, axie.target);
-                            // let should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z + axie_speed + 1));
-                            // TODO: Dit moet veel performanter!
-                            // if (should_move) {
-                                axie.mesh.movePOV(axie_speed, 0, 0);
-                                this.room.send("updateAxie", {
-                                    id: axie.id,
-                                    x: axie.mesh.position.x,
-                                    y: axie.mesh.position.y,
-                                    z: axie.mesh.position.z,
-                                });
-                            // } else {
-                            //     should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x + axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
-                            //     if (should_move) {
-                            //         axie.mesh.movePOV(axie_speed, 0, 0);
-                            //         this.room.send("updateAxie", {
-                            //             id: axie.id,
-                            //             x: axie.mesh.position.x,
-                            //             y: axie.mesh.position.y,
-                            //             z: axie.mesh.position.z,
-                            //         });
-                            //     } else {
-                            //         should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x - axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
-                            //         if (should_move) {
-                            //             axie.mesh.movePOV(-axie_speed, 0, 0);
-                            //             this.room.send("updateAxie", {
-                            //                 id: axie.id,
-                            //                 x: axie.mesh.position.x,
-                            //                 y: axie.mesh.position.y,
-                            //                 z: axie.mesh.position.z,
-                            //             });
-                            //         }
-                            //     }
-                            // }
+                            axie.mesh.movePOV(axie_speed, 0, 0);
+                            this.room.send("updateAxie", {
+                                id: axie.id,
+                                x: axie.mesh.position.x,
+                                y: axie.mesh.position.y,
+                                z: axie.mesh.position.z,
+                            });
 
                         } else if (axie.reload_time <= 0) {
                             const bullet_clone = axie.useCards(this.bullet);
@@ -513,7 +496,7 @@ export default class Game {
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
                     bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), bullet.mesh, bullet.target);
-                    bullet.mesh.movePOV(0, 0, bullet.speed);
+                    bullet.mesh.movePOV(bullet.speed, 0, 0);
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
                         bullet.target.inflictDamage(bullet.damage);
                         if (bullet.target.hp <= 0) {
