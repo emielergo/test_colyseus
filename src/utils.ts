@@ -7,21 +7,12 @@ import { int } from "babylonjs";
 import "@babylonjs/loaders/glTF";
 import { Delaunay } from 'd3-delaunay';
 import * as BABYLONMaterials from 'babylonjs-materials'
+import 'babylonjs-loaders'
 
 export const axie_move_source_by_id_map = new Map<String, string[]>();
 export var type_map: Map<String, int> = new Map<String, int>([["mouth", 0], ["eyes", 1], ["ears", 2], ["horn", 3], ["back", 4], ["tail", 5]]);
 
 export const createSkyBox = (scene: BABYLON.Scene) => {
-    // const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
-    // const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    // skyboxMaterial.backFaceCulling = false;
-    // skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./public/textures/skybox", scene);
-    // skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    // skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    // skybox.material = skyboxMaterial;
-    // skybox.isPickable = false;
-
     var box = BABYLON.MeshBuilder.CreateSphere("gradient-sky", { diameter: 1000 }, scene);
     box.position.y = 0;
     var gradientMaterial = new BABYLONMaterials.GradientMaterial("sky-gradient", scene);
@@ -36,21 +27,6 @@ export const createSkyBox = (scene: BABYLON.Scene) => {
 
 }
 
-export var getHorizontalPlaneVector = function (y, pos, rot) {
-    if (!rot.y) {
-        return null; // no solution, as it will never hit the zero plane
-    }
-    return new BABYLON.Vector3(
-        pos.x - (pos.y - y) * rot.x / rot.y,
-        1,
-        pos.z - (pos.y - y) * rot.z / rot.y
-    );
-};
-
-export var getZeroPlaneVector = function (pos, rot) {
-    return getHorizontalPlaneVector(0, pos, rot);
-};
-
 export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
     let forward = target.mesh.position.subtract(mesh.position);
     let up = xnormal;
@@ -61,13 +37,8 @@ export var getRotationVectorFromTarget = function (xnormal, mesh, target) {
 
 export var createPuffy = async function createPuffy(scene) {
     let puffy;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "puffy.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "puffy.glb").then((result) => {
         puffy = scene.getMeshByName("puffy");
-        result.meshes.forEach(mesh => {
-            if (mesh.id != "puffy") {
-                mesh.parent = puffy;
-            }
-        })
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
@@ -89,18 +60,13 @@ export var createPuffy = async function createPuffy(scene) {
 
 export var createBubba = async function createBubba(scene) {
     let bubba;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "bubba.babylon").then((result) => {
-        bubba = scene.getMeshByName("Cube");
-        result.meshes.forEach(mesh => {
-            if (mesh.id != "Cube") {
-                mesh.parent = bubba;
-            }
-        })
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "buba.glb").then((result) => {
+        bubba = scene.getMeshByName("buba");
     });
     bubba.position = new BABYLON.Vector3(0, 1, 180);
     bubba.actionManager = new BABYLON.ActionManager(scene);
     bubba.setEnabled(false);
-    bubba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0,0,1), new BABYLON.Vector3(0,1,0), new BABYLON.Vector3(-1,0,0));
+    bubba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, 1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(-1, 0, 0));
 
     axie_move_source_by_id_map.set('bubba', ['./public/bubba-foxy-mouth.png', './public/bubba-sparky.png', './public/bubba-foxy.png', './public/bubba-persimmon.png', './public/bubba-forest-hero.png', './public/bubba-buba-brush.png']);
 
@@ -119,13 +85,8 @@ export var createBubba = async function createBubba(scene) {
 
 export var createOlek = async function createOlek(scene) {
     let olek;
-    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "olek.babylon").then((result) => {
+    await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "olek.glb").then((result) => {
         olek = scene.getMeshByName("olek");
-        result.meshes.forEach(mesh => {
-            if (mesh.id != "olek") {
-                mesh.parent = olek;
-            }
-        })
     });
     olek.position = new BABYLON.Vector3(-5, 1, 180);
     olek.setEnabled(false);
@@ -152,7 +113,7 @@ export var createBunker = function createBunker(scene, game) {
     bunker_material.diffuseColor = BABYLON.Color3.Black();
     bunker_mesh.material = bunker_material;
 
-    return new Bunker(bunker_mesh.id, 200, 50, 1, 'bunker', bunker_mesh, null, game);
+    return new Bunker(bunker_mesh.id, 200, 30, 100, 'bunker', bunker_mesh, null, game);
 }
 
 export var createBulletMesh = function createBulletMesh(scene) {

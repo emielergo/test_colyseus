@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
-import { createBubba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, getZeroPlaneVector, setCrystalText, setEnergyText } from "./utils";
+import { createBubba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setCrystalText, setEnergyText } from "./utils";
 
 export default class Game {
     private canvas: HTMLCanvasElement;
@@ -196,6 +196,9 @@ export default class Game {
                     this.camera.position = new BABYLON.Vector3(30, 50, 192.5);
                     this.own_bunker.mesh.position = new BABYLON.Vector3(0, 1, 147);
                     this.target_bunker.mesh.position = new BABYLON.Vector3(0, 1, -147);
+                    this.puffy.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
+                    this.bubba.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
+                    this.olek.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
                 } else {
                     this.camera.target = new BABYLON.Vector3(0, 0, -162.5);
                     this.camera.position = new BABYLON.Vector3(-30, 50, -192.5);
@@ -274,7 +277,7 @@ export default class Game {
 
             player.bunker.onChange((changes: any) => {
                 changes.forEach(change => {
-                    if(change.field == 'hp'){
+                    if (change.field == 'hp') {
                         this.bunkerBySessionId.get(sessionId).hp = change.value;
                         if (change.value <= 0) {
                             if (isCurrentPlayer) {
@@ -314,7 +317,7 @@ export default class Game {
                         const clicked_mesh_id = pointerInfo.pickInfo.pickedMesh.id
                         if (clicked_mesh_id === this.own_drop_zone.id) {
                             // if (this.isHoveringOverOwnDropZone && this.selectedAxie) { //TESTING
-                            if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
+                                if (this.isHoveringOverOwnDropZone && this.selectedAxie && this.energy > 20) {
                                 var intersectsMesh = false;
 
                                 for (var axie of this.drop_zone_axies) {
@@ -356,18 +359,11 @@ export default class Game {
                     if (this.selectedAxie && this.selectedAxie.mesh) {
                         if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
                             this.selectedAxie.mesh.setEnabled(true);
-                            var target = BABYLON.Vector3.Unproject(
-                                new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
-                                canvas_client_rect.width,
-                                canvas_client_rect.height,
-                                BABYLON.Matrix.Identity(),
-                                this.camera.getViewMatrix(),
-                                this.camera.getProjectionMatrix()
-                            );
-                            target.x = this.camera.position.x - target.x;
-                            target.y = this.camera.position.y - target.y;
-                            target.z = this.camera.position.z - target.z;
-                            this.selectedAxie.mesh.position = getZeroPlaneVector(this.camera.position, target);
+                            if(pointerInfo.pickInfo.pickedPoint){
+                                this.selectedAxie.mesh.position = pointerInfo.pickInfo.pickedPoint;
+                                this.selectedAxie.mesh.position.x = -this.selectedAxie.mesh.position.x;
+                                this.selectedAxie.mesh.position.y += 1;
+                            }
                         } else {
                             this.selectedAxie.mesh.setEnabled(false);
                         }
@@ -387,8 +383,8 @@ export default class Game {
     }
 
     setRenderLoopObservable(): void {
-        // const axie_speed = - 0.25;
-        const axie_speed = - 5;//TESTING
+        const axie_speed = - 0.25;
+        // const axie_speed = - 5;//TESTING
         let frame = 0;
         let reload_time = 0;
 
@@ -397,7 +393,7 @@ export default class Game {
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
             if (frame % 300 == 0 && this.enemy_session_id) {
-                // if (frame % 300 == 0) { // TESTING
+            // if (frame % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
@@ -443,7 +439,7 @@ export default class Game {
                             let should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z + axie_speed + 1));
                             // TODO: Dit moet veel performanter!
                             if (should_move) {
-                                axie.mesh.movePOV(0, 0, axie_speed);
+                                axie.mesh.movePOV(axie_speed, 0, 0);
                                 this.room.send("updateAxie", {
                                     id: axie.id,
                                     x: axie.mesh.position.x,
