@@ -436,9 +436,9 @@ export default class Game {
                     if (this.render_loop) {
                         if (!axie.isInRangeOfTarget()) {
                             axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), axie.mesh, axie.target);
-                            let should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z + axie_speed + 1));
+                            // let should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x, axie.mesh.position.y, axie.mesh.position.z + axie_speed + 1));
                             // TODO: Dit moet veel performanter!
-                            if (should_move) {
+                            // if (should_move) {
                                 axie.mesh.movePOV(axie_speed, 0, 0);
                                 this.room.send("updateAxie", {
                                     id: axie.id,
@@ -446,29 +446,29 @@ export default class Game {
                                     y: axie.mesh.position.y,
                                     z: axie.mesh.position.z,
                                 });
-                            } else {
-                                should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x + axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
-                                if (should_move) {
-                                    axie.mesh.movePOV(axie_speed, 0, 0);
-                                    this.room.send("updateAxie", {
-                                        id: axie.id,
-                                        x: axie.mesh.position.x,
-                                        y: axie.mesh.position.y,
-                                        z: axie.mesh.position.z,
-                                    });
-                                } else {
-                                    should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x - axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
-                                    if (should_move) {
-                                        axie.mesh.movePOV(-axie_speed, 0, 0);
-                                        this.room.send("updateAxie", {
-                                            id: axie.id,
-                                            x: axie.mesh.position.x,
-                                            y: axie.mesh.position.y,
-                                            z: axie.mesh.position.z,
-                                        });
-                                    }
-                                }
-                            }
+                            // } else {
+                            //     should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x + axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
+                            //     if (should_move) {
+                            //         axie.mesh.movePOV(axie_speed, 0, 0);
+                            //         this.room.send("updateAxie", {
+                            //             id: axie.id,
+                            //             x: axie.mesh.position.x,
+                            //             y: axie.mesh.position.y,
+                            //             z: axie.mesh.position.z,
+                            //         });
+                            //     } else {
+                            //         should_move = !axie.intersectsGivenAxies(play_field_axies.values(), new BABYLON.Vector3(axie.mesh.position.x - axie_speed + 1, axie.mesh.position.y, axie.mesh.position.z));
+                            //         if (should_move) {
+                            //             axie.mesh.movePOV(-axie_speed, 0, 0);
+                            //             this.room.send("updateAxie", {
+                            //                 id: axie.id,
+                            //                 x: axie.mesh.position.x,
+                            //                 y: axie.mesh.position.y,
+                            //                 z: axie.mesh.position.z,
+                            //             });
+                            //         }
+                            //     }
+                            // }
 
                         } else if (axie.reload_time <= 0) {
                             const bullet_clone = axie.useCards(this.bullet);
