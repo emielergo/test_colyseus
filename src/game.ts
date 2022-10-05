@@ -165,7 +165,8 @@ export default class Game {
             loop: true,
             autoplay: true
           });
-
+        
+          let sceneHelper = await BABYLON.SceneOptimizer.OptimizeAsync(this.scene);
 
         generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
 
@@ -277,7 +278,7 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).createInstance(Math.random().toString()), this.own_bunker);
+                    let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
                     new_axie.mesh.setEnabled(true);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     new_axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), new_axie.mesh, new_axie.target);
