@@ -62,12 +62,10 @@ export var createbuba = async function createbuba(scene) {
     let buba;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "buba.glb").then((result) => {
         buba = scene.getMeshByName("buba");
-        buba.setParent(null);
     });
     buba.position = new BABYLON.Vector3(0, 1, 180);
     buba.actionManager = new BABYLON.ActionManager(scene);
     buba.setEnabled(false);
-    buba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, 1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(-1, 0, 0));
 
     axie_move_source_by_id_map.set('buba', ['/buba-foxy-mouth.png', '/buba-sparky.png', '/buba-foxy.png', '/buba-persimmon.png', '/buba-forest-hero.png', '/buba-buba-brush.png']);
 
