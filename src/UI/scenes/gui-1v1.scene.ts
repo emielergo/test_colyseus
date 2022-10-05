@@ -118,6 +118,7 @@ export class Gui1V1Scene extends LitElement {
 
     private energy: Number = 0;
     private crystals: Number = 0;
+    private buttonSound: Audio = new Audio('/button.mp3');
     private selection = {
         axie: undefined,
         move: undefined
@@ -179,6 +180,7 @@ export class Gui1V1Scene extends LitElement {
     }
 
     selectAxie(axie) {
+        this.buttonSound.play();
         if (this.selection.axie == axie)
             this.selection.axie = null;
         else
@@ -194,6 +196,7 @@ export class Gui1V1Scene extends LitElement {
     }
 
     activateMove(move) {
+        this.buttonSound.play();
             if (this.crystals >= move.cost)
                 this.selection.axie.moves.find(m => m == move).active = true;
         this.update();

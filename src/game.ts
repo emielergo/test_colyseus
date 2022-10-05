@@ -160,6 +160,11 @@ export default class Game {
         var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
         shadowGenerator.usePoissonSampling = true;
 
+        var music = new BABYLON.Sound("Music", "/bg-music-1.mp3", this.scene, null, {
+            loop: true,
+            autoplay: true
+          });
+
 
         generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
 
