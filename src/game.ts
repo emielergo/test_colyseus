@@ -144,17 +144,24 @@ export default class Game {
     async initWorld(): Promise<void> {
         this.ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 40, height: 300 }, this.scene);
         this.ground.isPickable = false;
+        this.ground.receiveShadows = true;
 
         const groundMat = new BABYLON.StandardMaterial("groundMat");
         groundMat.diffuseColor = new BABYLON.Color3(0.10, 0.62, 0.52);
-        groundMat.bumpTexture = new BABYLON.Texture('/textures/ground/rock_05_norm_01.png');
-        groundMat.bumpTexture.uScale = 4;
-        groundMat.bumpTexture.vScale = 30;
+        //groundMat.bumpTexture = new BABYLON.Texture('/textures/ground/rock_05_norm_01.png');
+        //groundMat.bumpTexture.uScale = 8;
+        //groundMat.bumpTexture.vScale = 60;
         groundMat.specularColor = new BABYLON.Color3(0.010, 0.062, 0.052);
         groundMat.specularPower = 1;
         this.ground.material = groundMat;
 
-        generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
+        var shadowLight = new BABYLON.DirectionalLight('shadow-light', new BABYLON.Vector3(40,-30,0), this.scene);
+        shadowLight.intensity = 0.5;
+        var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
+        shadowGenerator.usePoissonSampling = true;
+
+
+        generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
 
         this.own_bunker = createBunker(this.scene, this);
         this.own_bunker.id = this.own_bunker.id + ' ' + this.player_number;
@@ -167,6 +174,8 @@ export default class Game {
 
         const drop_zone_1_mat = new BABYLON.StandardMaterial("drop_zone_1_mat");
         drop_zone_1_mat.diffuseColor = BABYLON.Color3.Teal();
+        drop_zone_1_mat.roughness = 10000;
+        drop_zone_1_mat.specularColor = BABYLON.Color3.Teal();
         this.drop_zone_1.material = drop_zone_1_mat;
 
         this.drop_zone_2 = BABYLON.MeshBuilder.CreateBox("drop_zone_2", { width: 30, height: 1, depth: 15 }, this.scene);
@@ -174,6 +183,8 @@ export default class Game {
 
         const drop_zone_2_mat = new BABYLON.StandardMaterial("drop_zone_2_mat");
         drop_zone_2_mat.diffuseColor = BABYLON.Color3.Purple();
+        drop_zone_2_mat.roughness = 10000;
+        drop_zone_2_mat.specularColor = BABYLON.Color3.Purple();
         this.drop_zone_2.material = drop_zone_2_mat;
 
         this.puffy = await createPuffy(this.scene);

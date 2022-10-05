@@ -3,7 +3,7 @@ import Axie, { Bullet, Bunker } from "./raid_objects";
 import * as GUI from 'babylonjs-gui';
 import { Button } from "babylonjs-gui";
 import Card from "./card";
-import { int } from "babylonjs";
+import { int, ShadowGenerator } from "babylonjs";
 import "@babylonjs/loaders/glTF";
 import { Delaunay } from 'd3-delaunay';
 import * as BABYLONMaterials from 'babylonjs-materials'
@@ -121,7 +121,7 @@ export var createBulletMesh = function createBulletMesh(scene) {
     bullet_mesh.position = new BABYLON.Vector3(0, 1, -47.8);
 
     const bullet_material = new BABYLON.StandardMaterial("bullet_material", scene);
-    bullet_material.diffuseColor = BABYLON.Color3.Black();
+    bullet_material.diffuseColor = BABYLON.Color3.White();
     bullet_mesh.material = bullet_material;
 
     return bullet_mesh;
@@ -184,7 +184,7 @@ export var setCrystalText = function setCrystalText(game) {
 }
 
 
-export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 1, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52), ground) {
+export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 1, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52), ground, shadowGenerator: ShadowGenerator) {
     let points = [];
     for (let y = 0; y < mapSize.y; y++) {
         for (let x = 0; x < mapSize.x; x++) {
@@ -205,6 +205,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
         material.ambientColor = generatedColor;
         material.diffuseColor = generatedColor;
         material.specularPower = 1000;
+        material.roughness = 10;
         material.specularColor = new BABYLON.Color3(0, 0, 0);
         materials.push(material);
     }
@@ -238,6 +239,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     }
 
     let mesh = BABYLON.Mesh.MergeMeshes(meshes, true, undefined, undefined, undefined, true)
-
+    shadowGenerator.getShadowMap().renderList.push(mesh);
+    mesh.receiveShadows = true;
     mesh.parent = ground;
 }
