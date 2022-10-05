@@ -62,6 +62,7 @@ export var createbuba = async function createbuba(scene) {
     let buba;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "buba.glb").then((result) => {
         buba = scene.getMeshByName("buba");
+        buba.setParent(null);
     });
     buba.position = new BABYLON.Vector3(0, 1, 180);
     buba.actionManager = new BABYLON.ActionManager(scene);
@@ -117,7 +118,7 @@ export var createBunker = function createBunker(scene, game) {
 }
 
 export var createBulletMesh = function createBulletMesh(scene) {
-    const bullet_mesh = BABYLON.MeshBuilder.CreateSphere("bullet_mesh", { diameter: 0.1 });
+    const bullet_mesh = BABYLON.MeshBuilder.CreateSphere("bullet_mesh", { diameter: 0.4 });
     bullet_mesh.position = new BABYLON.Vector3(0, 1, -47.8);
 
     const bullet_material = new BABYLON.StandardMaterial("bullet_material", scene);

@@ -47,6 +47,7 @@ export default class Game {
     private olek!: Axie;
     private bullet!: BABYLON.Mesh;
     private health_bar!: BABYLON.Mesh;
+    private maxBulletAge: number = 75;
 
     constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine, room: Room<any>) {
         this.canvas = canvas;
@@ -276,7 +277,7 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 if (!isCurrentPlayer) {
-                    let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
+                    let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).createInstance(Math.random().toString()), this.own_bunker);
                     new_axie.mesh.setEnabled(true);
                     new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
                     new_axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), new_axie.mesh, new_axie.target);
@@ -387,7 +388,6 @@ export default class Game {
                             if (pointerInfo.pickInfo.pickedPoint) {
                                 this.selectedAxie.mesh.position = pointerInfo.pickInfo.pickedPoint;
                                 this.selectedAxie.mesh.position.x = -this.selectedAxie.mesh.position.x;
-                                this.selectedAxie.mesh.position.y += 1;
                             }
                         } else {
                             this.selectedAxie.mesh.setEnabled(false);
@@ -499,7 +499,7 @@ export default class Game {
                     if (reload_time == 0) {
                         let target = this.own_bunker.findClosestTarget(this.axiesByAxieIdBySessionId.get(this.enemy_session_id).values());
                         if (target) {
-                            var bullet = new Bullet('bullet', this.own_bunker.damage, Bullet.BULLET_SPEED, 'bullet', this.bullet.clone(), target);
+                            var bullet = new Bullet('bullet', this.own_bunker.damage, Bullet.BULLET_SPEED, 'bullet', this.bullet, target);
                             bullet.mesh.position = this.own_bunker.mesh.position.clone();
                             this.bullets.push(bullet);
                             reload_time = 25;
@@ -511,6 +511,8 @@ export default class Game {
             // Move Bullets
             if (this.bullets.length > 0) {
                 this.bullets.forEach((bullet) => {
+                    if (bullet.age > this.maxBulletAge)
+                        bullet.dispose();
                     bullet.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), bullet.mesh, bullet.target);
                     bullet.mesh.movePOV(bullet.speed, 0, 0);
                     if (bullet.mesh.intersectsMesh(bullet.target.mesh)) {
@@ -527,6 +529,7 @@ export default class Game {
                         }
                         bullet.dispose();
                     } else {
+                        bullet.age++;
                         remaining_bullets.push(bullet);
                     }
                 })
