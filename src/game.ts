@@ -132,17 +132,18 @@ export default class Game {
 
         var shadowLight = new BABYLON.DirectionalLight('shadow-light', new BABYLON.Vector3(40,-30,0), this.scene);
         shadowLight.intensity = 0.5;
-        var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
-        shadowGenerator.usePoissonSampling = true;
+        // var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
+        // shadowGenerator.usePoissonSampling = true;
 
         var music = new BABYLON.Sound("Music", "/bg-music-1.mp3", this.scene, null, {
             loop: true,
             autoplay: true
           });
-        
+
           let sceneHelper = await BABYLON.SceneOptimizer.OptimizeAsync(this.scene);
 
-        generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
+        generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
+        // generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
 
         this.own_bunker = createBunker(this.scene, this);
         this.own_bunker.id = this.own_bunker.id + ' ' + this.player_number;

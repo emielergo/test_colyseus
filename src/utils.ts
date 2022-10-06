@@ -197,7 +197,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     }
 
     let mesh = BABYLON.Mesh.MergeMeshes(meshes, true, undefined, undefined, undefined, true)
-    shadowGenerator.getShadowMap().renderList.push(mesh);
+    // shadowGenerator.getShadowMap().renderList.push(mesh);
     mesh.receiveShadows = true;
     mesh.parent = ground;
 }
