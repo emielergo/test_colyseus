@@ -28,7 +28,7 @@ export class GuiStartScene extends LitElement {
                 aspect-ratio: 1.5;
                 margin-top: -100px;
             }
-            
+
             .message {
                 border-top-left-radius: 2px;
                 border-top-right-radius: 2px;
@@ -69,7 +69,7 @@ export class GuiStartScene extends LitElement {
                 width: 16px;
                 height: 12px;
                 background: #9b0000;
-                clip-path: polygon(0% 0%, 0% 100%, 100% 0%);                
+                clip-path: polygon(0% 0%, 0% 100%, 100% 0%);
             }
 
             @keyframes logoAnimation {
@@ -99,7 +99,7 @@ export class GuiStartScene extends LitElement {
     render() {
         return html`
             <div class="start-menu" data-start-menu>
-                <img class="logo" width="250" src="/axie-raids.png"/>
+                <img class="logo" width="250" height="77" src="/Axie Raids - Logo small.png"/>
                 <div style="${this.won == undefined ? 'display: none;' : ''}" class="message">${(this.won ? 'You won!' : 'You lost...')}</div>
                 <gui-button @click=${()=> this.menuClick('create')} btnStyle="stylized">Create game</gui-button>
                 <gui-button @click=${()=> this.menuClick('join')} btnStyle="stylized">Join game</gui-button>

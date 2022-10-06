@@ -308,7 +308,6 @@ export default class Game {
     }
 
     setObservables(): void {
-        const axie_names = ["puffy", "buba", "olek"];
         this.scene.onPointerObservable.add((pointerInfo) => {
             switch (pointerInfo.type) {
                 // drop axie mesh logic
@@ -342,10 +341,6 @@ export default class Game {
                                     intersectsMesh = false;
                                 }
                             }
-                        } else if (!axie_names.includes(clicked_mesh_id) && axie_names.includes(clicked_mesh_id.replace(/\./g, ''))) {
-                            // this.show_moveset_menu = true;
-                        } else if (axie_names.includes(clicked_mesh_id)) {
-
                         }
                     }
                     break;
@@ -357,6 +352,7 @@ export default class Game {
                             if (pointerInfo.pickInfo.pickedPoint) {
                                 this.selectedAxie.mesh.position = pointerInfo.pickInfo.pickedPoint;
                                 this.selectedAxie.mesh.position.x = -this.selectedAxie.mesh.position.x;
+                                this.selectedAxie.mesh.position.y += 2;
                             }
                         } else {
                             this.selectedAxie.mesh.setEnabled(false);
@@ -384,8 +380,9 @@ export default class Game {
             const remaining_bullets = [];
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
-            if (this.clone_timer % 300 == 0 && this.enemy_session_id) {
+            if (this.clone_timer % 5 == 0 && this.enemy_session_id) {
                 // if (this.clone_timer % 300 == 0) { // TESTING
+                this.clone_timer++;
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
