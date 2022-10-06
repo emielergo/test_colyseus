@@ -5,7 +5,7 @@ import { Button } from 'babylonjs-gui';
 import { Client } from "colyseus.js";
 
 import Game from './game';
-import { axie_move_source_by_id_map, createButton, createSkyBox } from "./utils";
+import { axie_move_source_by_id_map, createSkyBox } from "./utils";
 
 const ROOM_NAME = "my_room";
 const ENDPOINT = "wss://server.axie-raids.com/";

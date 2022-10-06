@@ -138,51 +138,10 @@ export var createHealthBarMesh = function createHealthBarMesh(scene) {
     return health_bar;
 }
 
-export var createButton = function createButton(name, source, game): Button {
-    const button = GUI.Button.CreateImageOnlyButton(name, source);
-    button.width = "80px";
-    button.height = "80px";
-    button.thickness = 0;
-    button.paddingTop = "10px"
-    button.onPointerClickObservable.add(function (ev, state) {
-        const button = state.currentTarget;
-        if (game.crystal >= 10) {
-            if (button.thickness == 0) {
-                button.thickness = 3;
-
-                game.crystal = game.crystal - 10;
-                game.selectedAxie.active_cards[type_map.get(button.name)] = 1;
-                game.selectedAxie.level++;
-                game.selectedAxie.setDamageAndRangeFromCards();
-                setCrystalText(game);
-
-                if (game.selectedAxie.mesh.id.includes("puffy")) {
-                    game.puffy.active_cards[type_map.get(button.id)] = 1;
-                    game.puffy.level++;
-                } else if (game.selectedAxie.mesh.id.includes("buba")) {
-                    game.buba.active_cards[type_map.get(button.id)] = 1;
-                    game.buba.level++;
-                } else {
-                    game.olek.active_cards[type_map.get(button.id)] = 1;
-                    game.olek.level++;
-                }
-            }
-        }
-    });
-
-    return button;
-}
-
 export var setEnergyText = function setEnergyText(game) {
     window.$game_state.dispatchEvent('energy', { value: game.energy });
     //game.energy_text_block.text = `Energy: ${game.energy}`.toUpperCase();
 }
-
-export var setCrystalText = function setCrystalText(game) {
-    window.$game_state.dispatchEvent('crystal', { value: game.crystals });
-    //game.crystal_text_block.text = `Crystal: ${game.crystal}`.toUpperCase();
-}
-
 
 export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, minHeight: number = 1, color: BABYLON.Color3 = new BABYLON.Color3(0.70, 0.62, 0.52), ground) {
     let points = [];

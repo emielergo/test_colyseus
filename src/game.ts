@@ -5,7 +5,7 @@ import { Room } from "colyseus.js";
 import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
-import { createbuba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setCrystalText, setEnergyText } from "./utils";
+import { createbuba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setEnergyText } from "./utils";
 
 export default class Game {
     private canvas: HTMLCanvasElement;
@@ -18,9 +18,6 @@ export default class Game {
 
     public player_number!: number;
     public energy = 0;
-    private energy_text_block!: GUI.TextBlock;
-    public crystals!: number;
-    private crystal_text_block!: GUI.TextBlock;
     public enemy_session_id!: String;
     private isHoveringOverOwnDropZone: Boolean = false;
     private selectedAxie!: Axie;
@@ -69,29 +66,6 @@ export default class Game {
         playerInfo.outlineColor = "#000000";
         advancedTexture.addControl(playerInfo);
 
-        this.energy_text_block = new GUI.TextBlock("energy");
-        this.energy_text_block.text = `Energy: ${this.energy}`.toUpperCase();
-        this.energy_text_block.color = "#eaeaea";
-        this.energy_text_block.fontFamily = "Roboto";
-        this.energy_text_block.fontSize = 20;
-        this.energy_text_block.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        this.energy_text_block.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        this.energy_text_block.paddingTop = "30px";
-        this.energy_text_block.paddingLeft = "10px";
-        this.energy_text_block.outlineColor = "#000000";
-        //advancedTexture.addControl(this.energy_text_block);
-
-        this.crystal_text_block = new GUI.TextBlock("crystals");
-        this.crystal_text_block.text = `Crystals: ${this.crystals}`.toUpperCase();
-        this.crystal_text_block.color = "#eaeaea";
-        this.crystal_text_block.fontFamily = "Roboto";
-        this.crystal_text_block.fontSize = 20;
-        this.crystal_text_block.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        this.crystal_text_block.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        this.crystal_text_block.paddingTop = "50px";
-        this.crystal_text_block.paddingLeft = "10px";
-        this.crystal_text_block.outlineColor = "#000000";
-        //advancedTexture.addControl(this.crystal_text_block);
         this.wireButtons();
     }
 
@@ -135,8 +109,8 @@ export default class Game {
         window.$game_state.addEventListener('1v1.move', (event) => {
             this.selectedAxie.setActiveCard(event.detail.move);
             this.selectedAxie.level = this.selectedAxie.level + 1;
-            this.room.send("updateCrystals", {
-                crystals: this.crystals - 10
+            this.room.send("updateEnergy", {
+                energy_cost: 20
             });
         })
     }
@@ -196,8 +170,6 @@ export default class Game {
             // Set Player Specific Attributes
             if (isCurrentPlayer) {
                 this.player_number = player.number;
-                this.crystals = player.crystals;
-                setCrystalText(this);
 
                 if (player.number == 1) {
                     this.camera.target = new BABYLON.Vector3(0, 0, 162.5);
@@ -248,8 +220,6 @@ export default class Game {
             player.onChange((changes: any) => {
                 if (isCurrentPlayer) {
                     this.energy = player.energy;
-                    this.crystals = player.crystals;
-                    setCrystalText(this);
                     setEnergyText(this);
                 }
             });
@@ -348,10 +318,6 @@ export default class Game {
                                         energy_cost: 20
                                     });
                                     setEnergyText(this);
-                                    this.room.send("updateCrystals", {
-                                        crystals: this.crystals + 1
-                                    });
-                                    setCrystalText(this);
                                 } else {
                                     intersectsMesh = false;
                                 }
