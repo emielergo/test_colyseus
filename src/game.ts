@@ -18,6 +18,7 @@ export default class Game {
 
     public player_number!: number;
     public energy = 0;
+    public clone_timer = 0;
     public enemy_session_id!: String;
     private isHoveringOverOwnDropZone: Boolean = false;
     private selectedAxie!: Axie;
@@ -135,10 +136,10 @@ export default class Game {
         // var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
         // shadowGenerator.usePoissonSampling = true;
 
-        var music = new BABYLON.Sound("Music", "/bg-music-1.mp3", this.scene, null, {
-            loop: true,
-            autoplay: true
-          });
+        // var music = new BABYLON.Sound("Music", "/bg-music-1.mp3", this.scene, null, {
+        //     loop: true,
+        //     autoplay: true
+        //   });
 
           let sceneHelper = await BABYLON.SceneOptimizer.OptimizeAsync(this.scene);
 
@@ -239,6 +240,7 @@ export default class Game {
             player.onChange((changes: any) => {
                 if (isCurrentPlayer) {
                     this.energy = player.energy;
+                    this.clone_timer = player.clone_timer;
                     setEnergyText(this);
                 }
             });
@@ -377,16 +379,14 @@ export default class Game {
 
     setRenderLoopObservable(): void {
         const axie_speed = - 0.25;
-        // const axie_speed = - 5;//TESTING
-        let frame = 0;
         let reload_time = 0;
 
         this.scene.onBeforeRenderObservable.add(() => {
             const remaining_bullets = [];
             const enemyAxieMap = this.axiesByAxieIdBySessionId.get(this.enemy_session_id);
 
-            if (frame % 300 == 0 && this.enemy_session_id) {
-                // if (frame % 300 == 0) { // TESTING
+            if (this.clone_timer % 300 == 0 && this.enemy_session_id) {
+                // if (this.clone_timer % 300 == 0) { // TESTING
                 this.drop_zone_axies.forEach((axie) => {
                     var clonedAxie = axie.clone(this.room.sessionId + this.cloned_counter);
                     this.cloned_counter++;
@@ -507,7 +507,6 @@ export default class Game {
             if (reload_time > 0) {
                 reload_time--;
             }
-            frame++;
         })
 
     }
