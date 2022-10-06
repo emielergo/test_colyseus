@@ -270,19 +270,19 @@ export default class Axie extends RaidObject {
 }
 
 export class Bullet extends RaidObject {
-    public static BULLET_SPEED = -0.75;
+    public static BULLET_SPEED = -2;
 
     public speed: int;
 
     constructor(id: string, damage: int, speed: int, skin: string, mesh, target) {
         super(id, skin, damage, mesh, target);
         this.speed = speed;
-
+        this.age = 0;
         target.incoming_bullets.push(this);
     }
 
     clone(): Bullet {
-        return new Bullet(this.id, this.damage, this.speed, this.skin, this.mesh.clone(), this.target);
+        return new Bullet(this.id, this.damage, this.speed, this.skin, this.mesh.createInstance(Math.random().toString()), this.target);
     }
 
     intersectsWithTarget(): boolean {

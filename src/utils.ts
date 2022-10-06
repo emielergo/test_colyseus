@@ -3,7 +3,7 @@ import Axie, { Bullet, Bunker } from "./raid_objects";
 import * as GUI from 'babylonjs-gui';
 import { Button } from "babylonjs-gui";
 import Card from "./card";
-import { int } from "babylonjs";
+import { int, ShadowGenerator } from "babylonjs";
 import "@babylonjs/loaders/glTF";
 import { Delaunay } from 'd3-delaunay';
 import * as BABYLONMaterials from 'babylonjs-materials'
@@ -66,7 +66,6 @@ export var createbuba = async function createbuba(scene) {
     buba.position = new BABYLON.Vector3(0, 1, 180);
     buba.actionManager = new BABYLON.ActionManager(scene);
     buba.setEnabled(false);
-    buba.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, 1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(-1, 0, 0));
 
     axie_move_source_by_id_map.set('buba', ['/buba-foxy-mouth.png', '/buba-sparky.png', '/buba-foxy.png', '/buba-persimmon.png', '/buba-forest-hero.png', '/buba-buba-brush.png']);
 
@@ -117,11 +116,11 @@ export var createBunker = function createBunker(scene, game) {
 }
 
 export var createBulletMesh = function createBulletMesh(scene) {
-    const bullet_mesh = BABYLON.MeshBuilder.CreateSphere("bullet_mesh", { diameter: 0.1 });
+    const bullet_mesh = BABYLON.MeshBuilder.CreateSphere("bullet_mesh", { diameter: 0.4 });
     bullet_mesh.position = new BABYLON.Vector3(0, 1, -47.8);
 
     const bullet_material = new BABYLON.StandardMaterial("bullet_material", scene);
-    bullet_material.diffuseColor = BABYLON.Color3.Black();
+    bullet_material.diffuseColor = BABYLON.Color3.White();
     bullet_mesh.material = bullet_material;
 
     return bullet_mesh;
@@ -164,6 +163,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
         material.ambientColor = generatedColor;
         material.diffuseColor = generatedColor;
         material.specularPower = 1000;
+        material.roughness = 10;
         material.specularColor = new BABYLON.Color3(0, 0, 0);
         materials.push(material);
     }
@@ -197,6 +197,7 @@ export function generateMap(scene: BABYLON.Scene, mapSize = { x: 15, y: 30 }, mi
     }
 
     let mesh = BABYLON.Mesh.MergeMeshes(meshes, true, undefined, undefined, undefined, true)
-
+    shadowGenerator.getShadowMap().renderList.push(mesh);
+    mesh.receiveShadows = true;
     mesh.parent = ground;
 }
