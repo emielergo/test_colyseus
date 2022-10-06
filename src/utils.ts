@@ -39,6 +39,7 @@ export var createPuffy = async function createPuffy(scene) {
     let puffy;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "puffy.glb").then((result) => {
         puffy = scene.getMeshByName("puffy");
+        result.meshes.forEach( mesh => mesh.isPickable = false)
     });
     puffy.position = new BABYLON.Vector3(5, 1, 180);
     puffy.actionManager = new BABYLON.ActionManager(scene);
@@ -62,6 +63,7 @@ export var createbuba = async function createbuba(scene) {
     let buba;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "buba.glb").then((result) => {
         buba = scene.getMeshByName("buba");
+        result.meshes.forEach( mesh => mesh.isPickable = false)
     });
     buba.position = new BABYLON.Vector3(0, 1, 180);
     buba.actionManager = new BABYLON.ActionManager(scene);
@@ -86,6 +88,7 @@ export var createOlek = async function createOlek(scene) {
     let olek;
     await BABYLON.SceneLoader.ImportMeshAsync("", "/Meshes/", "olek.glb").then((result) => {
         olek = scene.getMeshByName("olek");
+        result.meshes.forEach( mesh => mesh.isPickable = false)
     });
     olek.position = new BABYLON.Vector3(-5, 1, 180);
     olek.setEnabled(false);

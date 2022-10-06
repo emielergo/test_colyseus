@@ -332,7 +332,6 @@ export default class Game {
                                     const sessionId = this.room.sessionId;
                                     const clonedAxie = this.selectedAxie.clone(sessionId);
 
-                                    clonedAxie.mesh.isPickable = true;
                                     this.drop_zone_axies.push(clonedAxie);
                                     this.energy -= 20;
                                     this.room.send("updateEnergy", {
