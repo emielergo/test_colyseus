@@ -99,6 +99,7 @@ export default class Axie extends RaidObject {
             if (this.cards_list[i].source == move.img) {
                 this.active_cards[i] = 1;
                 this.damage += this.cards_list[i].damage;
+                this.range += this.cards_list[i].range;
                 this.heal += this.cards_list[i].heal;
                 this.shielding += this.cards_list[i].shield;
             }
@@ -270,7 +271,7 @@ export default class Axie extends RaidObject {
 }
 
 export class Bullet extends RaidObject {
-    public static BULLET_SPEED = -2;
+    public static BULLET_SPEED = -0.5;
 
     public speed: int;
 

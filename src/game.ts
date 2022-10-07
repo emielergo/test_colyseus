@@ -26,9 +26,13 @@ export default class Game {
 
     // World
     private ground!: BABYLON.GroundMesh;
-    private drop_zone_1!: BABYLON.GroundMesh;
-    private drop_zone_2!: BABYLON.GroundMesh;
-    private own_drop_zone!: BABYLON.GroundMesh;
+    private drop_zone_1!: BABYLON.Mesh;
+    private drop_zone_2!: BABYLON.Mesh;
+    private own_drop_zone!: BABYLON.Mesh;
+    private power_plant_1!: BABYLON.Mesh;
+    private power_plant_2!: BABYLON.Mesh;
+    private own_power_plant!: BABYLON.Mesh;
+    private activate_power_plant;
     private drop_zone_axies = [];
     private bullets = [];
 
@@ -131,7 +135,7 @@ export default class Game {
         groundMat.specularPower = 1;
         this.ground.material = groundMat;
 
-        var shadowLight = new BABYLON.DirectionalLight('shadow-light', new BABYLON.Vector3(40,-30,0), this.scene);
+        var shadowLight = new BABYLON.DirectionalLight('shadow-light', new BABYLON.Vector3(40, -30, 0), this.scene);
         shadowLight.intensity = 0.5;
         // var shadowGenerator = new BABYLON.ShadowGenerator(4096, shadowLight);
         // shadowGenerator.usePoissonSampling = true;
@@ -141,7 +145,7 @@ export default class Game {
         //     autoplay: true
         //   });
 
-          let sceneHelper = await BABYLON.SceneOptimizer.OptimizeAsync(this.scene);
+        let sceneHelper = await BABYLON.SceneOptimizer.OptimizeAsync(this.scene);
 
         generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground);
         // generateMap(this.scene, { x: 180, y: 25 }, 1, new BABYLON.Color3(0.70, 0.62, 0.52), this.ground, shadowGenerator);
@@ -169,6 +173,24 @@ export default class Game {
         drop_zone_2_mat.roughness = 10000;
         drop_zone_2_mat.specularColor = BABYLON.Color3.Purple();
         this.drop_zone_2.material = drop_zone_2_mat;
+
+        this.power_plant_1 = BABYLON.MeshBuilder.CreateBox("power_plant_1", { width: 1, height: 1, depth: 2 }, this.scene);
+        this.power_plant_1.position = new BABYLON.Vector3(20, 0, 162.5);
+
+        const power_plant_1_mat = new BABYLON.StandardMaterial("power_plant_1_mat");
+        power_plant_1_mat.diffuseColor = BABYLON.Color3.Blue();
+        power_plant_1_mat.roughness = 10000;
+        power_plant_1_mat.specularColor = BABYLON.Color3.Blue();
+        this.power_plant_1.material = power_plant_1_mat;
+
+        this.power_plant_2 = BABYLON.MeshBuilder.CreateBox("power_plant_2", { width: 1, height: 1, depth: 2 }, this.scene);
+        this.power_plant_2.position = new BABYLON.Vector3(20, 0, -162.5);
+
+        const power_plant_2_mat = new BABYLON.StandardMaterial("power_plant_2_mat");
+        power_plant_2_mat.diffuseColor = BABYLON.Color3.Blue();
+        power_plant_2_mat.roughness = 10000;
+        power_plant_2_mat.specularColor = BABYLON.Color3.Blue();
+        this.power_plant_2.material = power_plant_2_mat;
 
         this.puffy = await createPuffy(this.scene);
         this.buba = await createbuba(this.scene);
@@ -212,8 +234,10 @@ export default class Game {
                 // Create Drop Zone Actions
                 if (player.number == 1) {
                     this.own_drop_zone = this.drop_zone_1;
+                    this.own_power_plant = this.power_plant_1;
                 } else {
                     this.own_drop_zone = this.drop_zone_2;
+                    this.own_power_plant = this.power_plant_2;
                 }
 
                 this.own_drop_zone.actionManager = new BABYLON.ActionManager(this.scene);
@@ -340,6 +364,14 @@ export default class Game {
                                 } else {
                                     intersectsMesh = false;
                                 }
+                            }
+                        } else if (clicked_mesh_id === this.own_power_plant.id && !this.activate_power_plant) {
+                            if(this.energy >= 50){
+                                this.room.send("activatePowerPlant", {
+                                    energy_cost: 50
+                                });
+                                (this.own_power_plant.material as StandardMaterial).diffuseColor = BABYLON.Color3.Green();
+                                this.activate_power_plant;
                             }
                         }
                     }
@@ -493,7 +525,7 @@ export default class Game {
                         }
                         bullet.dispose();
                     } else {
-                        bullet.age++;
+                        // bullet.age++;
                         remaining_bullets.push(bullet);
                     }
                 })
