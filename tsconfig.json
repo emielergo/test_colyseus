@@ -1,32 +1,25 @@
 {
-  "compilerOptions": {
-    "sourceMap": false,
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "declaration": false,
-    "emitDeclarationOnly": false,
-    "outDir": "./types",
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false,
-    "moduleResolution": "Node",
-    "isolatedModules": false,
-    "allowSyntheticDefaultImports": false,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": false,
-    "useDefineForClassFields": false,
-    "skipLibCheck": false,
-    "types": [
-      "babylonjs",
-      "babylonjs-loaders",
-      "babylonjs-gui",
-      "babylonjs-materials",
-      "node"
-    ]
-  },
-  "include": ["src/**/*.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "compilerOptions": {
+        "sourceMap": false,
+        "module": "ESNext",
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "declaration": false,
+        "emitDeclarationOnly": false,
+        "outDir": "./types",
+        "strict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": false,
+        "noFallthroughCasesInSwitch": false,
+        "moduleResolution": "Node",
+        "isolatedModules": false,
+        "allowSyntheticDefaultImports": false,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": false,
+        "useDefineForClassFields": false,
+        "skipLibCheck": false,
+        "types": ["babylonjs", "babylonjs-loaders", "babylonjs-gui", "babylonjs-materials", "node"]
+    },
+    "include": ["src/**/*.ts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }
-
