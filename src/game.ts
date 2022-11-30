@@ -6,6 +6,7 @@ import Axie, { Bullet, Bunker } from './raid_objects';
 
 import Menu from "./menu";
 import { createbuba, createBulletMesh, createBunker, createHealthBarMesh, createOlek, createPuffy, createSkyBox, generateMap, getRotationVectorFromTarget, setEnergyText } from "./utils";
+import { render } from 'lit';
 
 export default class Game {
     private canvas: HTMLCanvasElement;
@@ -294,6 +295,8 @@ export default class Game {
                     axieToRemove.mesh.dispose();
                     this.axiesByAxieIdBySessionId.get(sessionId).delete(axie.id);
                     this.axieNextPositionByAxieId.delete(axie.id);
+                } else {
+                    this.render_loop = false;
                 }
             })
 
@@ -302,14 +305,14 @@ export default class Game {
                     if (change.field == 'hp') {
                         this.bunkerBySessionId.get(sessionId).hp = change.value;
                         if (change.value <= 0) {
-                            if (isCurrentPlayer) {
-                                window.$game_state.commitState('scene', 'start');
-                                window.$game_state.dispatchEvent('1v1.won', false);
-                            } else {
-                                window.$game_state.commitState('scene', 'start');
-                                window.$game_state.dispatchEvent('1v1.won', true);
-                            }
-                            this.render_loop = false;
+                            // if (isCurrentPlayer) {
+                            //     window.$game_state.commitState('scene', 'start');
+                            //     window.$game_state.dispatchEvent('1v1.won', false);
+                            // } else {
+                            //     window.$game_state.commitState('scene', 'start');
+                            //     window.$game_state.dispatchEvent('1v1.won', true);
+                            // }
+                            // this.render_loop = false;
                         }
                     }
                 });
@@ -384,7 +387,7 @@ export default class Game {
                                         energy_cost: 20
                                     });
                                     this.room.send("insertAxie", {
-                                        id: clonedAxie.id,
+                                        id: clonedAxie.id + this.cloned_counter,
                                         hp: clonedAxie.hp,
                                         shield: clonedAxie.shield,
                                         range: clonedAxie.range,
@@ -395,6 +398,7 @@ export default class Game {
                                         y: clonedAxie.mesh.position.y,
                                         z: clonedAxie.mesh.position.z,
                                     });
+                                    this.cloned_counter++;
                                     setEnergyText(this);
                                 } else {
                                     intersectsMesh = false;
@@ -417,8 +421,10 @@ export default class Game {
                         if (this.isHoveringOverOwnDropZone && this.selectedAxie.level) {
                             this.selectedAxie.mesh.setEnabled(true);
                             if (pointerInfo.pickInfo.pickedPoint) {
-                                this.selectedAxie.mesh.position = pointerInfo.pickInfo.pickedPoint;
-                                this.selectedAxie.mesh.position.x = -this.selectedAxie.mesh.position.x;
+
+                                this.selectedAxie.mesh.position.x = - Math.round(pointerInfo.pickInfo.pickedPoint.x / 5) * 5;
+                                this.selectedAxie.mesh.position.y = Math.round(pointerInfo.pickInfo.pickedPoint.y / 5) * 5;
+                                this.selectedAxie.mesh.position.z = Math.round(pointerInfo.pickInfo.pickedPoint.z / 5) * 5;
                                 this.selectedAxie.mesh.position.y += 2;
                             }
                         } else {
@@ -477,6 +483,7 @@ export default class Game {
                     axie.mesh.position = BABYLON.Vector3.Lerp(axie.mesh.position, this.axieNextPositionByAxieId.get(axie.id), 0.05);
                 })
             })
+
             this.bulletsByBulletId.forEach((bullet, id) => {
                 bullet.position = BABYLON.Vector3.Lerp(bullet.position, this.bulletNextPositionByBulletId.get(bullet.id), 0.05);
             })
@@ -484,7 +491,8 @@ export default class Game {
 
         // Run the render loop.
         this.engine.runRenderLoop(() => {
-            this.scene.render();
+            if (this.render_loop)
+                this.scene.render();
         });
 
         // The canvas/window resize event handler.
