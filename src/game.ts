@@ -276,11 +276,14 @@ export default class Game {
             // update local target position
             player.axies.onAdd((axie) => {
                 let new_axie = new Axie(axie.id, axie.hp, axie.shield, axie.range, axie.damage, axie.level, axie.skin, (this.scene.getMeshById(axie.skin) as BABYLON.Mesh).clone(), this.own_bunker);
-                new_axie.mesh.setEnabled(true);
                 new_axie.mesh.position = new BABYLON.Vector3(axie.x, axie.y, axie.z);
-                new_axie.mesh.rotation = getRotationVectorFromTarget(new BABYLON.Vector3(0, 1, 0), new_axie.mesh, new_axie.target);
+                new_axie.mesh.setEnabled(true);
                 this.axiesByAxieIdBySessionId.get(sessionId).set(new_axie.id, new_axie);
                 this.axieNextPositionByAxieId.set(new_axie.id, new_axie.mesh.position);
+
+                if(!isCurrentPlayer){
+                    new_axie.mesh.rotation = BABYLON.Vector3.RotationFromAxis(new BABYLON.Vector3(0, 0, -1), new BABYLON.Vector3(0, 1, 0), new BABYLON.Vector3(1, 0, 0));
+                }
 
                 axie.onChange((changes: any) => {
                     this.axieNextPositionByAxieId.set(axie.id, new BABYLON.Vector3(axie.x, axie.y, axie.z));
@@ -337,14 +340,13 @@ export default class Game {
             this.bulletsByBulletId.set(bullet.id, new_bullet);
 
             bullet.onChange((changes: any) => {
-                this.bulletNextPositionByBulletId.set(bullet.id, new BABYLON.Vector3(bullet.x, bullet.y, bullet.z));
+                this.bulletNextPositionByBulletId.set(bullet.id, new BABYLON.Vector3(-bullet.x, bullet.y, bullet.z));
             });
         });
 
         this.room.state.bullets.onRemove((bullet) => {
             const bulletToRemove = this.bulletsByBulletId.get(bullet.id)
             if (bulletToRemove) {
-                console.log('remove bullet found');
                 bulletToRemove.dispose();
                 this.bulletsByBulletId.delete(bullet.id);
                 this.bulletNextPositionByBulletId.delete(bullet.id);
@@ -423,8 +425,8 @@ export default class Game {
                             if (pointerInfo.pickInfo.pickedPoint) {
 
                                 this.selectedAxie.mesh.position.x = - Math.round(pointerInfo.pickInfo.pickedPoint.x / 5) * 5;
-                                this.selectedAxie.mesh.position.y = Math.round(pointerInfo.pickInfo.pickedPoint.y / 5) * 5;
                                 this.selectedAxie.mesh.position.z = Math.round(pointerInfo.pickInfo.pickedPoint.z / 5) * 5;
+                                this.selectedAxie.mesh.position.y = pointerInfo.pickInfo.pickedPoint.y;
                                 this.selectedAxie.mesh.position.y += 2;
                             }
                         } else {
